@@ -1,5 +1,5 @@
 [project]
-name = "enzyme-llm-platform"
+name = "decodec"
 version = "0.1.0"
 description = "Protein Language Model (PLM) fine-tuning for enzyme sub-class classification with homology-aware evaluation and calibrated uncertainty"
 readme = "README.md"

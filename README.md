@@ -1,4 +1,4 @@
-# ESM2-EnzymeClassifier: Protein Language Model (PLM) fine-tuning for enzyme sub-class classification with homology-aware evaluation and calibrated uncertainty
+# DecodEC: Protein Language Model (PLM) fine-tuning for enzyme sub-class classification with homology-aware evaluation and calibrated uncertainty
 
 **Author:** Iker Zapirain Gysling  
 **Status:** In development  
@@ -236,7 +236,7 @@ All results will be reported against:
 ## Repository Structure
 
 ```
-esm2-enzyme-classifier/
+decodec/
 ├── README.md
 ├── LICENSE
 ├── pyproject.toml
@@ -328,17 +328,17 @@ esm2-enzyme-classifier/
 ### With Docker (recommended)
 
 ```bash
-git clone https://github.com/izgys/esm2-enzyme-classifier
-cd esm2-enzyme-classifier
-docker build -t esm2-enzyme-classifier .
-docker run -p 8000:8000 esm2-enzyme-classifier
+git clone https://github.com/izgys/decodec
+cd decodec
+docker build -t decodec .
+docker run -p 8000:8000 decodec
 ```
 
 ### Local installation
 
 ```bash
-git clone https://github.com/izgys/esm2-enzyme-classifier
-cd esm2-enzyme-classifier
+git clone https://github.com/izgys/decodec
+cd decodec
 pip install -e ".[dev]"
 ```
 
