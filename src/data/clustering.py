@@ -13,8 +13,8 @@ What this script does:
 
 Why Docker for MMseqs2?
     MMseqs2 is a Linux binary. Running it via Docker means the pipeline
-    works on Windows and Mac without manual installation, and the exact
-    MMseqs2 version is pinned in the Docker image tag — reproducibility.
+    works on Windows and Mac without manual installation. The image tag
+    is currently :latest, so the MMseqs2 version is not yet pinned.
 
 Why 30% identity threshold?
     30% is the community standard for protein ML benchmarking. Below ~25%
@@ -25,9 +25,9 @@ Why 30% identity threshold?
 Why cluster-based splitting rather than sequence-based?
     If we split sequences randomly, two sequences in the same cluster
     (>30% identity) may end up in train and test. The model sees essentially
-    the same protein in both — inflating test performance by 15-30% on
-    typical protein classification tasks. Cluster-based splitting prevents
-    this entirely.
+    the same protein in both, which inflates test performance. Cluster-based
+    splitting keeps every cluster within one split. The size of the inflation
+    on this dataset is to be measured, not assumed.
 """
 
 import json
