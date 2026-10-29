@@ -1,192 +1,81 @@
-# DecodEC: Protein Language Model (PLM) fine-tuning for enzyme sub-class classification with homology-aware evaluation and calibrated uncertainty
+# DecodEC
 
-**Author:** Iker Zapirain Gysling  
-**Status:** In development. The data pipeline and a frozen-embedding baseline are built; fine-tuning, calibration and interpretability are not yet.  
-**Domain:** Protein Engineering · Computational Biology · Production ML
+![Python 3.11](https://img.shields.io/badge/python-3.11-blue)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+![Status: in development](https://img.shields.io/badge/status-in%20development-orange)
 
----
+**Enzyme sub-class prediction from sequence, tested on proteins unlike anything seen in training.**
 
-## Current Result
+Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, so the score reflects new proteins rather than close relatives of the training set.
 
-| Model | Task | Split | Test macro-F1 | Test micro-F1 |
-|---|---|---|---|---|
-| Linear probe on frozen ESM-2 650M embeddings | 59 EC sub-classes | Homology-aware (MMseqs2, 30% identity, 80% coverage) | 0.494 | 0.679 |
+> **Status: early development.** The data pipeline and a first baseline work. The fine-tuned model, calibration, attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
 
-This is a preliminary reference point, not a final baseline:
+## Why
 
-- It is a single run with no uncertainty estimate.
-- The macro-F1 includes classes with too few test sequences to evaluate (EC 2.9 has 0, EC 1.9 has 1), which count as F1 = 0.
-- The probe is untuned: CLS-token embedding, sequences truncated at 512 residues, no class weighting, regularisation not tuned on validation.
+Knowing what an enzyme does is the starting point for target identification, selectivity work and enzyme engineering. Classical tools such as BLAST work well when a close relative with a known function exists. They struggle with remote homologues: proteins that share a mechanism but have drifted too far in sequence to be recognised.
 
-A corrected baseline, with an explicit rule for which classes are evaluable, comes before any fine-tuning results.
+Protein language models learn from millions of natural sequences and may capture function beyond plain similarity. The catch is evaluation. Protein datasets are full of near-duplicates, and a random train/test split lets a model score well by memorising close relatives. DecodEC is built around one question: **how much do protein language models really help once that leakage is removed?**
 
----
+## How it works
 
-## The Problem
+```mermaid
+flowchart TD
+    A["UniProtKB/Swiss-Prot<br/>reviewed enzymes with EC numbers"] --> B["Filter and deduplicate<br/>216,962 sequences, 59 sub-classes"]
+    B --> C["Cluster at 30% identity<br/>MMseqs2"]
+    C --> D["Split by cluster<br/>train / val / test"]
+    D --> E["Linear probe on frozen<br/>ESM-2 embeddings"]
+    D --> F["ESM-2 + LoRA<br/>fine-tuning"]
+    F --> G["Calibrated confidence"]
+    F --> H["Per-residue attributions"]
+    classDef built fill:#e2f0e2,stroke:#4a8a4a,color:#222
+    classDef planned fill:#f0f0f0,stroke:#999,stroke-dasharray:4 3,color:#222
+    class A,B,C,D,E built
+    class F,G,H planned
+```
 
-Enzyme classification from sequence is a foundational task in computational biology and drug discovery. Knowing which enzyme class a protein belongs to informs target identification, selectivity profiling, off-target risk assessment, and the design of selective inhibitors. Classical approaches rely on sequence similarity (BLAST, HMMs) and struggle with remote homologues — proteins that share a functional fold but have diverged beyond recognisable sequence identity.
+Green steps work today. Grey dashed steps are planned.
 
-Protein language models (PLMs) such as ESM-2 learn representations of protein sequences from evolutionary co-variation across very large sequence databases. These representations capture functional and structural information without explicit structural input, offering a route to classification that may generalise beyond shallow sequence similarity.
+A few things worth knowing:
 
-This project addresses four scientific questions:
+- **The cluster, not the sequence, is the unit of independence.** Sequences are grouped at 30% identity, and every cluster lands in exactly one split. No test protein has a close relative in training.
+- **The label is the EC sub-class**, the first two digits of the EC number. All seven top-level classes are covered, including EC 7 (translocases).
+- **Every fine-tuning result will be compared with fair baselines** on the same splits: a linear probe on frozen embeddings and a classical sequence-similarity search.
 
-- How well do ESM-2 embeddings encode enzyme sub-class identity, and how much does fine-tuning improve over a fair frozen-embedding baseline?
-- How much do random splits inflate performance compared with homology-aware splits on this dataset?
-- How calibrated are the model's confidence scores, and when should predictions be trusted?
-- Which sequence positions drive classification decisions, and do they correspond to conserved residues?
+## What works today
 
----
-
-## What Exists Today
-
-| Component | Status |
+| Part | Status |
 |---|---|
-| UniProtKB/Swiss-Prot download with EC filtering and checksums | Built |
-| Preprocessing: length filter, deduplication, rare-class filter, label encoding | Built |
-| MMseqs2 clustering and cluster-level train/val/test splits | Built |
-| PyTorch Dataset with ESM-2 tokenisation | Built |
-| Linear probe on frozen ESM-2 embeddings | Built (preliminary, see above) |
+| Download from UniProtKB/Swiss-Prot with EC filtering and checksums | Built |
+| Deduplication, rare-class filter, label encoding | Built |
+| MMseqs2 clustering and cluster-level splits | Built |
+| PyTorch dataset with ESM-2 tokenisation | Built |
+| Linear probe on frozen ESM-2 embeddings | Built, preliminary |
 | ESM-2 + LoRA fine-tuning | Planned |
-| Sequence-similarity nearest-neighbour baseline | Planned |
+| Sequence-similarity baseline | Planned |
 | Random vs homology-aware split comparison | Planned |
-| Temperature-scaling calibration with ECE | Planned |
-| Integrated gradients with MSA conservation cross-check | Planned |
-| FastAPI inference endpoint, Docker image, CI, tests | Planned |
+| Calibration (temperature scaling, ECE) | Planned |
+| Integrated gradients with conservation check | Planned |
+| Inference API, Docker image, tests and CI | Planned |
 
----
+## First result
 
-## Data Pipeline (as built)
+| Model | Classes | Split | Test macro-F1 | Test micro-F1 |
+|---|---|---|---|---|
+| Linear probe on frozen ESM-2 650M embeddings | 59 EC sub-classes | Homology-aware (30% identity, 80% coverage) | 0.494 | 0.679 |
 
-Data comes from UniProtKB/Swiss-Prot, restricted to reviewed entries with at least one EC annotation (`reviewed:true AND ec:*`).
+The data behind it: 152,334 training, 32,629 validation and 31,999 test sequences from 15,935 clusters.
 
-1. **Download.** Paginated UniProt REST download. Keeps sequences of 50–1024 residues whose EC numbers have at least two specific digits. The label is the EC sub-class (first two digits, e.g. 3.4) of the first listed EC number. The raw file's checksum is stored in `data/checksums.json`.
-2. **Preprocess.** Removes exact duplicate sequences (40,056 removed from 257,018 records), then drops sub-classes with fewer than 100 sequences (16 dropped). Result: 216,962 sequences in **59 sub-classes**, covering all seven top-level EC classes (including EC 7, translocases).
-3. **Cluster and split.** MMseqs2 (run in Docker) clusters sequences at 30% identity and 80% coverage, producing 15,935 clusters. Clusters, not sequences, are assigned to splits (70% / 15% / 15% of clusters per sub-class), so no cluster crosses splits. Result: 152,334 train / 32,629 val / 31,999 test sequences.
+Treat this as a first reference point, not a final number:
 
-All settings are in `config/data_config.yaml`.
+- **It is a single run with no uncertainty estimate.**
+- **Some classes are too small to score.** EC 2.9 has no test sequences and EC 1.9 has one, yet both count as F1 = 0 in the macro average.
+- **The probe is not tuned yet.** It uses the CLS token, cuts sequences at 512 residues and has no class weighting. On several rare classes it is always right when it predicts them but almost never predicts them (EC 1.15: precision 1.00, recall 0.05).
 
----
+A corrected baseline comes before any fine-tuning result, so that the gain from fine-tuning is measured against a fair starting point.
 
-## Scientific Background
+## Quick start
 
-### Enzyme Classification
-
-The Enzyme Commission (EC) system classifies enzymes hierarchically into seven top-level classes (oxidoreductases, transferases, hydrolases, lyases, isomerases, ligases and translocases), each subdivided into sub-classes and sub-subclasses. This project predicts the sub-class (two-digit EC number), which is harder than the top level while keeping enough data for most classes.
-
-The challenge is generalisation to remote homologues: sequences that share a functional mechanism with training examples but have diverged beyond the reach of classical similarity tools.
-
-### Why ESM-2
-
-ESM-2 (Lin et al., 2023, *Science*) is a family of protein language models trained with a masked language modelling objective on UniRef sequences. The 650M-parameter model produces per-residue and sequence-level representations that capture local sequence patterns, structural constraints and evolutionary co-variation, which makes it a strong starting point for downstream classification.
-
-### Why LoRA (planned)
-
-Full fine-tuning of a 650M-parameter model needs substantial GPU memory and risks overwriting what the model learned in pre-training. Low-Rank Adaptation (LoRA, Hu et al., 2022) freezes the pre-trained weights and learns small low-rank updates to selected layers (here, the attention query and value projections), so only a small fraction of parameters is trained.
-
-### Why Homology-Aware Splitting
-
-With random splits, near-identical proteins can appear in both train and test, so test performance measures memorisation of close homologues rather than generalisation. Clustering at 30% identity and assigning whole clusters to one split removes this leakage. How large the inflation is on this dataset will be measured directly by comparing random and homology-aware splits on the same records.
-
-### Calibration and Uncertainty (planned)
-
-A model whose confidence scores do not match its empirical accuracy is unreliable in practice. Temperature scaling (Guo et al., 2017) will be fitted on the validation set, with Expected Calibration Error (ECE) and reliability diagrams reported before and after. Low-confidence predictions will be flagged rather than silently assigned to the top class.
-
----
-
-## Key Design Decisions
-
-**Why sub-classes rather than top-level EC classes?**  
-Seven top-level classes make the task too easy to be informative. Sub-classes are harder while still leaving enough sequences per class for most of them.
-
-**Why homology-aware splitting rather than random?**  
-Random splits leak close homologues between train and test. The gap between random and homology-aware splits will be reported explicitly.
-
-**Why temperature scaling rather than more complex calibration?**  
-It has a single parameter, cannot change the predicted class, and is easy to interpret. More flexible methods (vector scaling, isotonic regression) will be tried only if per-class miscalibration remains.
-
-**Why integrated gradients rather than attention weights?**  
-Attention weights show how information is routed, not which inputs matter. Integrated gradients (Sundararajan et al., 2017) satisfy completeness and can be cross-checked against MSA conservation.
-
-**Why config-driven runs?**  
-Data settings live in YAML under `config/`, so a run can be reproduced from its config. Model and training configs will follow the same pattern.
-
----
-
-## Evaluation Plan
-
-### Metrics
-
-| Metric | Description |
-|---|---|
-| Macro-F1 | Primary metric, over evaluable classes only; always reported with the number of classes it covers and an uncertainty estimate |
-| Per-class F1 | Reported with support, to show which sub-classes are hardest |
-| Top-3 accuracy | Relevant where a ranked shortlist is acceptable |
-| ECE | Expected Calibration Error, with the binning stated |
-| Reliability diagram | Visual calibration check |
-
-### Baselines
-
-- **Linear probe on frozen ESM-2 embeddings**: the reference for how much fine-tuning adds
-- **Sequence-similarity nearest neighbour** (BLAST or MMseqs2 search against train): the classical baseline that matters most at a 30% split
-- **Random forest on ESM-2 embeddings**: a non-linear, non-neural baseline
-- **Random split vs homology-aware split**: same records and settings, only the split changes
-
-### Known Failure Modes to Document
-
-- **Sub-class boundary sequences** may be assigned to either of two classes with similar confidence.
-- **Families absent from Swiss-Prot** cannot be classified correctly. Low maximum softmax probability is only a weak signal for out-of-distribution input.
-- **Multi-functional enzymes** with EC numbers in more than one sub-class are labelled by their first EC number. Multi-label classification is a planned extension.
-- **Classes too small to evaluate** on the test split are reported separately, with their counts.
-- **Clustering sensitivity**: results may depend on the identity and coverage thresholds, which will be tested.
-
----
-
-## Repository Structure
-
-```
-decodec/
-├── README.md
-├── LICENSE
-├── pyproject.toml
-├── uv.lock
-│
-├── config/
-│   └── data_config.yaml           # UniProt query, length and class filters, clustering settings
-│
-├── src/
-│   ├── data/
-│   │   ├── download.py            # UniProtKB/Swiss-Prot download with EC filtering
-│   │   ├── preprocess.py          # Deduplication, rare-class filter, label encoding
-│   │   ├── clustering.py          # MMseqs2 clustering and cluster-level splits
-│   │   └── dataset.py             # PyTorch Dataset with ESM-2 tokenisation
-│   │
-│   ├── model/                     # planned: ESM-2 + LoRA
-│   ├── training/                  # planned: training loop and metrics
-│   ├── calibration/               # planned: temperature scaling and ECE
-│   ├── interpretability/          # planned: integrated gradients
-│   ├── inference/                 # planned: FastAPI endpoint
-│   └── visualisation/             # planned: plots
-│
-├── data/                          # generated by the pipeline, not tracked (except checksums.json)
-│   ├── raw/
-│   ├── processed/
-│   ├── clusters/
-│   └── checksums.json
-│
-└── experiments/
-    └── baseline_zeroshot/         # linear probe on frozen ESM-2 embeddings (preliminary)
-        ├── run_baseline.py
-        ├── results.json
-        └── per_class_report.txt
-```
-
----
-
-## Quickstart
-
-Requires Python 3.11, [uv](https://docs.astral.sh/uv/), Docker (for MMseqs2) and a CUDA GPU for the baseline.
-
-### Installation
+You need Python 3.11, [uv](https://docs.astral.sh/uv/), Docker (MMseqs2 runs in a container) and a CUDA GPU for the baseline.
 
 ```bash
 git clone https://github.com/izgys/decodec
@@ -194,7 +83,7 @@ cd decodec
 uv sync --extra dev
 ```
 
-### Data preparation
+Build the dataset. The three steps download Swiss-Prot, clean it and split it by cluster:
 
 ```bash
 uv run python -m src.data.download --config config/data_config.yaml
@@ -202,53 +91,125 @@ uv run python -m src.data.preprocess --config config/data_config.yaml
 uv run python -m src.data.clustering --config config/data_config.yaml
 ```
 
-UniProt releases change over time, so a fresh download will usually not match the stored checksum.
-
-### Baseline
+Then run the baseline:
 
 ```bash
 uv run python experiments/baseline_zeroshot/run_baseline.py
 ```
 
----
+Results land in `experiments/baseline_zeroshot/` (`results.json` and a per-class report). UniProt changes with every release, so a fresh download will give slightly different numbers.
+
+## Design choices
+
+**Sub-classes, not top-level classes.** Seven top-level classes make the task too easy to learn much from. Sub-classes are harder and still leave enough sequences for most classes.
+
+**Homology-aware splits first, random splits only as a comparison.** A random split mostly tests memory. The gap between the two will be measured directly on the same data, with nothing else changed.
+
+**A fair baseline before fine-tuning.** If the baseline is weak, any fine-tuned model looks good. The linear probe gets tuned before it is used as the reference.
+
+**LoRA instead of full fine-tuning.** LoRA freezes ESM-2 and trains small low-rank updates on top. It needs far less GPU memory and keeps what the model learned in pre-training.
+
+**Temperature scaling for calibration.** One parameter, fitted on validation data. It cannot change which class is predicted, only how confident the prediction is, which makes it easy to check and explain.
+
+**Integrated gradients, not attention weights.** Attention shows how information flows through the model, not which residues matter. Integrated gradients give per-residue attributions that can be checked against conservation in multiple sequence alignments.
+
+## Known limitations
+
+Each limitation has a planned fix in v1.
+
+| Limitation | Example | Planned fix |
+|---|---|---|
+| Classes too small to evaluate count in the macro-F1 | EC 2.9 has 0 test sequences, EC 1.9 has 1 | A rule for evaluable classes based on clusters per split; macro-F1 always reported with its class count |
+| The baseline probe is untuned | CLS token, 512-residue cut-off, no class weights; EC 1.15 recall 0.05 | Mean pooling, full length, class weights, regularisation tuned on validation |
+| No uncertainty on the headline number | One test macro-F1 from one run | Bootstrap confidence interval over clusters |
+| One label per protein | Proteins with EC numbers in two sub-classes get the first one | Count how many there are first; multi-label classification in v2 |
+| No classical baseline yet | Only the embedding probe exists | Nearest-neighbour sequence search against the training set |
+| Leakage gap not yet measured | Only the homology-aware split has been run | Random split on the same records, everything else unchanged |
+| MMseqs2 version not pinned | The Docker image uses the `latest` tag | Pin the version and store checksums for every pipeline stage |
+| The longest sequences lose two residues | 1,024 residues plus 2 special tokens exceed the 1,024-token cut-off | Tokenise at 1,026 tokens, which ESM-2 supports |
+| Low confidence is a weak signal for unknown families | Families absent from Swiss-Prot cannot be predicted correctly | Calibrated low-confidence flag, documented as a limit rather than a detector |
 
 ## Roadmap
 
-**v1 — Sequence-based classification**
+**v1: sequence-based classification**
 
-- [x] Data pipeline (UniProtKB/Swiss-Prot download, filtering, deduplication, label encoding)
-- [x] MMseqs2 homology-aware splitting
-- [x] Preliminary linear probe on frozen ESM-2 embeddings
-- [ ] Evaluable-class rule and corrected linear-probe baseline
-- [ ] Sequence-similarity nearest-neighbour baseline
-- [ ] ESM-2 + LoRA fine-tuning with MLflow tracking
+- [x] Data pipeline: download, filtering, deduplication, label encoding
+- [x] Homology-aware splitting with MMseqs2
+- [x] First linear probe on frozen ESM-2 embeddings
+- [ ] Evaluable-class rule and corrected baseline
+- [ ] Sequence-similarity baseline
+- [ ] ESM-2 650M + LoRA fine-tuning, tracked in MLflow
 - [ ] Random vs homology-aware split comparison
-- [ ] Calibration (temperature scaling, ECE)
-- [ ] Integrated gradients with MSA conservation cross-check
-- [ ] FastAPI inference endpoint, Docker packaging, tests and CI
+- [ ] Calibration with ECE and reliability diagrams
+- [ ] Integrated gradients with a conservation cross-check
+- [ ] Inference API, Docker image, tests and CI
 
-**v2 — Structure-aware extension**
+**v2: structure-aware extension**
 
-- [ ] Attribution mapping to 3D structure (PDB retrieval, B-factor replacement)
-- [ ] SaProt integration (structure-aware sequence tokens from Foldseek)
+- [ ] Attributions mapped onto 3D structures
+- [ ] Structure-aware tokens (SaProt)
 - [ ] Multi-label classification for multi-functional enzymes
-- [ ] Newer protein language models (ESM-3 or later)
+- [ ] Newer protein language models
 
----
+## For developers
 
-## Scientific References
+<details>
+<summary><b>Repository structure</b></summary>
 
-- Lin Z et al. (2023). Evolutionary-scale prediction of atomic-level protein structure with a language model. *Science* 379:1123–1130. DOI: 10.1126/science.ade2574
-- Hu EJ et al. (2022). LoRA: Low-Rank Adaptation of Large Language Models. *ICLR*. arXiv: 2106.09685
-- Sundararajan M et al. (2017). Axiomatic Attribution for Deep Networks. *ICML*. arXiv: 1703.01365
-- Guo C et al. (2017). On Calibration of Modern Neural Networks. *ICML*. arXiv: 1706.04599
-- Steinegger M & Söding J (2017). MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. *Nat. Biotechnol.* 35:1026–1028. DOI: 10.1038/nbt.3988
-- Steinegger M & Söding J (2018). Clustering huge protein sequence sets in linear time. *Nat. Commun.* 9:2542. DOI: 10.1038/s41467-018-04964-5
-- The UniProt Consortium (2025). UniProt: the Universal Protein Knowledgebase in 2025. *Nucleic Acids Res.* 53:D609–D617. DOI: 10.1093/nar/gkae1010
+```text
+decodec/
+├── config/
+│   └── data_config.yaml          UniProt query, filters, clustering settings
+├── src/
+│   ├── data/
+│   │   ├── download.py           UniProt download with EC filtering
+│   │   ├── preprocess.py         deduplication, rare-class filter, labels
+│   │   ├── clustering.py         MMseqs2 clustering and cluster-level splits
+│   │   └── dataset.py            PyTorch dataset with ESM-2 tokenisation
+│   └── model/, training/, calibration/, interpretability/, inference/, visualisation/
+│                                 placeholders for the planned parts
+├── data/                         created by the pipeline, not tracked (except checksums.json)
+├── experiments/
+│   └── baseline_zeroshot/        first linear probe: script, results, per-class report
+├── pyproject.toml
+└── uv.lock
+```
+
+</details>
+
+<details>
+<summary><b>Pipeline settings</b></summary>
+
+All data settings live in `config/data_config.yaml`:
+
+| Setting | Value | What it controls |
+|---|---|---|
+| `uniprot.query` | `reviewed:true AND ec:*` | Swiss-Prot entries with at least one EC number |
+| `filtering.min_length` / `max_length` | 50 / 1024 | Sequence length range |
+| `filtering.min_ec_digits` | 2 | EC numbers must be specific to the sub-class |
+| `filtering.min_class_count` | 100 | Sub-classes with fewer sequences are dropped |
+| `clustering.min_seq_id` | 0.30 | Identity threshold for clustering |
+| `clustering.train_frac` / `val_frac` | 0.70 / 0.15 | Share of clusters per split; the rest is test |
+| `clustering.seed` | 42 | Makes the split reproducible |
+
+</details>
+
+## References
+
+**Data and tools**
+
+- The UniProt Consortium (2025). UniProt: the Universal Protein Knowledgebase in 2025. *Nucleic Acids Res.* 53:D609-D617. [doi:10.1093/nar/gkae1010](https://doi.org/10.1093/nar/gkae1010)
+- Steinegger M, Söding J (2017). MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. *Nat. Biotechnol.* 35:1026-1028. [doi:10.1038/nbt.3988](https://doi.org/10.1038/nbt.3988)
+- Steinegger M, Söding J (2018). Clustering huge protein sequence sets in linear time. *Nat. Commun.* 9:2542. [doi:10.1038/s41467-018-04964-5](https://doi.org/10.1038/s41467-018-04964-5)
+
+**Models and methods**
+
+- Lin Z et al. (2023). Evolutionary-scale prediction of atomic-level protein structure with a language model. *Science* 379:1123-1130. [doi:10.1126/science.ade2574](https://doi.org/10.1126/science.ade2574)
+- Hu EJ et al. (2022). LoRA: Low-Rank Adaptation of Large Language Models. *ICLR*. [arXiv:2106.09685](https://arxiv.org/abs/2106.09685)
+- Guo C et al. (2017). On Calibration of Modern Neural Networks. *ICML*. [arXiv:1706.04599](https://arxiv.org/abs/1706.04599)
+- Sundararajan M, Taly A, Yan Q (2017). Axiomatic Attribution for Deep Networks. *ICML*. [arXiv:1703.01365](https://arxiv.org/abs/1703.01365)
 - Rao R et al. (2021). MSA Transformer. *ICML*.
-- Su J et al. (2024). SaProt: Protein Language Modeling with Structure-aware Vocabulary. *ICLR*. DOI (preprint): 10.1101/2023.10.01.560349
-
----
+- Su J et al. (2024). SaProt: Protein Language Modeling with Structure-aware Vocabulary. *ICLR*. [doi:10.1101/2023.10.01.560349](https://doi.org/10.1101/2023.10.01.560349) (preprint)
 
 ## Author
 
@@ -257,8 +218,6 @@ Computational Biochemist, PhD
 Barcelona, Spain  
 [LinkedIn](https://linkedin.com/in/zgysling) · [GitHub](https://github.com/izgys)
 
----
-
 ## License
 
-MIT License — see `LICENSE` for details.
+MIT License. See [`LICENSE`](LICENSE) for details.
