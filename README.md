@@ -20,16 +20,17 @@ Protein language models learn from millions of natural sequences and may capture
 
 ```mermaid
 flowchart TD
-    A["UniProtKB/Swiss-Prot<br/>reviewed enzymes with EC numbers"] --> B["Filter and deduplicate<br/>216,962 sequences, 59 sub-classes"]
+    A["UniProtKB/Swiss-Prot<br/>reviewed enzymes with EC numbers"] --> B["Filter and deduplicate<br/>one sub-class per protein"]
     B --> C["Cluster at 30% identity<br/>MMseqs2"]
-    C --> D["Split by cluster<br/>train / val / test"]
+    C --> K["Keep sub-classes with 20+ clusters<br/>212,917 sequences, 50 sub-classes"]
+    K --> D["Split by cluster<br/>train / val / test"]
     D --> E["Linear probe on frozen<br/>ESM-2 embeddings"]
     D --> F["ESM-2 + LoRA<br/>fine-tuning"]
     F --> G["Calibrated confidence"]
     F --> H["Per-residue attributions"]
     classDef built fill:#e2f0e2,stroke:#4a8a4a,color:#222
     classDef planned fill:#f0f0f0,stroke:#999,stroke-dasharray:4 3,color:#222
-    class A,B,C,D,E built
+    class A,B,C,K,D,E built
     class F,G,H planned
 ```
 
@@ -38,7 +39,8 @@ Green steps work today. Grey dashed steps are planned.
 A few things worth knowing:
 
 - **The cluster, not the sequence, is the unit of independence.** Sequences are grouped at 30% identity, and every cluster lands in exactly one split. No test protein has a close relative in training.
-- **The label is the EC sub-class**, the first two digits of the EC number. All seven top-level classes are covered, including EC 7 (translocases).
+- **Classes are counted in clusters too.** A sub-class stays only if it has at least 20 clusters, and every sub-class gets at least 3 clusters in validation and in test. A class with hundreds of test sequences from two clusters would really be judged on two examples.
+- **The label is the EC sub-class**, the first two digits of the EC number. All seven top-level classes are covered, including EC 7 (translocases). Proteins annotated with more than one sub-class (0.4%) are left out, because they have no single correct label.
 - **Every fine-tuning result will be compared with fair baselines** on the same splits: a linear probe on frozen embeddings and a classical sequence-similarity search.
 
 ## What works today
@@ -46,10 +48,10 @@ A few things worth knowing:
 | Part | Status |
 |---|---|
 | Download from UniProtKB/Swiss-Prot with EC filtering and checksums | Built |
-| Deduplication, rare-class filter, label encoding | Built |
-| MMseqs2 clustering and cluster-level splits | Built |
-| PyTorch dataset with ESM-2 tokenisation | Built |
-| Linear probe on frozen ESM-2 embeddings | Built, preliminary |
+| Multi-sub-class filter, deduplication, rare-class filter | Built |
+| MMseqs2 clustering, cluster-count class filter and cluster-level splits | Built |
+| PyTorch dataset with ESM-2 tokenisation, dynamic padding and length-grouped batches | Built |
+| Linear probe on frozen ESM-2 embeddings | Built, preliminary (previous dataset version) |
 | ESM-2 + LoRA fine-tuning | Planned |
 | Sequence-similarity baseline | Planned |
 | Random vs homology-aware split comparison | Planned |
@@ -63,15 +65,15 @@ A few things worth knowing:
 |---|---|---|---|---|
 | Linear probe on frozen ESM-2 650M embeddings | 59 EC sub-classes | Homology-aware (30% identity, 80% coverage) | 0.494 | 0.679 |
 
-The data behind it: 152,334 training, 32,629 validation and 31,999 test sequences from 15,935 clusters.
+**This result comes from the previous version of the dataset** (216,962 sequences, 59 sub-classes) and cannot be compared with anything run on the current one. It is kept because it showed what had to change:
 
-Treat this as a first reference point, not a final number:
-
+- **Some classes were too small to score.** EC 2.9 had no test sequences and EC 1.9 had one, yet both counted as F1 = 0 in the macro average. The pipeline now counts classes in clusters, which removed 9 more sub-classes and guarantees at least 3 clusters per class in validation and test.
 - **It is a single run with no uncertainty estimate.**
-- **Some classes are too small to score.** EC 2.9 has no test sequences and EC 1.9 has one, yet both count as F1 = 0 in the macro average.
-- **The probe is not tuned yet.** It uses the CLS token, cuts sequences at 512 residues and has no class weighting. On several rare classes it is always right when it predicts them but almost never predicts them (EC 1.15: precision 1.00, recall 0.05).
+- **The probe was not tuned.** It used the CLS token, cut sequences at 512 residues and had no class weighting. On several rare classes it was always right when it predicted them but almost never predicted them (EC 1.15: precision 1.00, recall 0.05).
 
-A corrected baseline comes before any fine-tuning result, so that the gain from fine-tuning is measured against a fair starting point.
+The current dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters, in 50 sub-classes. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary.
+
+A corrected baseline on this dataset comes next, before any fine-tuning result, so that the gain from fine-tuning is measured against a fair starting point.
 
 ## Quick start
 
@@ -115,18 +117,17 @@ Results land in `experiments/baseline_zeroshot/` (`results.json` and a per-class
 
 ## Known limitations
 
-Each limitation has a planned fix in v1.
+Each limitation has a planned fix.
 
 | Limitation | Example | Planned fix |
 |---|---|---|
-| Classes too small to evaluate count in the macro-F1 | EC 2.9 has 0 test sequences, EC 1.9 has 1 | A rule for evaluable classes based on clusters per split; macro-F1 always reported with its class count |
 | The baseline probe is untuned | CLS token, 512-residue cut-off, no class weights; EC 1.15 recall 0.05 | Mean pooling, full length, class weights, regularisation tuned on validation |
 | No uncertainty on the headline number | One test macro-F1 from one run | Bootstrap confidence interval over clusters |
-| One label per protein | Proteins with EC numbers in two sub-classes get the first one | Count how many there are first; multi-label classification in v2 |
+| Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v2 |
+| The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
 | No classical baseline yet | Only the embedding probe exists | Nearest-neighbour sequence search against the training set |
 | Leakage gap not yet measured | Only the homology-aware split has been run | Random split on the same records, everything else unchanged |
 | MMseqs2 version not pinned | The Docker image uses the `latest` tag | Pin the version and store checksums for every pipeline stage |
-| The longest sequences lose two residues | 1,024 residues plus 2 special tokens exceed the 1,024-token cut-off | Tokenise at 1,026 tokens, which ESM-2 supports |
 | Low confidence is a weak signal for unknown families | Families absent from Swiss-Prot cannot be predicted correctly | Calibrated low-confidence flag, documented as a limit rather than a detector |
 
 ## Roadmap
@@ -136,10 +137,12 @@ Each limitation has a planned fix in v1.
 - [x] Data pipeline: download, filtering, deduplication, label encoding
 - [x] Homology-aware splitting with MMseqs2
 - [x] First linear probe on frozen ESM-2 embeddings
-- [ ] Evaluable-class rule and corrected baseline
+- [x] Evaluable-class rule: at least 20 clusters per sub-class, at least 3 in validation and test
+- [x] Dynamic padding and length-grouped batches for training
+- [ ] Corrected baseline on the current dataset
 - [ ] Sequence-similarity baseline
 - [ ] ESM-2 650M + LoRA fine-tuning, tracked in MLflow
-- [ ] Random vs homology-aware split comparison
+- [ ] Performance against identity to the training set, including random vs homology-aware splits
 - [ ] Calibration with ECE and reliability diagrams
 - [ ] Integrated gradients with a conservation cross-check
 - [ ] Inference API, Docker image, tests and CI
@@ -163,9 +166,9 @@ decodec/
 ├── src/
 │   ├── data/
 │   │   ├── download.py           UniProt download with EC filtering
-│   │   ├── preprocess.py         deduplication, rare-class filter, labels
-│   │   ├── clustering.py         MMseqs2 clustering and cluster-level splits
-│   │   └── dataset.py            PyTorch dataset with ESM-2 tokenisation
+│   │   ├── preprocess.py         multi-sub-class filter, deduplication, rare-class filter
+│   │   ├── clustering.py         MMseqs2 clustering, class filter, splits, label map
+│   │   └── dataset.py            ESM-2 tokenisation, dynamic padding, length-grouped batches
 │   └── model/, training/, calibration/, interpretability/, inference/, visualisation/
 │                                 placeholders for the planned parts
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
@@ -189,6 +192,8 @@ All data settings live in `config/data_config.yaml`:
 | `filtering.min_ec_digits` | 2 | EC numbers must be specific to the sub-class |
 | `filtering.min_class_count` | 100 | Sub-classes with fewer sequences are dropped |
 | `clustering.min_seq_id` | 0.30 | Identity threshold for clustering |
+| `clustering.min_clusters_per_class` | 20 | Sub-classes with fewer clusters are dropped |
+| `clustering.min_eval_clusters` | 3 | Guaranteed clusters per sub-class in validation and in test |
 | `clustering.train_frac` / `val_frac` | 0.70 / 0.15 | Share of clusters per split; the rest is test |
 | `clustering.seed` | 42 | Makes the split reproducible |
 
