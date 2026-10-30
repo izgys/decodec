@@ -8,8 +8,17 @@ What this script does:
     1. Converts processed records to FASTA format (MMseqs2 input)
     2. Runs MMseqs2 easy-cluster via Docker at 30% sequence identity
     3. Parses the cluster TSV output
-    4. Assigns clusters to train/val/test splits
-    5. Saves split datasets and a clustering report
+    4. Drops sub-classes with too few clusters to evaluate
+    5. Builds the label map from the remaining sub-classes
+    6. Assigns clusters to train/val/test splits, with a minimum number of
+       clusters per sub-class in val and test
+    7. Saves split datasets, the label map and a clustering report
+
+Why filter on clusters, not sequences?
+    The cluster is the unit of independence. A sub-class with 700 test
+    sequences from 6 clusters is judged on 6 examples, not 700. A sub-class
+    is kept only if it has enough clusters to give every split several
+    independent examples (min_clusters_per_class, min_eval_clusters).
 
 Why Docker for MMseqs2?
     MMseqs2 is a Linux binary. Running it via Docker means the pipeline
@@ -47,7 +56,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# MMseqs2 Docker image — pinned for reproducibility
+# MMseqs2 Docker image — not yet pinned to a version (see T4.4)
 MMSEQS2_IMAGE = "ghcr.io/soedinglab/mmseqs2:latest"
 
 
@@ -211,6 +220,98 @@ def parse_cluster_tsv(tsv_path: Path) -> dict[str, str]:
 
 
 # ---------------------------------------------------------------------------
+# Cluster labels and the cluster-count filter
+# ---------------------------------------------------------------------------
+# Each cluster gets one sub-class: the majority label among its members.
+# A sub-class's cluster count is the number of clusters it is the majority
+# label of — those are the clusters the split can distribute.
+#
+# Dropping a sub-class removes its records, which can change the majority
+# label of mixed clusters, so the filter repeats until nothing changes.
+
+def get_cluster_subclasses(
+    records: list[dict], member_to_cluster: dict[str, str]
+) -> tuple[dict[str, list[dict]], dict[str, str]]:
+    """
+    Returns ({cluster_id: records}, {cluster_id: majority ec_subclass}).
+    """
+    cluster_to_records = defaultdict(list)
+    for record in records:
+        uid = record["uniprot_id"]
+        cluster_id = member_to_cluster.get(uid, uid)  # fallback: own ID
+        cluster_to_records[cluster_id].append(record)
+
+    cluster_to_subclass = {}
+    for cluster_id, cluster_records in cluster_to_records.items():
+        subclass_votes = Counter(r["ec_subclass"] for r in cluster_records)
+        cluster_to_subclass[cluster_id] = subclass_votes.most_common(1)[0][0]
+
+    return cluster_to_records, cluster_to_subclass
+
+
+def filter_classes_by_clusters(
+    records: list[dict],
+    member_to_cluster: dict[str, str],
+    min_clusters: int,
+) -> tuple[list[dict], dict[str, int]]:
+    """
+    Drop sub-classes that are the majority label of fewer than min_clusters
+    clusters. Returns (kept_records, {dropped_subclass: n_clusters}).
+    """
+    dropped = {}
+    while True:
+        _, cluster_to_subclass = get_cluster_subclasses(records, member_to_cluster)
+        counts = Counter(cluster_to_subclass.values())
+        # Sub-classes present only as minority members have 0 clusters
+        present = {r["ec_subclass"] for r in records}
+        rare = {sc: counts.get(sc, 0) for sc in present if counts.get(sc, 0) < min_clusters}
+        if not rare:
+            break
+        dropped.update(rare)
+        records = [r for r in records if r["ec_subclass"] not in rare]
+
+    if dropped:
+        logger.warning(
+            f"Dropping {len(dropped)} sub-classes with fewer than {min_clusters} clusters:"
+        )
+        for sc in sorted(dropped):
+            logger.warning(f"  EC {sc}: {dropped[sc]} clusters")
+
+    return records, dropped
+
+
+# ---------------------------------------------------------------------------
+# Label encoding
+# ---------------------------------------------------------------------------
+# The model needs integer labels, not strings like "3.4".
+# We build a deterministic map: sort sub-classes alphabetically so the
+# mapping is stable across runs, then save it to disk.
+#
+# Why here and not in preprocess.py?
+#   The final set of classes is only known after the cluster-count filter.
+#
+# Why save it?
+#   At inference time, you need to decode integer predictions back to
+#   EC sub-class strings. If you rebuild the map on a different dataset
+#   or in a different order, the integers mean different things.
+#   The saved label map is part of the model artifact.
+
+def build_label_map(records: list[dict]) -> dict[str, int]:
+    """
+    Build {ec_subclass: integer_index} map, sorted alphabetically for stability.
+    """
+    subclasses = sorted(set(r["ec_subclass"] for r in records))
+    return {sc: idx for idx, sc in enumerate(subclasses)}
+
+
+def apply_labels(records: list[dict], label_map: dict[str, int]) -> list[dict]:
+    """Add integer label field to each record."""
+    for record in records:
+        record["label"] = label_map[record["ec_subclass"]]
+    return records
+
+
+# ---------------------------------------------------------------------------
 # Homology-aware splitting
 # ---------------------------------------------------------------------------
 # We split at the CLUSTER level, not the sequence level.
@@ -233,6 +334,12 @@ def parse_cluster_tsv(tsv_path: Path) -> dict[str, str]:
 #   could leave some sub-classes with zero val or test clusters.
 #   Stratifying by sub-class ensures every sub-class is represented
 #   in every split.
+#
+# Why a minimum number of val and test clusters?
+#   Proportional rounding alone can leave a small sub-class with 1 or 2
+#   clusters in test, too few for a per-class F1. min_eval_clusters is
+#   guaranteed explicitly; the filter above makes sure every sub-class has
+#   enough clusters to meet it.
 
 def assign_splits(
     records: list[dict],
@@ -240,6 +347,7 @@ def assign_splits(
     train_frac: float = 0.70,
     val_frac: float = 0.15,
     seed: int = 42,
+    min_eval_clusters: int = 3,
 ) -> dict[str, str]:
     """
     Assign each cluster to train/val/test.
@@ -247,47 +355,30 @@ def assign_splits(
     """
     random.seed(seed)
 
-    # Build cluster → list of records mapping
-    cluster_to_records = defaultdict(list)
-    for record in records:
-        uid = record["uniprot_id"]
-        cluster_id = member_to_cluster.get(uid, uid)  # fallback: own ID
-        cluster_to_records[cluster_id].append(record)
+    _, cluster_to_subclass = get_cluster_subclasses(records, member_to_cluster)
 
-    # For each cluster, determine its EC sub-class by majority vote
-    # (most sequences in the cluster share the same sub-class)
-    cluster_to_subclass = {}
-    for cluster_id, cluster_records in cluster_to_records.items():
-        subclass_votes = Counter(r["ec_subclass"] for r in cluster_records)
-        cluster_to_subclass[cluster_id] = subclass_votes.most_common(1)[0][0]
-
-    # Group clusters by sub-class for stratified splitting
+    # Group clusters by sub-class for stratified splitting. Sorted, so the
+    # result depends only on the seed, not on dict or TSV order.
     subclass_to_clusters = defaultdict(list)
-    for cluster_id, subclass in cluster_to_subclass.items():
+    for cluster_id, subclass in sorted(cluster_to_subclass.items()):
         subclass_to_clusters[subclass].append(cluster_id)
 
     # Assign clusters to splits, stratified by sub-class
     cluster_to_split = {}
     split_stats = Counter()
 
-    for subclass, clusters in subclass_to_clusters.items():
+    for subclass, clusters in sorted(subclass_to_clusters.items()):
         random.shuffle(clusters)
         n = len(clusters)
-        n_train = max(1, int(n * train_frac))
-        n_val = max(1, int(n * val_frac))
-        # Remaining go to test
-        n_test = n - n_train - n_val
+        n_val = max(min_eval_clusters, int(n * val_frac))
+        n_test = max(min_eval_clusters, n - int(n * train_frac) - n_val)
+        n_train = n - n_val - n_test
 
-        if n_test < 1:
-            # Sub-class too small for three-way split — put in train only
-            logger.warning(
-                f"EC {subclass}: only {n} clusters, "
-                f"cannot create val/test splits — all assigned to train"
+        if n_train < 1:
+            raise ValueError(
+                f"EC {subclass}: only {n} clusters, cannot give val and test "
+                f"{min_eval_clusters} each. Raise min_clusters_per_class."
             )
-            for c in clusters:
-                cluster_to_split[c] = "train"
-            split_stats["train"] += n
-            continue
 
         for i, cluster_id in enumerate(clusters):
             if i < n_train:
@@ -373,16 +464,35 @@ def run(config_path: str = "config/data_config.yaml") -> None:
     # Step 3: Parse clusters
     member_to_cluster = parse_cluster_tsv(tsv_path)
 
-    # Step 4: Assign splits
+    # Step 4: Drop sub-classes with too few clusters
+    min_clusters = clustering_cfg.get("min_clusters_per_class", 20)
+    min_eval_clusters = clustering_cfg.get("min_eval_clusters", 3)
+    if min_clusters < 2 * min_eval_clusters + 1:
+        raise ValueError(
+            f"min_clusters_per_class ({min_clusters}) must be at least "
+            f"2 * min_eval_clusters + 1 ({2 * min_eval_clusters + 1})"
+        )
+    n_before_filter = len(records)
+    records, dropped_classes = filter_classes_by_clusters(
+        records, member_to_cluster, min_clusters
+    )
+    logger.info(f"After cluster-count filtering: {len(records):,} records")
+
+    # Step 5: Build and apply the label map
+    label_map = build_label_map(records)
+    records = apply_labels(records, label_map)
+    logger.info(f"Label map: {len(label_map)} classes")
+
+    # Step 6: Assign splits
     train_frac = clustering_cfg.get("train_frac", 0.70)
     val_frac = clustering_cfg.get("val_frac", 0.15)
     seed = clustering_cfg.get("seed", 42)
 
     cluster_to_split = assign_splits(
-        records, member_to_cluster, train_frac, val_frac, seed
+        records, member_to_cluster, train_frac, val_frac, seed, min_eval_clusters
     )
 
-    # Step 5: Apply splits to records
+    # Step 7: Apply splits to records
     train, val, test = apply_splits_to_records(
         records, member_to_cluster, cluster_to_split
     )
@@ -401,11 +511,31 @@ def run(config_path: str = "config/data_config.yaml") -> None:
         with open(out_path, "w") as f:
             json.dump(split_records, f, indent=2)
 
+    # Save label map — this is part of the model artifact
+    label_map_path = splits_dir / "label_map.json"
+    logger.info(f"Saving label map to {label_map_path}...")
+    with open(label_map_path, "w") as f:
+        json.dump(label_map, f, indent=2)
+
     # Save clustering report
+    def clusters_per_class(recs: list[dict]) -> dict[str, int]:
+        sets = defaultdict(set)
+        for r in recs:
+            sets[r["ec_subclass"]].add(r["cluster_id"])
+        return {sc: len(ids) for sc, ids in sorted(sets.items())}
+
     report = {
-        "n_total_sequences": len(records),
-        "n_clusters": len(set(member_to_cluster.values())),
+        "n_input_sequences": n_before_filter,
+        "n_clusters_mmseqs2": len(set(member_to_cluster.values())),
         "min_seq_id": min_seq_id,
+        "min_clusters_per_class": min_clusters,
+        "min_eval_clusters": min_eval_clusters,
+        "n_cluster_filter_classes_dropped": len(dropped_classes),
+        "n_cluster_filter_records_dropped": n_before_filter - len(records),
+        "cluster_filter_dropped_classes": dict(sorted(dropped_classes.items())),
+        "n_total_sequences": len(records),
+        "n_classes": len(label_map),
+        "n_clusters_split": len(cluster_to_split),
         "train_frac": train_frac,
         "val_frac": val_frac,
         "seed": seed,
@@ -414,6 +544,12 @@ def run(config_path: str = "config/data_config.yaml") -> None:
         "n_test": len(test),
         "subclass_split_counts": {
             split: dict(Counter(r["ec_subclass"] for r in recs))
+            for split, recs in [("train", train), ("val", val), ("test", test)]
+        },
+        # Clusters containing each sub-class (including minority members),
+        # the number that matters for evaluation
+        "subclass_split_clusters": {
+            split: clusters_per_class(recs)
             for split, recs in [("train", train), ("val", val), ("test", test)]
         },
     }

@@ -29,4 +29,6 @@ clustering:
   min_seq_id: 0.30       # 30% identity threshold — community standard
   train_frac: 0.70
   val_frac: 0.15         # test_frac is implicit: 1 - train - val = 0.15
+  min_clusters_per_class: 20   # drop sub-classes with fewer clusters (unit of independence)
+  min_eval_clusters: 3         # guaranteed clusters per sub-class in val and in test
   seed: 42               # fixed seed — reproducible splits
