@@ -46,8 +46,10 @@ import subprocess
 from collections import Counter, defaultdict
 from pathlib import Path
 
-import yaml
+from omegaconf import DictConfig
 from tqdm import tqdm
+
+from src.config import cli_config
 
 logging.basicConfig(
     level=logging.INFO,
@@ -57,14 +59,6 @@ logger = logging.getLogger(__name__)
 
 # MMseqs2 Docker image — not yet pinned to a version (see T4.4)
 MMSEQS2_IMAGE = "ghcr.io/soedinglab/mmseqs2:latest"
-
-
-def load_config(config_path: str) -> dict:
-    path = Path(config_path)
-    if not path.exists():
-        raise FileNotFoundError(f"Config not found: {config_path}")
-    with open(path) as f:
-        return yaml.safe_load(f)
 
 
 def load_records(processed_path: Path) -> list[dict]:
@@ -440,8 +434,8 @@ def apply_splits_to_records(
 # Main
 # ---------------------------------------------------------------------------
 
-def run(config_path: str = "config/data_config.yaml") -> None:
-    config = load_config(config_path)
+def run(cfg: DictConfig) -> None:
+    config = cfg.data
     output_cfg = config["output"]
     clustering_cfg = config.get("clustering", {})
 
@@ -560,14 +554,4 @@ def run(config_path: str = "config/data_config.yaml") -> None:
 
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(
-        description="Homology-aware train/val/test splitting via MMseqs2"
-    )
-    parser.add_argument(
-        "--config",
-        default="config/data_config.yaml",
-        help="Path to data config YAML",
-    )
-    args = parser.parse_args()
-    run(args.config)
+    run(cli_config("Homology-aware train/val/test splitting via MMseqs2"))

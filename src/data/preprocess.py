@@ -37,22 +37,16 @@ import logging
 from collections import Counter
 from pathlib import Path
 
-import yaml
+from omegaconf import DictConfig
 from tqdm import tqdm
+
+from src.config import cli_config
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)s  %(message)s",
 )
 logger = logging.getLogger(__name__)
-
-
-def load_config(config_path: str) -> dict:
-    path = Path(config_path)
-    if not path.exists():
-        raise FileNotFoundError(f"Config not found: {config_path}")
-    with open(path) as f:
-        return yaml.safe_load(f)
 
 
 def load_records(raw_path: Path) -> list[dict]:
@@ -174,8 +168,8 @@ def filter_rare_classes(
 # Main
 # ---------------------------------------------------------------------------
 
-def run(config_path: str = "config/data_config.yaml") -> None:
-    config = load_config(config_path)
+def run(cfg: DictConfig) -> None:
+    config = cfg.data
     filtering = config["filtering"]
     output_cfg = config["output"]
 
@@ -242,12 +236,4 @@ def run(config_path: str = "config/data_config.yaml") -> None:
 
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="Preprocess UniProt enzyme records")
-    parser.add_argument(
-        "--config",
-        default="config/data_config.yaml",
-        help="Path to data config YAML",
-    )
-    args = parser.parse_args()
-    run(args.config)
+    run(cli_config("Preprocess UniProt enzyme records"))

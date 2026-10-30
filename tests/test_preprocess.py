@@ -4,6 +4,7 @@ import json
 
 from conftest import make_record
 
+from src.config import load_config
 from src.data import preprocess
 
 
@@ -62,16 +63,14 @@ def test_run_report_counts_add_up(tmp_path):
     raw_dir = tmp_path / "raw"
     raw_dir.mkdir()
     (raw_dir / "raw.json").write_text(json.dumps(raw))
-    config = tmp_path / "config.yaml"
-    config.write_text(
-        "filtering:\n  min_class_count: 2\n"
-        "output:\n"
-        f"  raw_dir: '{raw_dir.as_posix()}'\n"
-        "  raw_filename: raw.json\n"
-        f"  processed_dir: '{(tmp_path / 'processed').as_posix()}'\n"
-    )
+    cfg = load_config([
+        "data.filtering.min_class_count=2",
+        f"data.output.raw_dir='{raw_dir.as_posix()}'",
+        "data.output.raw_filename=raw.json",
+        f"data.output.processed_dir='{(tmp_path / 'processed').as_posix()}'",
+    ])
 
-    preprocess.run(str(config))
+    preprocess.run(cfg)
 
     report = json.loads((tmp_path / "processed" / "preprocessing_report.json").read_text())
     assert report["n_raw"] == 9

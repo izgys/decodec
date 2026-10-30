@@ -4,7 +4,7 @@ src/data/download.py
 Downloads reviewed Swiss-Prot entries with EC annotations from the UniProt REST API.
 
 What this script does, in order:
-    1. Reads configuration from data_config.yaml
+    1. Reads configuration from config/data.yaml (Hydra, see src/config.py)
     2. Queries the UniProt API with pagination (500 entries per page)
     3. Extracts the fields we need from each entry's raw JSON
     4. Filters out entries that don't meet our quality criteria
@@ -27,8 +27,10 @@ from collections import Counter
 from pathlib import Path
 
 import requests
-import yaml
+from omegaconf import DictConfig
 from tqdm import tqdm
+
+from src.config import cli_config
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -40,18 +42,6 @@ logging.basicConfig(
     format="%(asctime)s  %(levelname)s  %(message)s",
 )
 logger = logging.getLogger(__name__)
-
-
-# ---------------------------------------------------------------------------
-# Config
-# ---------------------------------------------------------------------------
-
-def load_config(config_path: str) -> dict:
-    path = Path(config_path)
-    if not path.exists():
-        raise FileNotFoundError(f"Config not found: {config_path}")
-    with open(path) as f:
-        return yaml.safe_load(f)
 
 
 # ---------------------------------------------------------------------------
@@ -301,8 +291,8 @@ def compute_checksum(filepath: Path) -> str:
 # Main
 # ---------------------------------------------------------------------------
 
-def run(config_path: str = "config/data_config.yaml") -> None:
-    config = load_config(config_path)
+def run(cfg: DictConfig) -> None:
+    config = cfg.data
     filtering = config["filtering"]
     output_cfg = config["output"]
 
@@ -378,14 +368,4 @@ def run(config_path: str = "config/data_config.yaml") -> None:
 
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(
-        description="Download Swiss-Prot enzyme entries from UniProt"
-    )
-    parser.add_argument(
-        "--config",
-        default="config/data_config.yaml",
-        help="Path to data config YAML",
-    )
-    args = parser.parse_args()
-    run(args.config)
+    run(cli_config("Download Swiss-Prot enzyme entries from UniProt"))

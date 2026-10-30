@@ -1,3 +1,7 @@
+# @package data
+# Data pipeline settings: download, preprocessing, clustering and splits.
+# Override any value from the command line: --set data.clustering.seed=7
+
 uniprot:
   # Swiss-Prot only (reviewed:true) — manually curated, high-quality EC labels
   # ec:* means "has at least one EC annotation"

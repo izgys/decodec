@@ -1,0 +1,5 @@
+# Root config, composed by src/config.py (Hydra compose API).
+# Each entry in defaults is one file in this folder and one top-level key.
+defaults:
+  - data
+  - _self_

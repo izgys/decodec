@@ -88,10 +88,18 @@ uv sync --extra dev
 Build the dataset. The three steps download Swiss-Prot, clean it and split it by cluster:
 
 ```bash
-uv run python -m src.data.download --config config/data_config.yaml
-uv run python -m src.data.preprocess --config config/data_config.yaml
-uv run python -m src.data.clustering --config config/data_config.yaml
+uv run python -m src.data.download
+uv run python -m src.data.preprocess
+uv run python -m src.data.clustering
 ```
+
+Every setting lives in `config/data.yaml`. Change one for a single run with `--set`, for example a different split seed:
+
+```bash
+uv run python -m src.data.clustering --set data.clustering.seed=7
+```
+
+A misspelled setting is rejected with an error, so a typo cannot silently do nothing.
 
 Then run the baseline:
 
@@ -162,8 +170,10 @@ Each limitation has a planned fix.
 ```text
 decodec/
 ├── config/
-│   └── data_config.yaml          UniProt query, filters, clustering settings
+│   ├── config.yaml               root config (Hydra), lists the groups below
+│   └── data.yaml                 UniProt query, filters, clustering settings
 ├── src/
+│   ├── config.py                 loads config/ and --set overrides
 │   ├── data/
 │   │   ├── download.py           UniProt download with EC filtering
 │   │   ├── preprocess.py         multi-sub-class filter, deduplication, rare-class filter
@@ -171,6 +181,7 @@ decodec/
 │   │   └── dataset.py            ESM-2 tokenisation, dynamic padding, length-grouped batches
 │   └── model/, training/, calibration/, interpretability/, inference/, visualisation/
 │                                 placeholders for the planned parts
+├── tests/                        offline tests, run in CI with networking off
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
 ├── experiments/
 │   └── baseline_zeroshot/        first linear probe: script, results, per-class report
@@ -183,7 +194,7 @@ decodec/
 <details>
 <summary><b>Pipeline settings</b></summary>
 
-All data settings live in `config/data_config.yaml`:
+All data settings live in `config/data.yaml`, under the `data` key (so `--set data.filtering.min_class_count=50`):
 
 | Setting | Value | What it controls |
 |---|---|---|
