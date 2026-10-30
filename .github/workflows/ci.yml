@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      # --locked fails if uv.lock is out of date with pyproject.toml.
+      # The lockfile pins the CUDA 12.4 PyTorch wheels; they install and run
+      # on a CPU-only runner, the tests never touch a GPU.
+      - name: Install dependencies
+        run: uv sync --locked --extra dev --python 3.11
+
+      - name: Lint
+        run: uv run --no-sync ruff check .
+
+      # Tests run in a new network namespace with only loopback, so "offline"
+      # is guaranteed by the OS, not just by the socket guard in conftest.py.
+      - name: Tests (no network)
+        run: sudo unshare --net -- sudo -u "$USER" env HF_HUB_OFFLINE=1 .venv/bin/python -m pytest

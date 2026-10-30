@@ -40,3 +40,6 @@ Thumbs.db
 
 # Scratch files — local experiments, not tracked
 scratch/
+
+# Test coverage data
+.coverage

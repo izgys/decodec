@@ -36,9 +36,8 @@ from sklearn.metrics import (
     classification_report,
     f1_score,
 )
-from torch.utils.data import DataLoader
-from transformers import EsmModel, EsmTokenizer
 from tqdm import tqdm
+from transformers import EsmModel, EsmTokenizer
 
 logging.basicConfig(
     level=logging.INFO,
@@ -208,7 +207,7 @@ def run() -> None:
     micro_f1 = f1_score(test_labels, test_preds, average="micro")
 
     logger.info("=" * 50)
-    logger.info(f"Zero-shot ESM-2 baseline results:")
+    logger.info("Zero-shot ESM-2 baseline results:")
     logger.info(f"  Macro-F1:  {macro_f1:.4f}")
     logger.info(f"  Micro-F1:  {micro_f1:.4f}")
     logger.info("=" * 50)

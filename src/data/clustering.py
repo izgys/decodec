@@ -41,7 +41,6 @@ Why cluster-based splitting rather than sequence-based?
 
 import json
 import logging
-import os
 import random
 import subprocess
 from collections import Counter, defaultdict
@@ -158,7 +157,7 @@ def run_mmseqs2_docker(
 
     logger.info("Running MMseqs2 via Docker...")
     logger.info(f"Identity threshold: {min_seq_id:.0%}")
-    logger.info(f"This may take 10-30 minutes for 200k sequences...")
+    logger.info("This may take 10-30 minutes for 200k sequences...")
 
     result = subprocess.run(
         cmd,
