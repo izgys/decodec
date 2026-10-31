@@ -2,4 +2,5 @@
 # Each entry in defaults is one file in this folder and one top-level key.
 defaults:
   - data
+  - tracking
   - _self_

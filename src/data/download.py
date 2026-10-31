@@ -31,6 +31,7 @@ from omegaconf import DictConfig
 from tqdm import tqdm
 
 from src.config import cli_config
+from src.tracking import log_run
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -364,6 +365,14 @@ def run(cfg: DictConfig) -> None:
         json.dump(checksums, f, indent=2)
 
     logger.info(f"Checksum written to {checksums_path}")
+
+    # Track the run; the raw file is too large to store, its checksum identifies it
+    log_run(
+        cfg, "decodec-data", "download",
+        metrics={"n_records": len(records), "n_subclasses": len(subclass_counts)},
+        artifacts=[checksums_path],
+        tags={"raw_md5": checksum},
+    )
     logger.info("Download complete.")
 
 

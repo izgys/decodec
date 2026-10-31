@@ -68,6 +68,7 @@ def test_run_report_counts_add_up(tmp_path):
         f"data.output.raw_dir='{raw_dir.as_posix()}'",
         "data.output.raw_filename=raw.json",
         f"data.output.processed_dir='{(tmp_path / 'processed').as_posix()}'",
+        f"tracking.dir='{(tmp_path / 'mlruns').as_posix()}'",
     ])
 
     preprocess.run(cfg)
@@ -91,3 +92,5 @@ def test_run_report_counts_add_up(tmp_path):
     )
     # The label map is built later, by clustering.py
     assert not (tmp_path / "processed" / "label_map.json").exists()
+    # The run was tracked in the temp store, not in the repository's mlruns/
+    assert (tmp_path / "mlruns" / "mlflow.db").exists()

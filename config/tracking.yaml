@@ -1,0 +1,5 @@
+# @package tracking
+# MLflow tracking (src/tracking.py). Runs go to <dir>/mlflow.db, artifacts to <dir>/artifacts/.
+# Disable for a single run with --set tracking.enabled=false
+enabled: true
+dir: mlruns

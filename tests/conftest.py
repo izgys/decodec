@@ -43,6 +43,9 @@ def block_network(monkeypatch):
     monkeypatch.setattr(socket.socket, "connect", guarded_connect)
     monkeypatch.setattr(socket, "create_connection", guarded_create_connection)
     monkeypatch.setenv("HF_HUB_OFFLINE", "1")
+    # MLflow: no usage telemetry, and no tracking server inherited from the shell
+    monkeypatch.setenv("MLFLOW_DISABLE_TELEMETRY", "true")
+    monkeypatch.delenv("MLFLOW_TRACKING_URI", raising=False)
 
 
 # ESM-2 vocabulary, in order (facebook/esm2_* vocab.txt): <cls>=0, <pad>=1, <eos>=2

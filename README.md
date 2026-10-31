@@ -101,6 +101,14 @@ uv run python -m src.data.clustering --set data.clustering.seed=7
 
 A misspelled setting is rejected with an error, so a typo cannot silently do nothing.
 
+Each stage is logged to a local [MLflow](https://mlflow.org/) store with its full settings, the git commit and its report, so every dataset can be traced back to the code and config that built it. Browse the runs with:
+
+```bash
+uv run mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db    # then open http://127.0.0.1:5000
+```
+
+Turn tracking off for one run with `--set tracking.enabled=false`.
+
 Then run the baseline:
 
 ```bash
@@ -171,9 +179,11 @@ Each limitation has a planned fix.
 decodec/
 ├── config/
 │   ├── config.yaml               root config (Hydra), lists the groups below
-│   └── data.yaml                 UniProt query, filters, clustering settings
+│   ├── data.yaml                 UniProt query, filters, clustering settings
+│   └── tracking.yaml             MLflow on/off and store folder
 ├── src/
 │   ├── config.py                 loads config/ and --set overrides
+│   ├── tracking.py               MLflow logging (SQLite store in mlruns/)
 │   ├── data/
 │   │   ├── download.py           UniProt download with EC filtering
 │   │   ├── preprocess.py         multi-sub-class filter, deduplication, rare-class filter

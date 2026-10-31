@@ -41,6 +41,7 @@ from omegaconf import DictConfig
 from tqdm import tqdm
 
 from src.config import cli_config
+from src.tracking import log_run, numeric_metrics
 
 logging.basicConfig(
     level=logging.INFO,
@@ -232,6 +233,9 @@ def run(cfg: DictConfig) -> None:
     with open(report_path, "w") as f:
         json.dump(report, f, indent=2)
     logger.info(f"Report saved to {report_path}")
+
+    # Track the run (after the outputs are saved, so tracking never costs results)
+    log_run(cfg, "decodec-data", "preprocess", numeric_metrics(report), [report_path])
     logger.info("Preprocessing complete.")
 
 
