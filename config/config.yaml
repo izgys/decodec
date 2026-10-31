@@ -3,4 +3,6 @@
 defaults:
   - data
   - tracking
+  - embeddings
+  - probe
   - _self_

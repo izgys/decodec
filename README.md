@@ -109,13 +109,14 @@ uv run mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db    # then open h
 
 Turn tracking off for one run with `--set tracking.enabled=false`.
 
-Then run the baseline:
+Then run the baseline in two steps. The first extracts frozen ESM-2 embeddings on the GPU (about 1 hour 40 minutes on a laptop RTX 4070) and can be resumed if interrupted. The second fits the linear probe on the CPU:
 
 ```bash
-uv run python experiments/baseline_zeroshot/run_baseline.py
+uv run python -m src.embeddings
+uv run python experiments/baseline_linear_probe/run_probe.py
 ```
 
-Results land in `experiments/baseline_zeroshot/` (`results.json` and a per-class report). UniProt changes with every release, so a fresh download will give slightly different numbers.
+Results land in `experiments/baseline_linear_probe/results/` (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
 
 ## Design choices
 
@@ -180,10 +181,14 @@ decodec/
 ├── config/
 │   ├── config.yaml               root config (Hydra), lists the groups below
 │   ├── data.yaml                 UniProt query, filters, clustering settings
+│   ├── embeddings.yaml           ESM-2 model and batching for embedding extraction
+│   ├── probe.yaml                linear probe: poolings, C grid, class weights
 │   └── tracking.yaml             MLflow on/off and store folder
 ├── src/
 │   ├── config.py                 loads config/ and --set overrides
 │   ├── tracking.py               MLflow logging (SQLite store in mlruns/)
+│   ├── metrics.py                macro-F1, cluster bootstrap, hierarchical metrics
+│   ├── embeddings.py             frozen ESM-2 embeddings (CLS and mean) per split
 │   ├── data/
 │   │   ├── download.py           UniProt download with EC filtering
 │   │   ├── preprocess.py         multi-sub-class filter, deduplication, rare-class filter
@@ -194,7 +199,7 @@ decodec/
 ├── tests/                        offline tests, run in CI with networking off
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
 ├── experiments/
-│   └── baseline_zeroshot/        first linear probe: script, results, per-class report
+│   └── baseline_linear_probe/    linear probe on frozen embeddings (e0_previous_split/: first, historical run)
 ├── pyproject.toml
 └── uv.lock
 ```

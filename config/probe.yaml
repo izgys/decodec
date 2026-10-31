@@ -1,0 +1,9 @@
+# @package probe
+# Corrected linear probe (D2, experiment E1): experiments/baseline_linear_probe/run_probe.py
+poolings: [mean, cls]               # first = primary result; cls kept as a comparison
+C_grid: [0.001, 0.01, 0.1, 1.0, 10.0]  # inverse regularisation strength, chosen on val macro-F1
+class_weight: balanced              # rare classes weigh as much as common ones in the loss
+max_iter: 2000
+n_bootstrap: 1000                   # stratified cluster-bootstrap resamples for the 95% CI (D3)
+seed: 42
+output_dir: experiments/baseline_linear_probe/results
