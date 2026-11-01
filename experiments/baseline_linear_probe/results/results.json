@@ -1,0 +1,180 @@
+{
+  "experiment": "E1 linear probe (corrected)",
+  "model": "facebook/esm2_t33_650M_UR50D",
+  "git_commit": "b6cc58f",
+  "dirty": false,
+  "n_classes": 50,
+  "n_train": 149052,
+  "n_val": 28080,
+  "n_test": 35785,
+  "n_test_clusters": 2406,
+  "config": {
+    "data": {
+      "uniprot": {
+        "base_url": "https://rest.uniprot.org/uniprotkb/search",
+        "query": "reviewed:true AND ec:*",
+        "format": "json",
+        "fields": [
+          "accession",
+          "sequence",
+          "ec",
+          "protein_name",
+          "organism_name"
+        ],
+        "page_size": 500
+      },
+      "filtering": {
+        "min_length": 50,
+        "max_length": 1024,
+        "min_ec_digits": 2,
+        "min_class_count": 100
+      },
+      "output": {
+        "raw_dir": "data/raw",
+        "raw_filename": "uniprot_enzymes_raw.json",
+        "checksums_file": "data/checksums.json",
+        "processed_dir": "data/processed",
+        "clusters_dir": "data/clusters"
+      },
+      "clustering": {
+        "min_seq_id": 0.3,
+        "train_frac": 0.7,
+        "val_frac": 0.15,
+        "min_clusters_per_class": 20,
+        "min_eval_clusters": 3,
+        "seed": 42
+      }
+    },
+    "tracking": {
+      "enabled": true,
+      "dir": "mlruns"
+    },
+    "embeddings": {
+      "model_name": "facebook/esm2_t33_650M_UR50D",
+      "batch_size": 128,
+      "max_tokens": 8192,
+      "max_memory_fraction": 0.8,
+      "checkpoint_every": 100,
+      "fp16": true,
+      "output_dir": "data/embeddings/esm2_t33_650M_UR50D"
+    },
+    "probe": {
+      "poolings": [
+        "mean",
+        "cls"
+      ],
+      "C_grid": [
+        0.001,
+        0.01,
+        0.1,
+        1.0,
+        10.0
+      ],
+      "class_weight": "balanced",
+      "max_iter": 2000,
+      "n_bootstrap": 1000,
+      "seed": 42,
+      "output_dir": "experiments/baseline_linear_probe/results"
+    }
+  },
+  "poolings": {
+    "mean": {
+      "test": {
+        "macro_f1": 0.754565095808095,
+        "ci_low": 0.6920510733515323,
+        "ci_high": 0.781932600630836,
+        "micro_f1": 0.8546877183177309,
+        "top3_accuracy": 0.9078664244795305,
+        "top_level_accuracy": 0.8977504541008803,
+        "errors_within_top_level": 0.29634615384615387,
+        "best_C": 0.1
+      },
+      "C_sweep": [
+        {
+          "C": 0.001,
+          "val_macro_f1": 0.6551954677206342,
+          "n_iter": 123,
+          "converged": true,
+          "fit_seconds": 42.42085838317871
+        },
+        {
+          "C": 0.01,
+          "val_macro_f1": 0.7204449210314521,
+          "n_iter": 115,
+          "converged": true,
+          "fit_seconds": 40.60497760772705
+        },
+        {
+          "C": 0.1,
+          "val_macro_f1": 0.7337076219202087,
+          "n_iter": 85,
+          "converged": true,
+          "fit_seconds": 29.98536252975464
+        },
+        {
+          "C": 1.0,
+          "val_macro_f1": 0.7317715181742152,
+          "n_iter": 75,
+          "converged": true,
+          "fit_seconds": 26.379530668258667
+        },
+        {
+          "C": 10.0,
+          "val_macro_f1": 0.7242446183675658,
+          "n_iter": 82,
+          "converged": true,
+          "fit_seconds": 28.12868618965149
+        }
+      ]
+    },
+    "cls": {
+      "test": {
+        "macro_f1": 0.7012288596391175,
+        "ci_low": 0.6410097547226062,
+        "ci_high": 0.7304667424814127,
+        "micro_f1": 0.8026826882772111,
+        "top3_accuracy": 0.9018303758558055,
+        "top_level_accuracy": 0.8686600530948722,
+        "errors_within_top_level": 0.33437190199688427,
+        "best_C": 0.1
+      },
+      "C_sweep": [
+        {
+          "C": 0.001,
+          "val_macro_f1": 0.5621770977900614,
+          "n_iter": 167,
+          "converged": true,
+          "fit_seconds": 56.642478227615356
+        },
+        {
+          "C": 0.01,
+          "val_macro_f1": 0.6208478582123756,
+          "n_iter": 127,
+          "converged": true,
+          "fit_seconds": 44.21983289718628
+        },
+        {
+          "C": 0.1,
+          "val_macro_f1": 0.6415730113353922,
+          "n_iter": 110,
+          "converged": true,
+          "fit_seconds": 37.736682176589966
+        },
+        {
+          "C": 1.0,
+          "val_macro_f1": 0.6248409736703413,
+          "n_iter": 98,
+          "converged": true,
+          "fit_seconds": 32.498536109924316
+        },
+        {
+          "C": 10.0,
+          "val_macro_f1": 0.6310121122799398,
+          "n_iter": 111,
+          "converged": true,
+          "fit_seconds": 38.439571142196655
+        }
+      ]
+    }
+  }
+}

@@ -8,7 +8,7 @@
 
 Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, so the score reflects new proteins rather than close relatives of the training set.
 
-> **Status: early development.** The data pipeline and a first baseline work. The fine-tuned model, calibration, attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
+> **Status: early development.** The data pipeline and a tuned baseline work. The fine-tuned model, calibration, attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
 
 ## Why
 
@@ -51,7 +51,7 @@ A few things worth knowing:
 | Multi-sub-class filter, deduplication, rare-class filter | Built |
 | MMseqs2 clustering, cluster-count class filter and cluster-level splits | Built |
 | PyTorch dataset with ESM-2 tokenisation, dynamic padding and length-grouped batches | Built |
-| Linear probe on frozen ESM-2 embeddings | Built, preliminary (previous dataset version) |
+| Linear probe on frozen ESM-2 embeddings, with cluster-bootstrap intervals | Built |
 | ESM-2 + LoRA fine-tuning | Planned |
 | Sequence-similarity baseline | Planned |
 | Random vs homology-aware split comparison | Planned |
@@ -59,21 +59,29 @@ A few things worth knowing:
 | Integrated gradients with conservation check | Planned |
 | Inference API, Docker image, tests and CI | Planned |
 
-## First result
+## Current result
 
-| Model | Classes | Split | Test macro-F1 | Test micro-F1 |
-|---|---|---|---|---|
-| Linear probe on frozen ESM-2 650M embeddings | 59 EC sub-classes | Homology-aware (30% identity, 80% coverage) | 0.494 | 0.679 |
+Linear probe on frozen ESM-2 650M embeddings: mean pooling, class weights, regularisation chosen on validation. Homology-aware split (30% identity, 80% coverage), 50 EC sub-classes, 35,785 test sequences in 2,406 clusters. Commit `b6cc58f`, full numbers in [`results.json`](experiments/baseline_linear_probe/results/results.json).
 
-**This result comes from the previous version of the dataset** (216,962 sequences, 59 sub-classes) and cannot be compared with anything run on the current one. It is kept because it showed what had to change:
+| Metric | Mean pooling | CLS token |
+|---|---|---|
+| **Test macro-F1 (95% CI)** | **0.755 (0.692 to 0.782)** | 0.701 (0.641 to 0.730) |
+| Test micro-F1 | 0.855 | 0.803 |
+| Top-3 accuracy | 0.908 | 0.902 |
+| Top-level EC accuracy | 0.898 | 0.869 |
 
-- **Some classes were too small to score.** EC 2.9 had no test sequences and EC 1.9 had one, yet both counted as F1 = 0 in the macro average. The pipeline now counts classes in clusters, which removed 9 more sub-classes and guarantees at least 3 clusters per class in validation and test.
-- **It is a single run with no uncertainty estimate.**
-- **The probe was not tuned.** It used the CLS token, cut sequences at 512 residues and had no class weighting. On several rare classes it was always right when it predicted them but almost never predicted them (EC 1.15: precision 1.00, recall 0.05).
+The interval is a stratified cluster bootstrap: clusters, not sequences, are resampled within each class, because sequences in one cluster are not independent. Mean pooling beats the CLS token on the same test clusters by 0.053 (95% CI 0.012 to 0.092).
 
-The current dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters, in 50 sub-classes. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary.
+What the numbers say:
 
-A corrected baseline on this dataset comes next, before any fine-tuning result, so that the gain from fine-tuning is measured against a fair starting point.
+- **This is the number fine-tuning has to beat.** It is one fitted model on one split, so the interval covers which test clusters were drawn, not training or split randomness.
+- **Classes with more clusters score higher.** Mean F1 is 0.65 for the 12 classes with fewer than 10 test clusters, 0.75 for the 26 with 10 to 49, and 0.88 for the 12 with 50 or more.
+- **One cluster can decide a class.** EC 4.3 has the lowest F1 (0.11), and 526 of its 592 test sequences sit in a single cluster of HisF proteins, 455 of them predicted as EC 5.3. This is why every per-class score is reported with its cluster count.
+- **Sequence-similarity search has not been run yet**, so this does not show yet whether the model goes beyond plain similarity.
+
+The first version of this probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The two numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
+
+The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary.
 
 ## Quick start
 
@@ -109,7 +117,7 @@ uv run mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db    # then open h
 
 Turn tracking off for one run with `--set tracking.enabled=false`.
 
-Then run the baseline in two steps. The first extracts frozen ESM-2 embeddings on the GPU (about 1 hour 40 minutes on a laptop RTX 4070) and can be resumed if interrupted. The second fits the linear probe on the CPU:
+Then run the baseline in two steps. The first extracts frozen ESM-2 embeddings on the GPU (about 1 hour 40 minutes on a laptop RTX 4070) and can be resumed if interrupted. The second fits the linear probe on the CPU (about 6 minutes):
 
 ```bash
 uv run python -m src.embeddings
@@ -138,8 +146,7 @@ Each limitation has a planned fix.
 
 | Limitation | Example | Planned fix |
 |---|---|---|
-| The baseline probe is untuned | CLS token, 512-residue cut-off, no class weights; EC 1.15 recall 0.05 | Mean pooling, full length, class weights, regularisation tuned on validation |
-| No uncertainty on the headline number | One test macro-F1 from one run | Bootstrap confidence interval over clusters |
+| The interval covers test clusters only | One fitted model on one fixed split | Repeat the baselines over several split seeds |
 | Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v2 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
 | No classical baseline yet | Only the embedding probe exists | Nearest-neighbour sequence search against the training set |
@@ -156,7 +163,7 @@ Each limitation has a planned fix.
 - [x] First linear probe on frozen ESM-2 embeddings
 - [x] Evaluable-class rule: at least 20 clusters per sub-class, at least 3 in validation and test
 - [x] Dynamic padding and length-grouped batches for training
-- [ ] Corrected baseline on the current dataset
+- [x] Corrected baseline on the current dataset, with cluster-bootstrap intervals
 - [ ] Sequence-similarity baseline
 - [ ] ESM-2 650M + LoRA fine-tuning, tracked in MLflow
 - [ ] Performance against identity to the training set, including random vs homology-aware splits
