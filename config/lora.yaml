@@ -1,0 +1,8 @@
+# @package lora
+# LoRA adapters on ESM-2 (src/model/esm2_lora.py). Decision D7 picks the main model after the benchmark.
+model_name: facebook/esm2_t33_650M_UR50D
+r: 8                               # rank of the low-rank update
+alpha: 16                          # scaling: the update is multiplied by alpha / r
+dropout: 0.1                       # dropout on the adapters
+target_modules: [query, value]     # attention projections that get adapters
+head_dropout: 0.1                  # dropout before the linear classification head

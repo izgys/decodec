@@ -6,4 +6,6 @@ defaults:
   - embeddings
   - probe
   - similarity
+  - lora
+  - training
   - _self_

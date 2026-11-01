@@ -1,0 +1,29 @@
+# @package training
+# LoRA training (src/training/trainer.py). Learning settings are starting points, tuned on validation.
+epochs: 3
+batch_size: 64                 # max sequences per batch; max_tokens is usually the binding limit
+max_tokens: 4096               # max padded tokens per batch; set from the benchmark
+eval_max_tokens: 8192          # no gradients in evaluation, so larger batches fit
+grad_accum_steps: 4            # optimizer step every N batches
+max_batches_per_epoch: null    # cap an epoch at N (shuffled) batches; null = all, for shorter runs
+learning_rate: 0.0005
+weight_decay: 0.01
+warmup_fraction: 0.05          # share of optimizer steps with linear warmup, then cosine decay
+grad_clip: 1.0
+patience: 1                    # stop after this many epochs beyond the first without improvement
+balanced_classes: true         # class-weighted loss, as in the linear probe
+fp16: true                     # mixed precision on GPU
+base_fp16: true                # store frozen ESM-2 weights in half precision, saves VRAM
+gradient_checkpointing: true   # recompute activations in the backward pass, saves VRAM
+max_memory_fraction: 0.8       # empty the CUDA cache when reserved memory passes this share of VRAM
+checkpoint_minutes: 10         # save progress at least this often
+n_bootstrap: 1000              # cluster-bootstrap resamples for the final test interval
+seed: 42
+output_dir: experiments/lora/r8_650M
+
+benchmark:                     # src/training/benchmark.py, run before any long run
+  models: [facebook/esm2_t12_35M_UR50D, facebook/esm2_t33_650M_UR50D]
+  max_tokens: [2048, 4096, 8192]
+  n_longest: 4                 # longest batches first: the worst case for memory
+  n_batches: 40                # randomly chosen batches that are timed
+  output_dir: experiments/lora

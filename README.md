@@ -52,7 +52,7 @@ A few things worth knowing:
 | MMseqs2 clustering, cluster-count class filter and cluster-level splits | Built |
 | PyTorch dataset with ESM-2 tokenisation, dynamic padding and length-grouped batches | Built |
 | Linear probe on frozen ESM-2 embeddings, with cluster-bootstrap intervals | Built |
-| ESM-2 + LoRA fine-tuning | Planned |
+| ESM-2 + LoRA training with resumable checkpoints | Built, no result yet |
 | Sequence-similarity baseline and search of test against train | Built |
 | Random vs homology-aware split comparison | Planned |
 | Calibration (temperature scaling, ECE) | Planned |
@@ -209,6 +209,8 @@ decodec/
 │   ├── config.yaml               root config (Hydra), lists the groups below
 │   ├── data.yaml                 UniProt query, filters, clustering settings
 │   ├── embeddings.yaml           ESM-2 model and batching for embedding extraction
+│   ├── lora.yaml                 LoRA rank, alpha, target modules
+│   ├── training.yaml             training settings and hardware test
 │   ├── probe.yaml                linear probe: poolings, C grid, class weights
 │   ├── similarity.yaml           no-relative subset and identity bins
 │   └── tracking.yaml             MLflow on/off and store folder
@@ -223,7 +225,11 @@ decodec/
 │   │   ├── clustering.py         MMseqs2 clustering, class filter, splits, label map
 │   │   ├── identity.py           MMseqs2 search of test against train
 │   │   └── dataset.py            ESM-2 tokenisation, dynamic padding, length-grouped batches
-│   └── model/, training/, calibration/, interpretability/, inference/, visualisation/
+│   ├── model/esm2_lora.py        ESM-2 + LoRA with a mean-pooling head
+│   ├── training/
+│   │   ├── trainer.py            training loop, checkpoints, automatic resume
+│   │   └── benchmark.py          hardware test: memory, speed, estimated run time
+│   └── calibration/, interpretability/, inference/, visualisation/
 │                                 placeholders for the planned parts
 ├── tests/                        offline tests, run in CI with networking off
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
