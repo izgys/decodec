@@ -6,7 +6,7 @@
 
 **Enzyme sub-class prediction from sequence, tested on proteins unlike anything seen in training.**
 
-Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, so the score reflects new proteins rather than close relatives of the training set.
+Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, and measures how close each test protein is to the training set, so a score can be read against that distance.
 
 > **Status: early development.** The data pipeline and a tuned baseline work. The fine-tuned model, calibration, attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
 
@@ -38,7 +38,7 @@ Green steps work today. Grey dashed steps are planned.
 
 A few things worth knowing:
 
-- **The cluster, not the sequence, is the unit of independence.** Sequences are grouped at 30% identity, and every cluster lands in exactly one split. No test protein has a close relative in training.
+- **The cluster, not the sequence, is the unit of independence.** Sequences are grouped at 30% identity, and every cluster lands in exactly one split. This removes the closest relatives but not all of them, because clustering compares members with a representative, not with each other. A search of test against train measures what remains (see below).
 - **Classes are counted in clusters too.** A sub-class stays only if it has at least 20 clusters, and every sub-class gets at least 3 clusters in validation and in test. A class with hundreds of test sequences from two clusters would really be judged on two examples.
 - **The label is the EC sub-class**, the first two digits of the EC number. All seven top-level classes are covered, including EC 7 (translocases). Proteins annotated with more than one sub-class (0.4%) are left out, because they have no single correct label.
 - **Every fine-tuning result will be compared with fair baselines** on the same splits: a linear probe on frozen embeddings and a classical sequence-similarity search.
@@ -77,7 +77,8 @@ What the numbers say:
 - **This is the number fine-tuning has to beat.** It is one fitted model on one split, so the interval covers which test clusters were drawn, not training or split randomness.
 - **Classes with more clusters score higher.** Mean F1 is 0.65 for the 12 classes with fewer than 10 test clusters, 0.75 for the 26 with 10 to 49, and 0.88 for the 12 with 50 or more.
 - **One cluster can decide a class.** EC 4.3 has the lowest F1 (0.11), and 526 of its 592 test sequences sit in a single cluster of HisF proteins, 455 of them predicted as EC 5.3. This is why every per-class score is reported with its cluster count.
-- **Sequence-similarity search has not been run yet**, so this does not show yet whether the model goes beyond plain similarity.
+- **Sequence-similarity prediction has not been scored yet**, so this does not show yet whether the model goes beyond plain similarity.
+- **The test set still contains relatives of training proteins.** A search of test against train finds that 16,691 of the 35,785 test sequences (47%) have a training sequence above 30% identity covering at least 80% of both, so this score is probably higher than on proteins with no such relative. The other 19,094 sequences still cover all 50 classes and will be scored separately.
 
 The first version of this probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The two numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
 
@@ -146,6 +147,7 @@ Each limitation has a planned fix.
 
 | Limitation | Example | Planned fix |
 |---|---|---|
+| The split leaves relatives across train and test | 47% of test sequences have a training sequence above 30% identity and 80% coverage | Score those without such a relative separately, and report performance by identity to train |
 | The interval covers test clusters only | One fitted model on one fixed split | Repeat the baselines over several split seeds |
 | Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v2 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |

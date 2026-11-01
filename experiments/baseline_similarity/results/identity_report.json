@@ -1,0 +1,350 @@
+{
+  "n_test": 35785,
+  "n_with_hit": 35379,
+  "n_no_hit": 406,
+  "share_with_hit": 0.9886544641609613,
+  "n_clusters_with_hit": 2368,
+  "n_clusters": 2406,
+  "n_covered_identity_over_30": 16691,
+  "n_covered_identity_over_50": 2994,
+  "n_covered_identity_over_90": 21,
+  "n_any_identity_over_30": 34570,
+  "n_any_identity_over_50": 13958,
+  "n_any_identity_over_90": 525,
+  "n_hits_per_query_histogram": {
+    "0": 22940,
+    "100": 5180,
+    "200": 3738,
+    "300": 3927
+  },
+  "best_hit_identity": [
+    {
+      "identity": "none",
+      "n_sequences": 406,
+      "n_clusters": 117,
+      "n_classes": 28
+    },
+    {
+      "identity": "15-20",
+      "n_sequences": 14,
+      "n_clusters": 11,
+      "n_classes": 8
+    },
+    {
+      "identity": "20-25",
+      "n_sequences": 1408,
+      "n_clusters": 282,
+      "n_classes": 42
+    },
+    {
+      "identity": "25-30",
+      "n_sequences": 5051,
+      "n_clusters": 861,
+      "n_classes": 49
+    },
+    {
+      "identity": "30-35",
+      "n_sequences": 7632,
+      "n_clusters": 885,
+      "n_classes": 49
+    },
+    {
+      "identity": "35-40",
+      "n_sequences": 6774,
+      "n_clusters": 699,
+      "n_classes": 48
+    },
+    {
+      "identity": "40-45",
+      "n_sequences": 4870,
+      "n_clusters": 521,
+      "n_classes": 49
+    },
+    {
+      "identity": "45-50",
+      "n_sequences": 3208,
+      "n_clusters": 355,
+      "n_classes": 43
+    },
+    {
+      "identity": "50-55",
+      "n_sequences": 2380,
+      "n_clusters": 277,
+      "n_classes": 43
+    },
+    {
+      "identity": "55-60",
+      "n_sequences": 1252,
+      "n_clusters": 198,
+      "n_classes": 38
+    },
+    {
+      "identity": "60-65",
+      "n_sequences": 895,
+      "n_clusters": 172,
+      "n_classes": 39
+    },
+    {
+      "identity": "65-70",
+      "n_sequences": 539,
+      "n_clusters": 115,
+      "n_classes": 33
+    },
+    {
+      "identity": "70-75",
+      "n_sequences": 423,
+      "n_clusters": 80,
+      "n_classes": 29
+    },
+    {
+      "identity": "75-80",
+      "n_sequences": 274,
+      "n_clusters": 59,
+      "n_classes": 23
+    },
+    {
+      "identity": "80-85",
+      "n_sequences": 129,
+      "n_clusters": 41,
+      "n_classes": 22
+    },
+    {
+      "identity": "85-90",
+      "n_sequences": 136,
+      "n_clusters": 35,
+      "n_classes": 20
+    },
+    {
+      "identity": "90-95",
+      "n_sequences": 150,
+      "n_clusters": 39,
+      "n_classes": 16
+    },
+    {
+      "identity": "95-100",
+      "n_sequences": 244,
+      "n_clusters": 52,
+      "n_classes": 22
+    }
+  ],
+  "max_identity": [
+    {
+      "identity": "none",
+      "n_sequences": 406,
+      "n_clusters": 117,
+      "n_classes": 28
+    },
+    {
+      "identity": "15-20",
+      "n_sequences": 1,
+      "n_clusters": 1,
+      "n_classes": 1
+    },
+    {
+      "identity": "20-25",
+      "n_sequences": 96,
+      "n_clusters": 41,
+      "n_classes": 20
+    },
+    {
+      "identity": "25-30",
+      "n_sequences": 712,
+      "n_clusters": 241,
+      "n_classes": 35
+    },
+    {
+      "identity": "30-35",
+      "n_sequences": 3090,
+      "n_clusters": 550,
+      "n_classes": 47
+    },
+    {
+      "identity": "35-40",
+      "n_sequences": 5273,
+      "n_clusters": 826,
+      "n_classes": 49
+    },
+    {
+      "identity": "40-45",
+      "n_sequences": 6801,
+      "n_clusters": 935,
+      "n_classes": 49
+    },
+    {
+      "identity": "45-50",
+      "n_sequences": 5448,
+      "n_clusters": 719,
+      "n_classes": 48
+    },
+    {
+      "identity": "50-55",
+      "n_sequences": 4976,
+      "n_clusters": 668,
+      "n_classes": 47
+    },
+    {
+      "identity": "55-60",
+      "n_sequences": 2986,
+      "n_clusters": 438,
+      "n_classes": 46
+    },
+    {
+      "identity": "60-65",
+      "n_sequences": 2198,
+      "n_clusters": 351,
+      "n_classes": 45
+    },
+    {
+      "identity": "65-70",
+      "n_sequences": 1448,
+      "n_clusters": 229,
+      "n_classes": 42
+    },
+    {
+      "identity": "70-75",
+      "n_sequences": 854,
+      "n_clusters": 141,
+      "n_classes": 37
+    },
+    {
+      "identity": "75-80",
+      "n_sequences": 557,
+      "n_clusters": 102,
+      "n_classes": 32
+    },
+    {
+      "identity": "80-85",
+      "n_sequences": 235,
+      "n_clusters": 68,
+      "n_classes": 26
+    },
+    {
+      "identity": "85-90",
+      "n_sequences": 179,
+      "n_clusters": 42,
+      "n_classes": 22
+    },
+    {
+      "identity": "90-95",
+      "n_sequences": 174,
+      "n_clusters": 47,
+      "n_classes": 20
+    },
+    {
+      "identity": "95-100",
+      "n_sequences": 351,
+      "n_clusters": 64,
+      "n_classes": 23
+    }
+  ],
+  "max_identity_covered": [
+    {
+      "identity": "none",
+      "n_sequences": 12377,
+      "n_clusters": 1686,
+      "n_classes": 50
+    },
+    {
+      "identity": "15-20",
+      "n_sequences": 53,
+      "n_clusters": 13,
+      "n_classes": 11
+    },
+    {
+      "identity": "20-25",
+      "n_sequences": 1598,
+      "n_clusters": 228,
+      "n_classes": 42
+    },
+    {
+      "identity": "25-30",
+      "n_sequences": 5066,
+      "n_clusters": 559,
+      "n_classes": 48
+    },
+    {
+      "identity": "30-35",
+      "n_sequences": 5562,
+      "n_clusters": 464,
+      "n_classes": 46
+    },
+    {
+      "identity": "35-40",
+      "n_sequences": 3852,
+      "n_clusters": 277,
+      "n_classes": 43
+    },
+    {
+      "identity": "40-45",
+      "n_sequences": 2674,
+      "n_clusters": 166,
+      "n_classes": 40
+    },
+    {
+      "identity": "45-50",
+      "n_sequences": 1609,
+      "n_clusters": 121,
+      "n_classes": 35
+    },
+    {
+      "identity": "50-55",
+      "n_sequences": 1148,
+      "n_clusters": 104,
+      "n_classes": 33
+    },
+    {
+      "identity": "55-60",
+      "n_sequences": 728,
+      "n_clusters": 82,
+      "n_classes": 31
+    },
+    {
+      "identity": "60-65",
+      "n_sequences": 474,
+      "n_clusters": 67,
+      "n_classes": 23
+    },
+    {
+      "identity": "65-70",
+      "n_sequences": 286,
+      "n_clusters": 43,
+      "n_classes": 18
+    },
+    {
+      "identity": "70-75",
+      "n_sequences": 175,
+      "n_clusters": 34,
+      "n_classes": 16
+    },
+    {
+      "identity": "75-80",
+      "n_sequences": 84,
+      "n_clusters": 24,
+      "n_classes": 15
+    },
+    {
+      "identity": "80-85",
+      "n_sequences": 49,
+      "n_clusters": 17,
+      "n_classes": 15
+    },
+    {
+      "identity": "85-90",
+      "n_sequences": 29,
+      "n_clusters": 10,
+      "n_classes": 8
+    },
+    {
+      "identity": "90-95",
+      "n_sequences": 9,
+      "n_clusters": 4,
+      "n_classes": 3
+    },
+    {
+      "identity": "95-100",
+      "n_sequences": 12,
+      "n_clusters": 6,
+      "n_classes": 4
+    }
+  ]
+}
