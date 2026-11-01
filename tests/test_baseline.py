@@ -181,3 +181,33 @@ def test_embeddings_then_probe_end_to_end(tiny_model, tmp_path):
         assert (tmp_path / "results" / name).exists()
     with np.load(tmp_path / "results" / "test_predictions_mean.npz") as f:
         assert f["probabilities"].shape == (len(f["labels"]), 3)
+
+
+def test_probe_validation_only_never_loads_test(tiny_model, tmp_path):
+    _, model_path = tiny_model
+    processed = tmp_path / "processed"
+    write_splits(processed)
+    cfg = load_config([
+        f"data.output.processed_dir='{processed.as_posix()}'",
+        f"embeddings.model_name='{model_path.as_posix()}'",
+        f"embeddings.output_dir='{(tmp_path / 'emb').as_posix()}'",
+        "embeddings.max_tokens=1100",
+        f"probe.output_dir='{(tmp_path / 'results').as_posix()}'",
+        "probe.C_grid=[0.1,1.0]",
+        "probe.poolings=[mean]",
+        "probe.n_bootstrap=50",
+        "probe.evaluate_test=false",
+        f"tracking.dir='{(tmp_path / 'mlruns').as_posix()}'",
+    ])
+    embeddings.run(cfg)
+    (tmp_path / "emb" / "test.npz").unlink()       # loading it would now raise
+
+    load_probe_module().run(cfg)
+    results = json.loads((tmp_path / "results" / "results.json").read_text())
+    mean = results["poolings"]["mean"]
+    assert "test" not in mean and "n_test" not in results
+    # Selected on the same data, so the score must equal the best of the sweep
+    best = max(s["val_macro_f1"] for s in mean["C_sweep"])
+    assert mean["val"]["macro_f1"] == pytest.approx(best)
+    assert (tmp_path / "results" / "val_predictions_mean.npz").exists()
+    assert not (tmp_path / "results" / "test_predictions_mean.npz").exists()

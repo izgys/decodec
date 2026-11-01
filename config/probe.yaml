@@ -6,4 +6,5 @@ class_weight: balanced              # rare classes weigh as much as common ones 
 max_iter: 2000
 n_bootstrap: 1000                   # stratified cluster-bootstrap resamples for the 95% CI (D3)
 seed: 42
+evaluate_test: true                 # false: report on validation and never load the test embeddings
 output_dir: experiments/baseline_linear_probe/results

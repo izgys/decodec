@@ -16,6 +16,11 @@ What this script does:
     4. Saves results.json, per-class reports and test predictions, and logs
        the run to MLflow
 
+With probe.evaluate_test=false the test embeddings are never loaded: steps 2
+to 4 report on validation instead. Use it for checks that inform a decision,
+such as a control for a trial run. The score is slightly optimistic, because
+C was chosen on the same data.
+
 Why a linear probe?
     A linear model measures what is already in the representations, not what
     a network can learn on top of them. It is the reference for how much
@@ -89,25 +94,25 @@ def fit_and_select(
 
 def evaluate(
     clf: LogisticRegression,
-    x_test: np.ndarray, test: dict[str, np.ndarray],
+    x: np.ndarray, split_data: dict[str, np.ndarray],
     labels: list[int], index_to_subclass: dict[int, str], probe: DictConfig,
 ) -> tuple[dict, list[dict], np.ndarray, np.ndarray]:
-    y_true = test["labels"]
-    scores = clf.predict_proba(x_test)
+    y_true = split_data["labels"]
+    scores = clf.predict_proba(x)
     # predict_proba columns follow clf.classes_; map back to label indices
     full = np.zeros((len(y_true), len(labels)), dtype=np.float32)
     full[:, clf.classes_] = scores
     y_pred = full.argmax(axis=1)
 
     summary = metrics.macro_f1_with_ci(
-        y_true, y_pred, test["clusters"], labels, probe.n_bootstrap, probe.seed
+        y_true, y_pred, split_data["clusters"], labels, probe.n_bootstrap, probe.seed
     )
     summary.update({
         "micro_f1": float(f1_score(y_true, y_pred, average="micro")),
         "top3_accuracy": metrics.top_k_accuracy(y_true, full, 3),
         **metrics.hierarchical_metrics(y_true, y_pred, index_to_subclass),
     })
-    table = metrics.per_class_table(y_true, y_pred, test["clusters"], index_to_subclass)
+    table = metrics.per_class_table(y_true, y_pred, split_data["clusters"], index_to_subclass)
     return summary, table, y_pred, full
 
 
@@ -132,9 +137,11 @@ def run(cfg: DictConfig) -> None:
     index_to_subclass = {v: k for k, v in label_map.items()}
     labels = sorted(index_to_subclass)
 
-    data = {split: load_split(cfg, split) for split in SPLITS}
+    eval_split = "test" if probe.evaluate_test else "val"
+    splits = SPLITS if probe.evaluate_test else [s for s in SPLITS if s != "test"]
+    data = {split: load_split(cfg, split) for split in splits}
     model_name = str(data["train"]["model_name"])
-    for split in SPLITS:
+    for split in splits:
         logger.info(f"{split}: {len(data[split]['labels']):,} embeddings")
 
     commit, dirty = git_state()
@@ -146,39 +153,40 @@ def run(cfg: DictConfig) -> None:
         "n_classes": len(labels),
         "n_train": int(len(data["train"]["labels"])),
         "n_val": int(len(data["val"]["labels"])),
-        "n_test": int(len(data["test"]["labels"])),
-        "n_test_clusters": int(len(set(data["test"]["clusters"].tolist()))),
+        f"n_{eval_split}_clusters": int(len(set(data[eval_split]["clusters"].tolist()))),
         "config": config_as_dict(cfg),
         "poolings": {},
     }
+    if probe.evaluate_test:
+        results["n_test"] = int(len(data["test"]["labels"]))
 
     for pooling in probe.poolings:
         logger.info(f"Pooling: {pooling}")
         scaler = StandardScaler().fit(data["train"][pooling].astype(np.float32))
-        x = {s: scaler.transform(data[s][pooling].astype(np.float32)) for s in SPLITS}
+        x = {s: scaler.transform(data[s][pooling].astype(np.float32)) for s in splits}
 
         clf, sweep = fit_and_select(
             x["train"], data["train"]["labels"], x["val"], data["val"]["labels"], labels, probe
         )
         summary, table, y_pred, scores = evaluate(
-            clf, x["test"], data["test"], labels, index_to_subclass, probe
+            clf, x[eval_split], data[eval_split], labels, index_to_subclass, probe
         )
         summary["best_C"] = float(clf.C)
         logger.info(
-            f"  test macro-F1 {summary['macro_f1']:.4f} "
+            f"  {eval_split} macro-F1 {summary['macro_f1']:.4f} "
             f"[{summary['ci_low']:.4f}, {summary['ci_high']:.4f}], C={clf.C}"
         )
 
-        results["poolings"][pooling] = {"test": summary, "C_sweep": sweep}
+        results["poolings"][pooling] = {eval_split: summary, "C_sweep": sweep}
         write_per_class_report(output_dir / f"per_class_{pooling}.txt", table)
         with open(output_dir / f"per_class_{pooling}.json", "w") as f:
             json.dump(table, f, indent=2)
-        # Kept for paired comparisons with later models (same test order and IDs)
+        # Kept for paired comparisons with later models (same order and IDs)
         np.savez(
-            output_dir / f"test_predictions_{pooling}.npz",
-            uniprot_ids=data["test"]["uniprot_ids"],
-            labels=data["test"]["labels"],
-            clusters=data["test"]["clusters"],
+            output_dir / f"{eval_split}_predictions_{pooling}.npz",
+            uniprot_ids=data[eval_split]["uniprot_ids"],
+            labels=data[eval_split]["labels"],
+            clusters=data[eval_split]["clusters"],
             predictions=y_pred,
             probabilities=scores.astype(np.float16),
         )
@@ -194,7 +202,7 @@ def run(cfg: DictConfig) -> None:
         metrics={
             f"{p}/{k}": v
             for p, r in results["poolings"].items()
-            for k, v in r["test"].items()
+            for k, v in r[eval_split].items()
         },
         artifacts=sorted(output_dir.iterdir()),
     )
