@@ -36,3 +36,11 @@ clustering:
   min_clusters_per_class: 20   # drop sub-classes with fewer clusters (unit of independence)
   min_eval_clusters: 3         # guaranteed clusters per sub-class in val and in test
   seed: 42               # fixed seed — reproducible splits
+
+identity:
+  # MMseqs2 search of test against train (src/data/identity.py, D14)
+  sensitivity: 7.5       # highest standard sensitivity, for remote homologues
+  max_evalue: 10         # permissive: keep weak hits, nearest neighbour gets its best chance
+  max_seqs: 300          # prefilter hits kept per test sequence
+  work_dir: data/identity
+  report_dir: experiments/baseline_similarity/results
