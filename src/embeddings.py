@@ -22,8 +22,10 @@ Why keyed by UniProt ID?
     new extraction. Every row carries its ID, label and cluster.
 
 Resuming:
-    A split whose .npz already exists for the same model is skipped, so an
-    interrupted run continues where it stopped. Delete the file to redo it.
+    A split whose .npz already exists for the same model is skipped. Within a
+    split, progress is saved to <split>.partial.npz every checkpoint_every
+    batches, so an interrupted run loses at most that many batches. Delete
+    the files to redo a split.
 """
 
 import logging
@@ -65,6 +67,27 @@ def pool(hidden: torch.Tensor, attention_mask: torch.Tensor) -> tuple[torch.Tens
     return hidden[:, 0], mean
 
 
+# ---------------------------------------------------------------------------
+# GPU memory on an 8 GB card
+# ---------------------------------------------------------------------------
+# Every batch has a different shape, so PyTorch's caching allocator keeps
+# reserving new blocks. On Windows, once dedicated VRAM is full the driver
+# silently moves GPU memory into system RAM ("sysmem fallback"), and
+# throughput drops by more than 10x without any error. Two guards:
+#   - Longest batches first: the largest blocks are reserved at the start,
+#     and later, smaller batches reuse them instead of fragmenting memory.
+#   - If reserved memory passes max_memory_fraction of the card, the cache is
+#     emptied before the next batch.
+# The progress bar shows tokens per second and reserved memory, so a
+# slowdown is visible within minutes, not hours.
+
+def save_atomically(path: Path, **arrays) -> None:
+    """Write to a temp file, then rename, so a crash never leaves a half file."""
+    tmp = path.with_name(path.stem + ".tmp.npz")
+    np.savez(tmp, **arrays)
+    tmp.replace(path)
+
+
 @torch.inference_mode()
 def extract_split(
     model: EsmModel,
@@ -73,28 +96,67 @@ def extract_split(
     batch_size: int,
     max_tokens: int,
     device: torch.device,
+    checkpoint_path: Path | None = None,
+    checkpoint_every: int = 100,
+    max_memory_fraction: float = 0.8,
 ) -> dict[str, np.ndarray]:
-    """Embeddings for every record of one split, in the dataset's record order."""
+    """
+    Embeddings for every record of one split, in the dataset's record order.
+    With checkpoint_path, progress is saved every checkpoint_every batches and
+    an interrupted split resumes from the last checkpoint.
+    """
     sampler = LengthGroupedBatchSampler(
         dataset.token_lengths(), batch_size=batch_size, max_tokens=max_tokens, shuffle=False
     )
-    loader = torch.utils.data.DataLoader(
-        dataset, batch_sampler=sampler, collate_fn=PaddingCollator(pad_token_id)
-    )
+    batches = list(sampler)[::-1]                      # longest first
     dim = model.config.hidden_size
     cls = np.zeros((len(dataset), dim), dtype=np.float16)
     mean = np.zeros((len(dataset), dim), dtype=np.float16)
+    done = np.zeros(len(dataset), dtype=bool)
 
-    for batch in tqdm(loader, desc="Embedding", unit="batch"):
-        out = model(
-            input_ids=batch["input_ids"].to(device),
-            attention_mask=batch["attention_mask"].to(device),
-        )
-        batch_cls, batch_mean = pool(out.last_hidden_state, batch["attention_mask"].to(device))
+    if checkpoint_path is not None and checkpoint_path.exists():
+        with np.load(checkpoint_path) as ckpt:
+            if len(ckpt["done"]) == len(dataset):
+                cls, mean, done = ckpt["cls"], ckpt["mean"], ckpt["done"]
+                logger.info(f"Resuming from checkpoint: {done.sum():,} of {len(done):,} done")
+    todo = [b for b in batches if not done[b].all()]
+
+    loader = torch.utils.data.DataLoader(
+        dataset, batch_sampler=todo, collate_fn=PaddingCollator(pad_token_id)
+    )
+    total_memory = (
+        torch.cuda.get_device_properties(device).total_memory if device.type == "cuda" else None
+    )
+    bar = tqdm(loader, desc="Embedding", unit="batch", total=len(todo))
+    window_tokens, window_start = 0, time.time()
+
+    for step, batch in enumerate(bar, start=1):
+        mask = batch["attention_mask"].to(device)
+        out = model(input_ids=batch["input_ids"].to(device), attention_mask=mask)
+        batch_cls, batch_mean = pool(out.last_hidden_state, mask)
         # Batches are reordered by length; the index puts each row back in place
         idx = batch["index"].numpy()
         cls[idx] = batch_cls.cpu().numpy()
         mean[idx] = batch_mean.cpu().numpy()
+        done[idx] = True
+        del out, batch_cls, batch_mean
+
+        window_tokens += int(mask.numel())
+        if total_memory is not None:
+            reserved = torch.cuda.memory_reserved(device)
+            if reserved > max_memory_fraction * total_memory:
+                torch.cuda.empty_cache()
+        if step % 10 == 0:
+            postfix = {"tok/s": f"{window_tokens / (time.time() - window_start):,.0f}"}
+            if total_memory is not None:
+                postfix["gpu_GB"] = f"{torch.cuda.memory_reserved(device) / 2**30:.1f}"
+            bar.set_postfix(postfix)
+            window_tokens, window_start = 0, time.time()
+        if checkpoint_path is not None and step % checkpoint_every == 0:
+            save_atomically(checkpoint_path, cls=cls, mean=mean, done=done)
+
+    if not done.all():
+        raise RuntimeError(f"{(~done).sum()} records were not embedded")
 
     records = dataset.records
     return {
@@ -133,12 +195,17 @@ def run(cfg: DictConfig) -> None:
             logger.info(f"{split}: {path} exists for this model, skipping")
             continue
         dataset = EnzymeDataset(processed_dir / f"{split}.json", tokenizer)
+        checkpoint = output_dir / f"{split}.partial.npz"
         start = time.time()
         arrays = extract_split(
-            model, dataset, tokenizer.pad_token_id, emb.batch_size, emb.max_tokens, device
+            model, dataset, tokenizer.pad_token_id, emb.batch_size, emb.max_tokens, device,
+            checkpoint_path=checkpoint,
+            checkpoint_every=emb.checkpoint_every,
+            max_memory_fraction=emb.max_memory_fraction,
         )
         timings[f"seconds_{split}"] = time.time() - start
-        np.savez(path, model_name=np.array(emb.model_name), **arrays)
+        save_atomically(path, model_name=np.array(emb.model_name), **arrays)
+        checkpoint.unlink(missing_ok=True)
         logger.info(f"{split}: {len(dataset):,} embeddings saved to {path} "
                     f"({timings[f'seconds_{split}'] / 60:.1f} min)")
 

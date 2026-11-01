@@ -92,6 +92,48 @@ def test_extract_split_restores_record_order(tiny_model, tokenizer, tmp_path):
         np.testing.assert_allclose(arrays["cls"][i], cls[0].numpy(), atol=1e-3)
 
 
+class Crashing(torch.nn.Module):
+    """Wraps a model and raises on the n-th forward call, like a killed run."""
+
+    def __init__(self, model, crash_at: int):
+        super().__init__()
+        self.model, self.crash_at, self.calls = model, crash_at, 0
+        self.config = model.config
+
+    def forward(self, **kwargs):
+        self.calls += 1
+        if self.calls == self.crash_at:
+            raise KeyboardInterrupt
+        return self.model(**kwargs)
+
+
+def test_interrupted_extraction_resumes_from_checkpoint(tiny_model, tokenizer, tmp_path):
+    model, _ = tiny_model
+    write_splits(tmp_path / "processed")
+    dataset = EnzymeDataset(tmp_path / "processed" / "train.json", tokenizer)
+    args = (dataset, tokenizer.pad_token_id, 4, 400, torch.device("cpu"))
+    reference = embeddings.extract_split(model, *args)
+
+    checkpoint = tmp_path / "train.partial.npz"
+    crashing = Crashing(model, crash_at=8)
+    with pytest.raises(KeyboardInterrupt):
+        embeddings.extract_split(crashing, *args, checkpoint_path=checkpoint, checkpoint_every=3)
+    with np.load(checkpoint) as ckpt:
+        n_saved = int(ckpt["done"].sum())
+    assert 0 < n_saved < len(dataset)              # 6 batches saved before the crash
+
+    resumed_model = Crashing(model, crash_at=-1)
+    resumed = embeddings.extract_split(
+        resumed_model, *args, checkpoint_path=checkpoint, checkpoint_every=3
+    )
+    n_batches = len(embeddings.LengthGroupedBatchSampler(
+        dataset.token_lengths(), batch_size=4, max_tokens=400, shuffle=False
+    ))
+    assert resumed_model.calls == n_batches - 6      # only the missing batches were run
+    np.testing.assert_allclose(resumed["mean"], reference["mean"], atol=1e-3)
+    np.testing.assert_allclose(resumed["cls"], reference["cls"], atol=1e-3)
+
+
 def load_probe_module():
     path = REPO / "experiments" / "baseline_linear_probe" / "run_probe.py"
     spec = importlib.util.spec_from_file_location("run_probe", path)

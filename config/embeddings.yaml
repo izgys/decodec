@@ -2,6 +2,8 @@
 # Frozen ESM-2 embedding extraction (src/embeddings.py), input to the linear probe.
 model_name: facebook/esm2_t33_650M_UR50D
 batch_size: 128        # max sequences per batch; max_tokens is usually the binding limit
-max_tokens: 16384      # max padded tokens per batch (rows x longest sequence), sized for 8 GB VRAM
+max_tokens: 8192       # max padded tokens per batch (rows x longest sequence), sized for 8 GB VRAM
+max_memory_fraction: 0.8   # empty the CUDA cache when reserved memory passes this share of VRAM
+checkpoint_every: 100      # save progress within a split every N batches (resume after interruption)
 fp16: true             # half precision on GPU; ignored on CPU
 output_dir: data/embeddings/esm2_t33_650M_UR50D
