@@ -1,0 +1,119 @@
+{
+  "device": "cuda",
+  "models": {
+    "facebook/esm2_t12_35M_UR50D": {
+      "n_trainable_parameters": 208370,
+      "checkpoint": {
+        "size_mb": 0.8190250396728516,
+        "save_seconds": 0.0058057308197021484,
+        "load_seconds": 0.016838550567626953,
+        "weights_restored": true
+      },
+      "results": [
+        {
+          "max_tokens": 2048,
+          "status": "ok",
+          "n_batches_per_epoch": 31720,
+          "train_tokens_per_second": 24259.057505832076,
+          "first_half_tokens_per_second": 24117.697753173823,
+          "second_half_tokens_per_second": 24401.94341952777,
+          "eval_tokens_per_second": 96177.12692996657,
+          "epoch_hours": 0.6555750360943181,
+          "peak_allocated_gb": 0.18878698348999023,
+          "peak_reserved_gb": 0.244140625,
+          "total_vram_gb": 7.99560546875,
+          "vram_used_gb_all_programs": 0.4111328125,
+          "spill_risk": false
+        },
+        {
+          "max_tokens": 4096,
+          "status": "ok",
+          "n_batches_per_epoch": 14851,
+          "train_tokens_per_second": 34628.186729013105,
+          "first_half_tokens_per_second": 34836.736338576964,
+          "second_half_tokens_per_second": 34422.01679565815,
+          "eval_tokens_per_second": 138641.0256189066,
+          "epoch_hours": 0.46019632189735604,
+          "peak_allocated_gb": 0.3007779121398926,
+          "peak_reserved_gb": 0.470703125,
+          "total_vram_gb": 7.99560546875,
+          "vram_used_gb_all_programs": 0.6376953125,
+          "spill_risk": false
+        },
+        {
+          "max_tokens": 8192,
+          "status": "ok",
+          "n_batches_per_epoch": 7262,
+          "train_tokens_per_second": 30476.02144064018,
+          "first_half_tokens_per_second": 30791.398123546292,
+          "second_half_tokens_per_second": 30166.885883120485,
+          "eval_tokens_per_second": 127961.85474707857,
+          "epoch_hours": 0.5249156848713199,
+          "peak_allocated_gb": 0.5011663436889648,
+          "peak_reserved_gb": 0.794921875,
+          "total_vram_gb": 7.99560546875,
+          "vram_used_gb_all_programs": 0.9619140625,
+          "spill_risk": false
+        }
+      ],
+      "recommended_max_tokens": 4096
+    },
+    "facebook/esm2_t33_650M_UR50D": {
+      "n_trainable_parameters": 1415730,
+      "checkpoint": {
+        "size_mb": 5.454805374145508,
+        "save_seconds": 0.01607990264892578,
+        "load_seconds": 0.034417152404785156,
+        "weights_restored": true
+      },
+      "results": [
+        {
+          "max_tokens": 2048,
+          "status": "ok",
+          "n_batches_per_epoch": 31720,
+          "train_tokens_per_second": 4378.474154347949,
+          "first_half_tokens_per_second": 4353.553666526293,
+          "second_half_tokens_per_second": 4403.656789468137,
+          "eval_tokens_per_second": 15038.334138964236,
+          "epoch_hours": 3.6322316723526265,
+          "peak_allocated_gb": 1.6376028060913086,
+          "peak_reserved_gb": 1.91796875,
+          "total_vram_gb": 7.99560546875,
+          "vram_used_gb_all_programs": 2.0849609375,
+          "spill_risk": false
+        },
+        {
+          "max_tokens": 4096,
+          "status": "ok",
+          "n_batches_per_epoch": 14851,
+          "train_tokens_per_second": 3850.267023991124,
+          "first_half_tokens_per_second": 3856.119770040497,
+          "second_half_tokens_per_second": 3844.4291042344557,
+          "eval_tokens_per_second": 13695.447466822547,
+          "epoch_hours": 4.138872464525308,
+          "peak_allocated_gb": 2.0151853561401367,
+          "peak_reserved_gb": 2.650390625,
+          "total_vram_gb": 7.99560546875,
+          "vram_used_gb_all_programs": 2.8173828125,
+          "spill_risk": false
+        },
+        {
+          "max_tokens": 8192,
+          "status": "ok",
+          "n_batches_per_epoch": 7262,
+          "train_tokens_per_second": 3417.506037301393,
+          "first_half_tokens_per_second": 3436.854915815882,
+          "second_half_tokens_per_second": 3398.3642347415953,
+          "eval_tokens_per_second": 12054.35305765288,
+          "epoch_hours": 4.6809988020676165,
+          "peak_allocated_gb": 2.7717132568359375,
+          "peak_reserved_gb": 3.892578125,
+          "total_vram_gb": 7.99560546875,
+          "vram_used_gb_all_programs": 4.0595703125,
+          "spill_risk": false
+        }
+      ],
+      "recommended_max_tokens": 2048
+    }
+  }
+}

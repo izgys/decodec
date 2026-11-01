@@ -11,6 +11,7 @@ What this script does:
     3. At the end, loads the best epoch and evaluates once on test: macro-F1
        with a cluster-bootstrap interval, plus saved logits for calibration
        and paired comparisons
+       (--set training.evaluate_test=false stops at validation, for trial runs)
 
 Saving and resuming:
     last.pt     Latest progress: trainable weights, optimizer, scheduler,
@@ -388,7 +389,10 @@ def run(cfg: DictConfig) -> None:
     best = torch.load(output_dir / "best.pt", map_location="cpu", weights_only=True)
     model.load_trainable_state(best["model"])
     arrays = {}
-    for name, dataset in [("val", val_set), ("test", test_set)]:
+    splits = [("val", val_set)]
+    if training.evaluate_test:
+        splits.append(("test", test_set))
+    for name, dataset in splits:
         logits = predict_logits(
             model, dataset, pad_id, training.batch_size, training.eval_max_tokens,
             len(labels), device, use_amp, training.max_memory_fraction,
@@ -403,19 +407,35 @@ def run(cfg: DictConfig) -> None:
         )
         arrays[name] = logits
 
-    y_test = np.array([r["label"] for r in test_set.records])
-    clusters = np.array([r["cluster_id"] for r in test_set.records])
-    y_pred = arrays["test"].argmax(axis=1)
-    summary = metrics.macro_f1_with_ci(
-        y_test, y_pred, clusters, labels, training.n_bootstrap, training.seed
-    )
-    summary.update({
-        "accuracy": float((y_pred == y_test).mean()),
-        "top3_accuracy": metrics.top_k_accuracy(y_test, arrays["test"], 3),
-        **metrics.hierarchical_metrics(y_test, y_pred, index_to_subclass),
-    })
-
     history_path = output_dir / "history.json"
+    history = json.loads(history_path.read_text())
+    best_val = max(entry["val_macro_f1"] for entry in history)
+    artifacts = [history_path]
+
+    # A trial run stops here: settings are chosen on validation, test stays unseen
+    summary = None
+    if training.evaluate_test:
+        y_test = np.array([r["label"] for r in test_set.records])
+        clusters = np.array([r["cluster_id"] for r in test_set.records])
+        y_pred = arrays["test"].argmax(axis=1)
+        summary = metrics.macro_f1_with_ci(
+            y_test, y_pred, clusters, labels, training.n_bootstrap, training.seed
+        )
+        summary.update({
+            "accuracy": float((y_pred == y_test).mean()),
+            "top3_accuracy": metrics.top_k_accuracy(y_test, arrays["test"], 3),
+            **metrics.hierarchical_metrics(y_test, y_pred, index_to_subclass),
+        })
+        per_class_path = output_dir / "per_class.json"
+        with open(per_class_path, "w") as f:
+            table = metrics.per_class_table(y_test, y_pred, clusters, index_to_subclass)
+            json.dump(table, f, indent=2)
+        artifacts.append(per_class_path)
+        logger.info(
+            f"Test macro-F1 {summary['macro_f1']:.4f} "
+            f"[{summary['ci_low']:.4f}, {summary['ci_high']:.4f}]"
+        )
+
     commit, dirty = git_state()
     results = {
         "experiment": f"LoRA r={lora.r} on {lora.model_name}",
@@ -424,24 +444,20 @@ def run(cfg: DictConfig) -> None:
         "n_classes": len(labels),
         "n_trainable_parameters": model.n_trainable(),
         "best_epoch": best["epoch"],
+        "best_val_macro_f1": best_val,
         "test": summary,
-        "history": json.loads(history_path.read_text()),
+        "history": history,
         "config": config_as_dict(cfg),
     }
     results_path = output_dir / "results.json"
     with open(results_path, "w") as f:
         json.dump(results, f, indent=2)
-    per_class_path = output_dir / "per_class.json"
-    with open(per_class_path, "w") as f:
-        json.dump(metrics.per_class_table(y_test, y_pred, clusters, index_to_subclass), f, indent=2)
+    logger.info(f"Best validation macro-F1 {best_val:.4f}, results saved to {results_path}")
 
-    logger.info(
-        f"Test macro-F1 {summary['macro_f1']:.4f} "
-        f"[{summary['ci_low']:.4f}, {summary['ci_high']:.4f}], saved to {results_path}"
-    )
     log_run(
-        cfg, "decodec-lora", output_dir.name, summary,
-        artifacts=[results_path, per_class_path, history_path],
+        cfg, "decodec-lora", output_dir.name,
+        {"best_val_macro_f1": best_val, **(summary or {})},
+        artifacts=[results_path, *artifacts],
     )
 
 

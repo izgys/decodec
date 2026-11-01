@@ -167,6 +167,17 @@ def test_full_run_saves_results_and_touches_test_once(tmp_path, tiny_model_path)
         assert f["logits"].shape == (len(f["labels"]), N_CLASSES)
 
 
+def test_trial_run_leaves_the_test_set_untouched(tmp_path, tiny_model_path):
+    trainer.run(make_cfg(tmp_path, tiny_model_path, evaluate_test="false"))
+    out = tmp_path / "run"
+    results = json.loads((out / "results.json").read_text())
+    assert results["test"] is None
+    assert results["best_val_macro_f1"] == max(h["val_macro_f1"] for h in results["history"])
+    assert (out / "val_predictions.npz").exists()
+    assert not (out / "test_predictions.npz").exists()
+    assert not (out / "per_class.json").exists()
+
+
 def final_weights(out_dir):
     return torch.load(out_dir / "last.pt", map_location="cpu", weights_only=False)["model"]
 

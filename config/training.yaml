@@ -17,6 +17,7 @@ base_fp16: true                # store frozen ESM-2 weights in half precision, s
 gradient_checkpointing: true   # recompute activations in the backward pass, saves VRAM
 max_memory_fraction: 0.8       # empty the CUDA cache when reserved memory passes this share of VRAM
 checkpoint_minutes: 10         # save progress at least this often
+evaluate_test: true            # false for trial runs: settings are chosen on validation only
 n_bootstrap: 1000              # cluster-bootstrap resamples for the final test interval
 seed: 42
 output_dir: experiments/lora/r8_650M
