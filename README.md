@@ -53,36 +53,48 @@ A few things worth knowing:
 | PyTorch dataset with ESM-2 tokenisation, dynamic padding and length-grouped batches | Built |
 | Linear probe on frozen ESM-2 embeddings, with cluster-bootstrap intervals | Built |
 | ESM-2 + LoRA fine-tuning | Planned |
-| Sequence-similarity baseline | Planned |
+| Sequence-similarity baseline and search of test against train | Built |
 | Random vs homology-aware split comparison | Planned |
 | Calibration (temperature scaling, ECE) | Planned |
 | Integrated gradients with conservation check | Planned |
 | Inference API, Docker image, tests and CI | Planned |
 
-## Current result
+## Current results
 
-Linear probe on frozen ESM-2 650M embeddings: mean pooling, class weights, regularisation chosen on validation. Homology-aware split (30% identity, 80% coverage), 50 EC sub-classes, 35,785 test sequences in 2,406 clusters. Commit `b6cc58f`, full numbers in [`results.json`](experiments/baseline_linear_probe/results/results.json).
+Two baselines on the same homology-aware split (30% identity, 80% coverage), 50 EC sub-classes, 35,785 test sequences in 2,406 clusters. Neither is fine-tuned yet.
 
-| Metric | Mean pooling | CLS token |
-|---|---|---|
-| **Test macro-F1 (95% CI)** | **0.755 (0.692 to 0.782)** | 0.701 (0.641 to 0.730) |
-| Test micro-F1 | 0.855 | 0.803 |
-| Top-3 accuracy | 0.908 | 0.902 |
-| Top-level EC accuracy | 0.898 | 0.869 |
+- **Nearest neighbour:** copy the label of the best training hit from an MMseqs2 search. A sequence with no hit counts as wrong.
+- **Linear probe:** logistic regression on frozen, mean-pooled ESM-2 650M embeddings, with class weights and regularisation chosen on validation.
 
-The interval is a stratified cluster bootstrap: clusters, not sequences, are resampled within each class, because sequences in one cluster are not independent. Mean pooling beats the CLS token on the same test clusters by 0.053 (95% CI 0.012 to 0.092).
+| Test macro-F1 (95% CI) | Nearest neighbour | Linear probe | Probe minus neighbour |
+|---|---|---|---|
+| **No training relative** (19,094 sequences) | **0.739 (0.660 to 0.762)** | **0.659 (0.594 to 0.702)** | **-0.080 (-0.110 to -0.009)** |
+| All test sequences | 0.815 (0.754 to 0.835) | 0.755 (0.692 to 0.782) | -0.060 (-0.100 to -0.013) |
+
+"No training relative" means no training hit at or above 30% identity covering at least 80% of both sequences. This excludes 47% of the test set, because clustering compares members with a representative and so leaves some relatives across the split. Intervals are stratified cluster bootstraps: clusters, not sequences, are resampled within each class.
+
+**Plain sequence similarity currently beats frozen ESM-2 embeddings.** Performance by identity of the best training hit:
+
+| Best-hit identity | Sequences | Clusters | Neighbour macro-F1 | Probe macro-F1 | Probe minus neighbour |
+|---|---|---|---|---|---|
+| No hit | 406 | 117 | 0.000 | 0.367 | +0.367 (0.306 to 0.426) |
+| Below 30% | 6,473 | 965 | 0.637 | 0.632 | -0.005 (-0.052 to 0.039) |
+| 30 to 40% | 14,406 | 1,212 | 0.783 | 0.712 | -0.070 (-0.117 to -0.006) |
+| 40 to 50% | 8,078 | 684 | 0.846 | 0.757 | -0.089 (-0.128 to -0.028) |
+| 50 to 70% | 5,066 | 449 | 0.965 | 0.885 | -0.079 (-0.122 to -0.029) |
+| 70% and above | 1,356 | 175 | 0.971 | 0.897 | -0.074 (-0.138 to -0.051) |
+
+The subset and bins were fixed before any per-bin score was computed. Bins hold different sets of classes, so macro-F1 is not strictly comparable between rows; the difference within a row is the comparison to read.
 
 What the numbers say:
 
-- **This is the number fine-tuning has to beat.** It is one fitted model on one split, so the interval covers which test clusters were drawn, not training or split randomness.
-- **Classes with more clusters score higher.** Mean F1 is 0.65 for the 12 classes with fewer than 10 test clusters, 0.75 for the 26 with 10 to 49, and 0.88 for the 12 with 50 or more.
-- **One cluster can decide a class.** EC 4.3 has the lowest F1 (0.11), and 526 of its 592 test sequences sit in a single cluster of HisF proteins, 455 of them predicted as EC 5.3. This is why every per-class score is reported with its cluster count.
-- **Sequence-similarity prediction has not been scored yet**, so this does not show yet whether the model goes beyond plain similarity.
-- **The test set still contains relatives of training proteins.** A search of test against train finds that 16,691 of the 35,785 test sequences (47%) have a training sequence above 30% identity covering at least 80% of both, so this score is probably higher than on proteins with no such relative. The other 19,094 sequences still cover all 50 classes and will be scored separately.
+- **Similarity wins while it has something to work with, and the probe only pulls ahead once it runs out.** The two tie below 30% identity, and the probe is clearly better only where the search finds nothing. That group is small, about 1% of the test set.
+- **Fine-tuning has a concrete target:** on sequences with no training relative, beat 0.739. These are single runs on one split, so the intervals cover which test clusters were drawn, not training or split randomness.
+- **Exploratory, chosen after seeing the data:** on the 7.8% of sequences with a weak hit or none (E-value above 0.001), the probe beats the neighbour by 0.222 (0.183 to 0.297). A hybrid that trusts the search when its hit is strong and the probe otherwise scores 0.780 on sequences with no training relative, 0.041 (0.022 to 0.078) above the neighbour alone. Both need confirming with a threshold set on validation data.
 
-The first version of this probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The two numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
+The first version of the probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
 
-The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary.
+The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [probe](experiments/baseline_linear_probe/results/results.json), [neighbour and bins](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
 
 ## Quick start
 
@@ -125,6 +137,13 @@ uv run python -m src.embeddings
 uv run python experiments/baseline_linear_probe/run_probe.py
 ```
 
+The similarity baseline searches test against train with MMseqs2 (about 3 minutes, Docker needed), then scores both models by identity to the training set:
+
+```bash
+uv run python -m src.data.identity
+uv run python experiments/baseline_similarity/run_similarity.py
+```
+
 Results land in `experiments/baseline_linear_probe/results/` (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
 
 ## Design choices
@@ -147,11 +166,10 @@ Each limitation has a planned fix.
 
 | Limitation | Example | Planned fix |
 |---|---|---|
-| The split leaves relatives across train and test | 47% of test sequences have a training sequence above 30% identity and 80% coverage | Score those without such a relative separately, and report performance by identity to train |
+| The split leaves relatives across train and test | 47% of test sequences have a training sequence above 30% identity and 80% coverage; they are scored separately, not removed | Measure what a stricter partitioning would cost |
 | The interval covers test clusters only | One fitted model on one fixed split | Repeat the baselines over several split seeds |
 | Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v2 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
-| No classical baseline yet | Only the embedding probe exists | Nearest-neighbour sequence search against the training set |
 | Leakage gap not yet measured | Only the homology-aware split has been run | Random split on the same records, everything else unchanged |
 | MMseqs2 version not pinned | The Docker image uses the `latest` tag | Pin the version and store checksums for every pipeline stage |
 | Low confidence is a weak signal for unknown families | Families absent from Swiss-Prot cannot be predicted correctly | Calibrated low-confidence flag, documented as a limit rather than a detector |
@@ -166,9 +184,9 @@ Each limitation has a planned fix.
 - [x] Evaluable-class rule: at least 20 clusters per sub-class, at least 3 in validation and test
 - [x] Dynamic padding and length-grouped batches for training
 - [x] Corrected baseline on the current dataset, with cluster-bootstrap intervals
-- [ ] Sequence-similarity baseline
+- [x] Sequence-similarity baseline, and performance by identity to the training set
 - [ ] ESM-2 650M + LoRA fine-tuning, tracked in MLflow
-- [ ] Performance against identity to the training set, including random vs homology-aware splits
+- [ ] Random vs homology-aware split comparison
 - [ ] Calibration with ECE and reliability diagrams
 - [ ] Integrated gradients with a conservation cross-check
 - [ ] Inference API, Docker image, tests and CI
@@ -192,6 +210,7 @@ decodec/
 │   ├── data.yaml                 UniProt query, filters, clustering settings
 │   ├── embeddings.yaml           ESM-2 model and batching for embedding extraction
 │   ├── probe.yaml                linear probe: poolings, C grid, class weights
+│   ├── similarity.yaml           no-relative subset and identity bins
 │   └── tracking.yaml             MLflow on/off and store folder
 ├── src/
 │   ├── config.py                 loads config/ and --set overrides
@@ -202,13 +221,15 @@ decodec/
 │   │   ├── download.py           UniProt download with EC filtering
 │   │   ├── preprocess.py         multi-sub-class filter, deduplication, rare-class filter
 │   │   ├── clustering.py         MMseqs2 clustering, class filter, splits, label map
+│   │   ├── identity.py           MMseqs2 search of test against train
 │   │   └── dataset.py            ESM-2 tokenisation, dynamic padding, length-grouped batches
 │   └── model/, training/, calibration/, interpretability/, inference/, visualisation/
 │                                 placeholders for the planned parts
 ├── tests/                        offline tests, run in CI with networking off
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
 ├── experiments/
-│   └── baseline_linear_probe/    linear probe on frozen embeddings (e0_previous_split/: first, historical run)
+│   ├── baseline_linear_probe/    linear probe on frozen embeddings (e0_previous_split/: first, historical run)
+│   └── baseline_similarity/      nearest neighbour vs probe, by identity to train
 ├── pyproject.toml
 └── uv.lock
 ```
