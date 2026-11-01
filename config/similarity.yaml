@@ -1,0 +1,10 @@
+# @package similarity
+# Nearest-neighbour similarity baseline (D5, D14, experiment E2):
+# experiments/baseline_similarity/run_similarity.py
+# The subset and bins below were fixed from identity_report.json, before any per-bin score existed.
+relative_identity: 30               # relative-free = no training hit at or above this identity...
+                                    # ...covering at least 80% of both sequences (clustering thresholds)
+identity_edges: [30, 40, 50, 70]    # best-hit identity bins: <30, 30-40, 40-50, 50-70, >=70; no hit is its own bin
+n_bootstrap: 1000                   # stratified cluster-bootstrap resamples for the 95% CIs (D3)
+seed: 42
+output_dir: experiments/baseline_similarity/results

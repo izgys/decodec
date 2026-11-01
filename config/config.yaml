@@ -5,4 +5,5 @@ defaults:
   - tracking
   - embeddings
   - probe
+  - similarity
   - _self_

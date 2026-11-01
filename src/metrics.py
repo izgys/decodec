@@ -82,7 +82,8 @@ def hierarchical_metrics(
     that still has the right first digit (a "near miss").
     """
     true_top = np.array([top_level(index_to_subclass[int(i)]) for i in y_true])
-    pred_top = np.array([top_level(index_to_subclass[int(i)]) for i in y_pred])
+    # A label outside the map (-1, "no prediction") never matches a top-level class
+    pred_top = np.array([top_level(index_to_subclass.get(int(i), "none")) for i in y_pred])
     wrong = y_true != y_pred
     return {
         "top_level_accuracy": float((true_top == pred_top).mean()),
@@ -178,3 +179,20 @@ def paired_difference_ci(
     low, high = confidence_interval(replicates)
     point = macro_f1(y_true, pred_a, labels) - macro_f1(y_true, pred_b, labels)
     return {"difference": point, "ci_low": low, "ci_high": high}
+
+
+def paired_accuracy_difference_ci(
+    y_true: np.ndarray,
+    pred_a: np.ndarray,
+    pred_b: np.ndarray,
+    clusters: Sequence[str],
+    n_resamples: int = 1000,
+    seed: int = 42,
+) -> dict[str, float]:
+    """Accuracy of model A minus model B, with a paired 95% interval."""
+    wins = (pred_a == y_true).astype(float) - (pred_b == y_true).astype(float)
+    replicates = bootstrap_replicates(
+        lambda idx: wins[idx].mean(), y_true, clusters, n_resamples, seed
+    )
+    low, high = confidence_interval(replicates)
+    return {"difference": float(wins.mean()), "ci_low": low, "ci_high": high}
