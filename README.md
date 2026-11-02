@@ -260,6 +260,7 @@ Each limitation has a planned fix.
 - [ ] Hybrid of search and language model, with its threshold set on validation
 - [ ] Integrated gradients with a conservation cross-check, on selected families and failing clusters
 - [ ] Inference API and Docker image, returning the prediction with its evidence: best hit, identity, calibrated confidence and a low-support flag
+- [ ] Pinned MMseqs2 version and checksums for every pipeline stage
 - [ ] Release v1 with its results as they stand
 
 **v2: improving the model**
