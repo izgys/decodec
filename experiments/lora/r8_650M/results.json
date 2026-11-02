@@ -1,0 +1,170 @@
+{
+  "experiment": "LoRA r=8 on facebook/esm2_t33_650M_UR50D",
+  "git_commit": "25e091e",
+  "dirty": false,
+  "n_classes": 50,
+  "n_trainable_parameters": 1415730,
+  "best_epoch": 3,
+  "best_val_macro_f1": 0.7157183919088055,
+  "test": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.81337113981181,
+      "val_macro_f1": 0.6293604359160384,
+      "opt_steps": 3965,
+      "epoch_minutes": 236.39400998353958
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.1588244470706842,
+      "val_macro_f1": 0.6945719525278118,
+      "opt_steps": 7930,
+      "epoch_minutes": 235.2878433505694
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.06587638503648217,
+      "val_macro_f1": 0.7157183919088055,
+      "opt_steps": 11895,
+      "epoch_minutes": 237.20278062025707
+    }
+  ],
+  "config": {
+    "data": {
+      "uniprot": {
+        "base_url": "https://rest.uniprot.org/uniprotkb/search",
+        "query": "reviewed:true AND ec:*",
+        "format": "json",
+        "fields": [
+          "accession",
+          "sequence",
+          "ec",
+          "protein_name",
+          "organism_name"
+        ],
+        "page_size": 500
+      },
+      "filtering": {
+        "min_length": 50,
+        "max_length": 1024,
+        "min_ec_digits": 2,
+        "min_class_count": 100
+      },
+      "output": {
+        "raw_dir": "data/raw",
+        "raw_filename": "uniprot_enzymes_raw.json",
+        "checksums_file": "data/checksums.json",
+        "processed_dir": "data/processed",
+        "clusters_dir": "data/clusters"
+      },
+      "clustering": {
+        "min_seq_id": 0.3,
+        "train_frac": 0.7,
+        "val_frac": 0.15,
+        "min_clusters_per_class": 20,
+        "min_eval_clusters": 3,
+        "seed": 42
+      },
+      "identity": {
+        "sensitivity": 7.5,
+        "max_evalue": 10,
+        "max_seqs": 300,
+        "work_dir": "data/identity",
+        "report_dir": "experiments/baseline_similarity/results"
+      }
+    },
+    "tracking": {
+      "enabled": true,
+      "dir": "mlruns"
+    },
+    "embeddings": {
+      "model_name": "facebook/esm2_t33_650M_UR50D",
+      "batch_size": 128,
+      "max_tokens": 8192,
+      "max_memory_fraction": 0.8,
+      "checkpoint_every": 100,
+      "fp16": true,
+      "output_dir": "data/embeddings/esm2_t33_650M_UR50D"
+    },
+    "probe": {
+      "poolings": [
+        "mean",
+        "cls"
+      ],
+      "C_grid": [
+        0.001,
+        0.01,
+        0.1,
+        1.0,
+        10.0
+      ],
+      "class_weight": "balanced",
+      "max_iter": 2000,
+      "n_bootstrap": 1000,
+      "seed": 42,
+      "evaluate_test": true,
+      "output_dir": "experiments/baseline_linear_probe/results"
+    },
+    "similarity": {
+      "relative_identity": 30,
+      "identity_edges": [
+        30,
+        40,
+        50,
+        70
+      ],
+      "n_bootstrap": 1000,
+      "seed": 42,
+      "output_dir": "experiments/baseline_similarity/results"
+    },
+    "lora": {
+      "model_name": "facebook/esm2_t33_650M_UR50D",
+      "r": 8,
+      "alpha": 16,
+      "dropout": 0.1,
+      "target_modules": [
+        "query",
+        "value"
+      ],
+      "head_dropout": 0.1
+    },
+    "training": {
+      "epochs": 3,
+      "batch_size": 64,
+      "max_tokens": 2048,
+      "eval_max_tokens": 8192,
+      "grad_accum_steps": 8,
+      "max_batches_per_epoch": null,
+      "learning_rate": 0.0005,
+      "weight_decay": 0.01,
+      "warmup_fraction": 0.05,
+      "grad_clip": 1.0,
+      "patience": 1,
+      "balanced_classes": true,
+      "fp16": true,
+      "base_fp16": true,
+      "gradient_checkpointing": true,
+      "max_memory_fraction": 0.8,
+      "checkpoint_minutes": 10,
+      "evaluate_test": false,
+      "n_bootstrap": 1000,
+      "seed": 42,
+      "output_dir": "experiments/lora/r8_650M",
+      "benchmark": {
+        "models": [
+          "facebook/esm2_t12_35M_UR50D",
+          "facebook/esm2_t33_650M_UR50D"
+        ],
+        "max_tokens": [
+          2048,
+          4096,
+          8192
+        ],
+        "n_longest": 4,
+        "n_batches": 40,
+        "output_dir": "experiments/lora"
+      }
+    }
+  }
+}

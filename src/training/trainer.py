@@ -260,8 +260,11 @@ def train(cfg: DictConfig, model, train_set, val_set, pad_id, labels, output_dir
             sampler.set_epoch(epoch)
             batches = list(sampler)[:n_batches]
             todo = batches[progress["batches_done"]:]
+            # Its own generator: building a DataLoader draws a random number, which
+            # on CPU would shift dropout after a resume compared with an unbroken run
             loader = torch.utils.data.DataLoader(
-                train_set, batch_sampler=todo, collate_fn=PaddingCollator(pad_id)
+                train_set, batch_sampler=todo, collate_fn=PaddingCollator(pad_id),
+                generator=torch.Generator(),
             )
             bar = tqdm(loader, desc=f"Epoch {epoch + 1}/{training.epochs}", unit="batch",
                        initial=progress["batches_done"], total=n_batches)
