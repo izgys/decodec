@@ -40,6 +40,7 @@ from omegaconf import DictConfig
 
 from src import metrics
 from src.config import cli_config, config_as_dict
+from src.data.identity import build_views
 from src.tracking import git_state, log_run
 
 logging.basicConfig(
@@ -56,33 +57,6 @@ def predict_from_best_hit(table: list[dict], train_labels: dict[str, int]) -> np
     return np.array(
         [train_labels[row["best_target"]] if row["n_hits"] else NO_PREDICTION for row in table]
     )
-
-
-def build_views(
-    table: list[dict], relative_identity: float, edges: list[float]
-) -> dict[str, np.ndarray]:
-    """Boolean mask per view. The identity bins partition the test set."""
-    best = np.array([row.get("best_identity", np.nan) for row in table], dtype=float)
-    covered = np.array(
-        [row.get("max_identity_covered") or 0.0 for row in table], dtype=float
-    )
-    has_hit = ~np.isnan(best)
-
-    views = {
-        "all": np.ones(len(table), dtype=bool),
-        "relative_free": covered < relative_identity,
-        "no_hit": ~has_hit,
-    }
-    bounds = [-np.inf, *edges, np.inf]
-    for low, high in zip(bounds[:-1], bounds[1:]):
-        if low == -np.inf:
-            name = f"<{high:g}"
-        elif high == np.inf:
-            name = f">={low:g}"
-        else:
-            name = f"{low:g}-{high:g}"
-        views[name] = has_hit & (best >= low) & (best < high)
-    return views
 
 
 def score_view(

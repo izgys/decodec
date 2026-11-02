@@ -8,7 +8,7 @@
 
 Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, and measures how close each test protein is to the training set, so a score can be read against that distance.
 
-> **Status: early development.** The data pipeline and a tuned baseline work. The fine-tuned model, calibration, attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
+> **Status: in development.** The data pipeline, both baselines and the fine-tuned model work. Calibration, attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
 
 ## Why
 
@@ -30,8 +30,8 @@ flowchart TD
     F --> H["Per-residue attributions"]
     classDef built fill:#e2f0e2,stroke:#4a8a4a,color:#222
     classDef planned fill:#f0f0f0,stroke:#999,stroke-dasharray:4 3,color:#222
-    class A,B,C,K,D,E built
-    class F,G,H planned
+    class A,B,C,K,D,E,F built
+    class G,H planned
 ```
 
 Green steps work today. Grey dashed steps are planned.
@@ -41,7 +41,7 @@ A few things worth knowing:
 - **The cluster, not the sequence, is the unit of independence.** Sequences are grouped at 30% identity, and every cluster lands in exactly one split. This removes the closest relatives but not all of them, because clustering compares members with a representative, not with each other. A search of test against train measures what remains (see below).
 - **Classes are counted in clusters too.** A sub-class stays only if it has at least 20 clusters, and every sub-class gets at least 3 clusters in validation and in test. A class with hundreds of test sequences from two clusters would really be judged on two examples.
 - **The label is the EC sub-class**, the first two digits of the EC number. All seven top-level classes are covered, including EC 7 (translocases). Proteins annotated with more than one sub-class (0.4%) are left out, because they have no single correct label.
-- **Every fine-tuning result will be compared with fair baselines** on the same splits: a linear probe on frozen embeddings and a classical sequence-similarity search.
+- **The fine-tuned model is compared with fair baselines** on the same splits: a linear probe on frozen embeddings and a classical sequence-similarity search.
 
 ## What works today
 
@@ -52,8 +52,9 @@ A few things worth knowing:
 | MMseqs2 clustering, cluster-count class filter and cluster-level splits | Built |
 | PyTorch dataset with ESM-2 tokenisation, dynamic padding and length-grouped batches | Built |
 | Linear probe on frozen ESM-2 embeddings, with cluster-bootstrap intervals | Built |
-| ESM-2 + LoRA training with resumable checkpoints | Built, no result yet |
+| ESM-2 + LoRA training with resumable checkpoints | Built |
 | Sequence-similarity baseline and search of test against train | Built |
+| Paired comparison of LoRA with both baselines, by identity to train | Built |
 | Random vs homology-aware split comparison | Planned |
 | Calibration (temperature scaling, ECE) | Planned |
 | Integrated gradients with conservation check | Planned |
@@ -61,40 +62,46 @@ A few things worth knowing:
 
 ## Current results
 
-Two baselines on the same homology-aware split (30% identity, 80% coverage), 50 EC sub-classes, 35,785 test sequences in 2,406 clusters. Neither is fine-tuned yet.
+Three models on the same homology-aware split (30% identity, 80% coverage), 50 EC sub-classes, 35,785 test sequences in 2,406 clusters.
 
 - **Nearest neighbour:** copy the label of the best training hit from an MMseqs2 search. A sequence with no hit counts as wrong.
 - **Linear probe:** logistic regression on frozen, mean-pooled ESM-2 650M embeddings, with class weights and regularisation chosen on validation.
+- **ESM-2 + LoRA:** ESM-2 650M with rank-8 LoRA adapters and a linear head on the mean-pooled residues, trained for 3 epochs with class weights. It has 1,415,730 trainable parameters.
 
-| Test macro-F1 (95% CI) | Nearest neighbour | Linear probe | Probe minus neighbour |
-|---|---|---|---|
-| **No training relative** (19,094 sequences) | **0.739 (0.660 to 0.762)** | **0.659 (0.594 to 0.702)** | **-0.080 (-0.110 to -0.009)** |
-| All test sequences | 0.815 (0.754 to 0.835) | 0.755 (0.692 to 0.782) | -0.060 (-0.100 to -0.013) |
-
-"No training relative" means no training hit at or above 30% identity covering at least 80% of both sequences. This excludes 47% of the test set, because clustering compares members with a representative and so leaves some relatives across the split. Intervals are stratified cluster bootstraps: clusters, not sequences, are resampled within each class.
-
-**Plain sequence similarity currently beats frozen ESM-2 embeddings.** Performance by identity of the best training hit:
-
-| Best-hit identity | Sequences | Clusters | Neighbour macro-F1 | Probe macro-F1 | Probe minus neighbour |
+| Test macro-F1 (95% CI) | ESM-2 + LoRA | Linear probe | Nearest neighbour | LoRA minus probe | LoRA minus neighbour |
 |---|---|---|---|---|---|
-| No hit | 406 | 117 | 0.000 | 0.367 | +0.367 (0.306 to 0.426) |
-| Below 30% | 6,473 | 965 | 0.637 | 0.632 | -0.005 (-0.052 to 0.039) |
-| 30 to 40% | 14,406 | 1,212 | 0.783 | 0.712 | -0.070 (-0.117 to -0.006) |
-| 40 to 50% | 8,078 | 684 | 0.846 | 0.757 | -0.089 (-0.128 to -0.028) |
-| 50 to 70% | 5,066 | 449 | 0.965 | 0.885 | -0.079 (-0.122 to -0.029) |
-| 70% and above | 1,356 | 175 | 0.971 | 0.897 | -0.074 (-0.138 to -0.051) |
+| **No training relative** (19,094 sequences, 50 classes) | **0.672 (0.609 to 0.721)** | 0.659 (0.594 to 0.702) | 0.739 (0.660 to 0.762) | **+0.013 (-0.020 to 0.059)** | **-0.067 (-0.094 to 0.008)** |
+| All test sequences (35,785 sequences, 50 classes) | 0.773 (0.716 to 0.809) | 0.755 (0.692 to 0.782) | 0.815 (0.754 to 0.835) | +0.019 (-0.006 to 0.057) | -0.041 (-0.075 to 0.010) |
 
-The subset and bins were fixed before any per-bin score was computed. Bins hold different sets of classes, so macro-F1 is not strictly comparable between rows; the difference within a row is the comparison to read.
+"No training relative" means no training hit at or above 30% identity covering at least 80% of both sequences. This excludes 47% of the test set, because clustering compares members with a representative and so leaves some relatives across the split. Intervals are stratified cluster bootstraps: clusters, not sequences, are resampled within each class, and differences are paired on the same clusters.
+
+**Fine-tuning did not clearly beat either baseline.** Every interval above for LoRA minus a baseline includes zero. The nearest neighbour does clearly beat the frozen probe: by 0.080 (0.009 to 0.110) with no training relative, and by 0.060 (0.013 to 0.100) on all test sequences.
+
+Performance by identity of the best training hit:
+
+| Best-hit identity | Sequences | Clusters | Classes | LoRA macro-F1 | Probe macro-F1 | Neighbour macro-F1 | LoRA minus probe | LoRA minus neighbour |
+|---|---|---|---|---|---|---|---|---|
+| No hit | 406 | 117 | 28 | 0.397 | 0.367 | 0.000 | +0.029 (-0.050 to 0.077) | +0.397 (0.317 to 0.439) |
+| Below 30% | 6,473 | 965 | 49 | 0.649 | 0.632 | 0.637 | +0.017 (-0.016 to 0.056) | +0.012 (-0.037 to 0.065) |
+| 30 to 40% | 14,406 | 1,212 | 50 | 0.750 | 0.712 | 0.783 | +0.038 (0.001 to 0.078) | -0.033 (-0.073 to 0.029) |
+| 40 to 50% | 8,078 | 684 | 49 | 0.820 | 0.757 | 0.846 | +0.063 (0.014 to 0.100) | -0.026 (-0.065 to 0.023) |
+| 50 to 70% | 5,066 | 449 | 46 | 0.898 | 0.885 | 0.965 | +0.013 (-0.039 to 0.049) | -0.066 (-0.113 to -0.033) |
+| 70% and above | 1,356 | 175 | 36 | 0.837 | 0.897 | 0.971 | -0.060 (-0.104 to -0.038) | -0.133 (-0.208 to -0.115) |
+
+The subset and bins were fixed before any per-bin score was computed. Bins hold different sets of classes, so macro-F1 is not strictly comparable between rows; the difference within a row is the comparison to read. The six rows are six comparisons with no correction for multiplicity, so an interval that barely excludes zero is weak evidence.
 
 What the numbers say:
 
-- **Similarity wins while it has something to work with, and the probe only pulls ahead once it runs out.** The two tie below 30% identity, and the probe is clearly better only where the search finds nothing. That group is small, about 1% of the test set.
-- **Fine-tuning has a concrete target:** on sequences with no training relative, beat 0.739. These are single runs on one split, so the intervals cover which test clusters were drawn, not training or split randomness.
+- **Similarity wins while it has something to work with.** With a hit at 50% identity or above, the neighbour beats LoRA clearly. For weaker hits, the intervals include zero.
+- **Language models help where the search finds nothing, and fine-tuning is not the reason.** With no hit, the neighbour scores 0.000, and LoRA and the frozen probe score about the same. That group is small, about 1% of the test set.
+- **Fine-tuning may help at middle identities.** LoRA is ahead of the probe from 30 to 50% identity, most clearly from 40 to 50%. This needs repeating before it counts as a finding.
+- **LoRA is worse than the frozen probe at 70% identity and above.** These should be the easiest sequences, and the cause is not known yet.
+- **These are single runs on one split,** so the intervals cover which test clusters were drawn, not training or split randomness.
 - **Exploratory, chosen after seeing the data:** on the 7.8% of sequences with a weak hit or none (E-value above 0.001), the probe beats the neighbour by 0.222 (0.183 to 0.297). A hybrid that trusts the search when its hit is strong and the probe otherwise scores 0.780 on sequences with no training relative, 0.041 (0.022 to 0.078) above the neighbour alone. Both need confirming with a threshold set on validation data.
 
 The first version of the probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
 
-The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [probe](experiments/baseline_linear_probe/results/results.json), [neighbour and bins](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
+The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [LoRA against both baselines](experiments/model_comparison/results/results.json), [LoRA training](experiments/lora/r8_650M/results.json), [probe](experiments/baseline_linear_probe/results/results.json), [neighbour](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
 
 ## Quick start
 
@@ -144,7 +151,20 @@ uv run python -m src.data.identity
 uv run python experiments/baseline_similarity/run_similarity.py
 ```
 
-Results land in `experiments/baseline_linear_probe/results/` (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
+Train ESM-2 + LoRA (about 12 hours on a laptop RTX 4070). Rerun the same command to continue after any interruption. The hardware test first takes a few minutes per setting and reports memory use and the estimated run time:
+
+```bash
+uv run python -m src.training.benchmark
+uv run python -m src.training.trainer --set training.max_tokens=2048 --set training.grad_accum_steps=8
+```
+
+Then compare it with both baselines on the same sequences (about a minute):
+
+```bash
+uv run python experiments/model_comparison/run_comparison.py
+```
+
+Results land in each experiment's folder (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
 
 ## Design choices
 
@@ -167,7 +187,8 @@ Each limitation has a planned fix.
 | Limitation | Example | Planned fix |
 |---|---|---|
 | The split leaves relatives across train and test | 47% of test sequences have a training sequence above 30% identity and 80% coverage; they are scored separately, not removed | Measure what a stricter partitioning would cost |
-| The interval covers test clusters only | One fitted model on one fixed split | Repeat the baselines over several split seeds |
+| The interval covers test clusters only | One fitted model on one fixed split, and one training run for LoRA | Repeat over several split and training seeds |
+| LoRA loses to the frozen probe on the closest relatives | At 70% identity and above, macro-F1 is 0.060 (0.038 to 0.104) lower on 1,356 sequences, 36 classes, cause unknown | Inspect the errors in that bin by class and family |
 | Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v2 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
 | Leakage gap not yet measured | Only the homology-aware split has been run | Random split on the same records, everything else unchanged |
@@ -185,7 +206,8 @@ Each limitation has a planned fix.
 - [x] Dynamic padding and length-grouped batches for training
 - [x] Corrected baseline on the current dataset, with cluster-bootstrap intervals
 - [x] Sequence-similarity baseline, and performance by identity to the training set
-- [ ] ESM-2 650M + LoRA fine-tuning, tracked in MLflow
+- [x] ESM-2 650M + LoRA fine-tuning, tracked in MLflow
+- [x] Paired comparison of LoRA with both baselines, by identity to the training set
 - [ ] Random vs homology-aware split comparison
 - [ ] Calibration with ECE and reliability diagrams
 - [ ] Integrated gradients with a conservation cross-check
@@ -213,6 +235,7 @@ decodec/
 │   ├── training.yaml             training settings and hardware test
 │   ├── probe.yaml                linear probe: poolings, C grid, class weights
 │   ├── similarity.yaml           no-relative subset and identity bins
+│   ├── comparison.yaml           LoRA vs baselines: predictions and bootstrap settings
 │   └── tracking.yaml             MLflow on/off and store folder
 ├── src/
 │   ├── config.py                 loads config/ and --set overrides
@@ -235,7 +258,9 @@ decodec/
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
 ├── experiments/
 │   ├── baseline_linear_probe/    linear probe on frozen embeddings (e0_previous_split/: first, historical run)
-│   └── baseline_similarity/      nearest neighbour vs probe, by identity to train
+│   ├── baseline_similarity/      nearest neighbour vs probe, by identity to train
+│   ├── lora/                     hardware test, 35M trial and 650M training results
+│   └── model_comparison/         LoRA vs both baselines, by identity to train
 ├── pyproject.toml
 └── uv.lock
 ```

@@ -1,0 +1,7 @@
+# @package comparison
+# LoRA vs both baselines (D14, experiment E3): experiments/model_comparison/run_comparison.py
+# The subset and identity bins come from similarity.yaml, the same ones as E2.
+lora_predictions: experiments/lora/r8_650M/test_predictions.npz
+n_bootstrap: 1000                   # stratified cluster-bootstrap resamples for the 95% CIs (D3)
+seed: 42
+output_dir: experiments/model_comparison/results

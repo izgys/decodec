@@ -8,4 +8,5 @@ defaults:
   - similarity
   - lora
   - training
+  - comparison
   - _self_

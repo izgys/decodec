@@ -31,6 +31,7 @@ import subprocess
 from collections import Counter, defaultdict
 from pathlib import Path
 
+import numpy as np
 from omegaconf import DictConfig
 
 from src.config import cli_config
@@ -225,6 +226,33 @@ def build_report(table: list[dict], records: list[dict]) -> dict:
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
+def build_views(
+    table: list[dict], relative_identity: float, edges: list[float]
+) -> dict[str, np.ndarray]:
+    """Boolean mask per view. The identity bins partition the test set."""
+    best = np.array([row.get("best_identity", np.nan) for row in table], dtype=float)
+    covered = np.array(
+        [row.get("max_identity_covered") or 0.0 for row in table], dtype=float
+    )
+    has_hit = ~np.isnan(best)
+
+    views = {
+        "all": np.ones(len(table), dtype=bool),
+        "relative_free": covered < relative_identity,
+        "no_hit": ~has_hit,
+    }
+    bounds = [-np.inf, *edges, np.inf]
+    for low, high in zip(bounds[:-1], bounds[1:]):
+        if low == -np.inf:
+            name = f"<{high:g}"
+        elif high == np.inf:
+            name = f">={low:g}"
+        else:
+            name = f"{low:g}-{high:g}"
+        views[name] = has_hit & (best >= low) & (best < high)
+    return views
+
 
 def run(cfg: DictConfig) -> None:
     identity = cfg.data.identity
