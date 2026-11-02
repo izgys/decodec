@@ -1,12 +1,20 @@
 {
   "experiment": "LoRA r=8 on facebook/esm2_t33_650M_UR50D",
-  "git_commit": "25e091e",
+  "git_commit": "e5d0f0b",
   "dirty": false,
   "n_classes": 50,
   "n_trainable_parameters": 1415730,
   "best_epoch": 3,
   "best_val_macro_f1": 0.7157183919088055,
-  "test": null,
+  "test": {
+    "macro_f1": 0.7733891056753777,
+    "ci_low": 0.7159333773957527,
+    "ci_high": 0.8090148161061325,
+    "accuracy": 0.8771831773089284,
+    "top3_accuracy": 0.9173955567975409,
+    "top_level_accuracy": 0.9232918820734944,
+    "errors_within_top_level": 0.37542662116040953
+  },
   "history": [
     {
       "epoch": 1,
@@ -147,7 +155,7 @@
       "gradient_checkpointing": true,
       "max_memory_fraction": 0.8,
       "checkpoint_minutes": 10,
-      "evaluate_test": false,
+      "evaluate_test": true,
       "n_bootstrap": 1000,
       "seed": 42,
       "output_dir": "experiments/lora/r8_650M",
