@@ -58,7 +58,9 @@ A few things worth knowing:
 | Random vs homology-aware split comparison | Planned |
 | Calibration (temperature scaling, ECE), by identity and by cluster | Built |
 | Integrated gradients with conservation check | Planned |
-| Inference API, Docker image, tests and CI | Planned |
+| Hybrid of search and language model, with its threshold set on validation | Planned |
+| Inference API and Docker image | Planned |
+| Tests and CI, run with networking off | Built |
 
 ## Current results
 
@@ -233,7 +235,7 @@ Each limitation has a planned fix.
 | The interval covers test clusters only | One fitted model on one fixed split, and one training run for LoRA | Repeat over several split and training seeds |
 | Whole families can fail with high confidence | 8 of 239 large test clusters are mostly wrong at a mean confidence of 0.8 or above, even after calibration; all 204 dermonecrotic toxins (EC 4.6) are predicted as EC 3.1 | Flag low training support at inference, for example with the best hit from a sequence search |
 | One temperature does not fit every identity range | After scaling, ECE is 0.066 below 30% identity and 0.073 from 40 to 50%, in opposite directions | Test a temperature that depends on identity to the training set |
-| Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v2 |
+| Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v3 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
 | Leakage gap not yet measured | Only the homology-aware split has been run | Random split on the same records, everything else unchanged |
 | MMseqs2 version not pinned | The Docker image uses the `latest` tag | Pin the version and store checksums for every pipeline stage |
@@ -252,12 +254,25 @@ Each limitation has a planned fix.
 - [x] Sequence-similarity baseline, and performance by identity to the training set
 - [x] ESM-2 650M + LoRA fine-tuning, tracked in MLflow
 - [x] Paired comparison of LoRA with both baselines, by identity to the training set
-- [ ] Random vs homology-aware split comparison
 - [x] Calibration with ECE and reliability diagrams
-- [ ] Integrated gradients with a conservation cross-check
-- [ ] Inference API, Docker image, tests and CI
+- [x] Tests and CI, run with networking off
+- [ ] Random vs homology-aware split comparison
+- [ ] Hybrid of search and language model, with its threshold set on validation
+- [ ] Integrated gradients with a conservation cross-check, on selected families and failing clusters
+- [ ] Inference API and Docker image, returning the prediction with its evidence: best hit, identity, calibrated confidence and a low-support flag
+- [ ] Release v1 with its results as they stand
 
-**v2: structure-aware extension**
+**v2: improving the model**
+
+The goal is to beat the nearest neighbour on sequences with no training relative (macro-F1 0.739 (0.660 to 0.762) on the current test split, 19,094 sequences, 50 classes). The current test set has been used, so the rules are fixed before any tuning:
+
+- [ ] Fix a new holdout, from a new split seed or newer Swiss-Prot entries, and score the nearest neighbour on it
+- [ ] Set the success rule: the interval for the paired difference must exclude zero
+- [ ] Set a limit on full training runs, with settings chosen on validation and one final test evaluation
+- [ ] Try reducing overfitting, different class weighting, attention pooling and contrastive learning
+- [ ] Report the result, whichever way it goes
+
+**v3: structure-aware extension**
 
 - [ ] Attributions mapped onto 3D structures
 - [ ] Structure-aware tokens (SaProt)
