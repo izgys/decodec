@@ -9,6 +9,7 @@ import pytest
 from conftest import make_record
 
 from src.config import load_config
+from src.visualisation import comparison_figure
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -89,6 +90,21 @@ def test_per_class_table_holds_every_model(tmp_path):
     assert [r["subclass"] for r in rows] == ["1.1", "3.4"]
     assert all(r["lora_f1"] == 1.0 and r["probe_f1"] < 1.0 for r in rows)
     assert rows[0]["support"] == 6 and rows[0]["n_clusters"] == 6
+
+
+def test_figure_is_drawn_for_each_theme(tmp_path):
+    cfg = write_inputs(tmp_path)
+    comparison.run(cfg)
+    comparison_figure.run(cfg)
+    for theme in ["light", "dark"]:
+        path = tmp_path / "results" / f"model_comparison_{theme}.png"
+        assert path.read_bytes().startswith(b"\x89PNG")
+
+
+def test_figure_needs_the_comparison_results(tmp_path):
+    cfg = write_inputs(tmp_path)
+    with pytest.raises(FileNotFoundError, match="run_comparison"):
+        comparison_figure.run(cfg)
 
 
 @pytest.mark.parametrize("model", ["lora", "probe", "neighbour"])

@@ -68,6 +68,13 @@ Three models on the same homology-aware split (30% identity, 80% coverage), 50 E
 - **Linear probe:** logistic regression on frozen, mean-pooled ESM-2 650M embeddings, with class weights and regularisation chosen on validation.
 - **ESM-2 + LoRA:** ESM-2 650M with rank-8 LoRA adapters and a linear head on the mean-pooled residues, trained for 3 epochs with class weights. It has 1,415,730 trainable parameters.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="experiments/model_comparison/results/model_comparison_dark.png">
+  <img alt="Test macro-F1 of ESM-2 + LoRA, the linear probe and the nearest neighbour for all test sequences, for sequences with no training relative and per identity bin, with the paired difference between LoRA and each baseline. The exact values are in the tables below." src="experiments/model_comparison/results/model_comparison_light.png">
+</picture>
+
+In the right panel, an interval that crosses the zero line means no clear difference. Exact values are in the tables below.
+
 | Test macro-F1 (95% CI) | ESM-2 + LoRA | Linear probe | Nearest neighbour | LoRA minus probe | LoRA minus neighbour |
 |---|---|---|---|---|---|
 | **No training relative** (19,094 sequences, 50 classes) | **0.672 (0.609 to 0.721)** | 0.659 (0.594 to 0.702) | 0.739 (0.660 to 0.762) | **+0.013 (-0.020 to 0.059)** | **-0.067 (-0.094 to 0.008)** |
@@ -158,10 +165,11 @@ uv run python -m src.training.benchmark
 uv run python -m src.training.trainer --set training.max_tokens=2048 --set training.grad_accum_steps=8
 ```
 
-Then compare it with both baselines on the same sequences (about a minute):
+Then compare it with both baselines on the same sequences (about a minute) and draw the figure:
 
 ```bash
 uv run python experiments/model_comparison/run_comparison.py
+uv run python -m src.visualisation.comparison_figure
 ```
 
 Results land in each experiment's folder (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
@@ -252,7 +260,8 @@ decodec/
 │   ├── training/
 │   │   ├── trainer.py            training loop, checkpoints, automatic resume
 │   │   └── benchmark.py          hardware test: memory, speed, estimated run time
-│   └── calibration/, interpretability/, inference/, visualisation/
+│   ├── visualisation/comparison_figure.py   README figure from the comparison results
+│   └── calibration/, interpretability/, inference/
 │                                 placeholders for the planned parts
 ├── tests/                        offline tests, run in CI with networking off
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
