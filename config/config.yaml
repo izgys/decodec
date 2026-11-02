@@ -9,4 +9,5 @@ defaults:
   - lora
   - training
   - comparison
+  - calibration
   - _self_

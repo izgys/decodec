@@ -1,0 +1,11 @@
+# @package calibration
+# Temperature scaling (D16): src/calibration/temperature.py
+# The identity views come from similarity.yaml, the same ones as E2 and E3.
+predictions_dir: experiments/lora/r8_650M   # val_predictions.npz and test_predictions.npz, with logits
+n_bins: 15                          # equal-width confidence bins for ECE and the reliability diagram
+confidence_thresholds: [0.5, 0.9]   # report how many predictions clear each, and their accuracy
+min_cluster_size: 20                # clusters at least this large are checked one by one
+min_bin_sequences: 20               # the reliability diagram skips emptier bins
+n_bootstrap: 1000                   # stratified cluster-bootstrap resamples for the 95% CIs (D3)
+seed: 42
+output_dir: experiments/calibration/results

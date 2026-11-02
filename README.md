@@ -8,7 +8,7 @@
 
 Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, and measures how close each test protein is to the training set, so a score can be read against that distance.
 
-> **Status: in development.** The data pipeline, both baselines and the fine-tuned model work. Calibration, attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
+> **Status: in development.** The data pipeline, both baselines, the fine-tuned model and its calibration work. Attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
 
 ## Why
 
@@ -30,8 +30,8 @@ flowchart TD
     F --> H["Per-residue attributions"]
     classDef built fill:#e2f0e2,stroke:#4a8a4a,color:#222
     classDef planned fill:#f0f0f0,stroke:#999,stroke-dasharray:4 3,color:#222
-    class A,B,C,K,D,E,F built
-    class G,H planned
+    class A,B,C,K,D,E,F,G built
+    class H planned
 ```
 
 Green steps work today. Grey dashed steps are planned.
@@ -56,7 +56,7 @@ A few things worth knowing:
 | Sequence-similarity baseline and search of test against train | Built |
 | Paired comparison of LoRA with both baselines, by identity to train | Built |
 | Random vs homology-aware split comparison | Planned |
-| Calibration (temperature scaling, ECE) | Planned |
+| Calibration (temperature scaling, ECE), by identity and by cluster | Built |
 | Integrated gradients with conservation check | Planned |
 | Inference API, Docker image, tests and CI | Planned |
 
@@ -106,9 +106,37 @@ What the numbers say:
 - **These are single runs on one split,** so the intervals cover which test clusters were drawn, not training or split randomness.
 - **Exploratory, chosen after seeing the data:** on the 7.8% of sequences with a weak hit or none (E-value above 0.001), the probe beats the neighbour by 0.222 (0.183 to 0.297). A hybrid that trusts the search when its hit is strong and the probe otherwise scores 0.780 on sequences with no training relative, 0.041 (0.022 to 0.078) above the neighbour alone. Both need confirming with a threshold set on validation data.
 
+### Calibration
+
+Before calibration, the model is overconfident: on all test sequences its mean confidence is 0.943 and its accuracy is 0.877. Temperature scaling divides the logits by one number, fitted on validation, here **T = 1.55**. No prediction changes, so accuracy and macro-F1 stay as above.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="experiments/calibration/results/reliability_dark.png">
+  <img alt="Reliability diagrams for all test sequences and for sequences with no training relative, before and after temperature scaling. The exact values are in the table below." src="experiments/calibration/results/reliability_light.png">
+</picture>
+
+Expected calibration error (ECE), the average gap between confidence and accuracy, on the same test split. Lower is better:
+
+| Test sequences | Sequences | Clusters | Classes | ECE before | ECE after | Change (paired) |
+|---|---|---|---|---|---|---|
+| **All** | 35,785 | 2,406 | 50 | 0.066 (0.029 to 0.117) | 0.022 (0.019 to 0.067) | -0.044 (-0.061 to 0.020) |
+| **No training relative** | 19,094 | 2,105 | 50 | 0.130 (0.062 to 0.208) | 0.061 (0.029 to 0.140) | -0.068 (-0.087 to -0.013) |
+| No hit | 406 | 117 | 28 | 0.250 (0.176 to 0.357) | 0.135 (0.089 to 0.225) | -0.115 (-0.148 to -0.057) |
+| Below 30% | 6,473 | 965 | 49 | 0.134 (0.059 to 0.234) | 0.066 (0.030 to 0.168) | -0.068 (-0.090 to -0.013) |
+| 30 to 40% | 14,406 | 1,212 | 50 | 0.086 (0.027 to 0.164) | 0.048 (0.022 to 0.118) | -0.039 (-0.065 to 0.029) |
+| 40 to 50% | 8,078 | 684 | 49 | 0.009 (0.006 to 0.030) | 0.073 (0.047 to 0.102) | +0.064 (0.020 to 0.090) |
+| 50 to 70% | 5,066 | 449 | 46 | 0.009 (0.005 to 0.026) | 0.060 (0.043 to 0.082) | +0.051 (0.021 to 0.072) |
+| 70% and above | 1,356 | 175 | 36 | 0.094 (0.054 to 0.165) | 0.086 (0.079 to 0.141) | -0.008 (-0.035 to 0.053) |
+
+What the numbers say:
+
+- **One temperature is a compromise.** It clearly helps on distant sequences, where the model is most overconfident. From 40 to 70% identity the model was already well calibrated, and scaling makes it underconfident there. On all test sequences the interval for the change includes zero.
+- **Confidence is more useful after scaling.** Predictions at 0.9 or above cover 65.0% of test sequences at 96.2% accuracy, against 87.4% at 92.9% before.
+- **Whole families can still fail with high confidence.** Of the 239 test clusters with at least 20 sequences, 15 (2,071 sequences) are mostly wrong with a mean confidence of 0.8 or above before scaling, and 8 (1,484 sequences) after. The others mostly just fall below that line: the toxin cluster above stays at 0% accuracy, with mean confidence moving from 0.91 to 0.78. A high score is not a guarantee for a family with little support in training.
+
 The first version of the probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
 
-The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [LoRA against both baselines](experiments/model_comparison/results/results.json), [LoRA training](experiments/lora/r8_650M/results.json), [probe](experiments/baseline_linear_probe/results/results.json), [neighbour](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
+The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [LoRA against both baselines](experiments/model_comparison/results/results.json), [LoRA training](experiments/lora/r8_650M/results.json), [calibration](experiments/calibration/results/results.json), [probe](experiments/baseline_linear_probe/results/results.json), [neighbour](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
 
 ## Quick start
 
@@ -172,6 +200,13 @@ uv run python experiments/model_comparison/run_comparison.py
 uv run python -m src.visualisation.comparison_figure
 ```
 
+Calibrate it from the saved logits (under a minute, no GPU needed) and draw the reliability diagram:
+
+```bash
+uv run python -m src.calibration.temperature
+uv run python -m src.visualisation.reliability_figure
+```
+
 Results land in each experiment's folder (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
 
 ## Design choices
@@ -196,7 +231,8 @@ Each limitation has a planned fix.
 |---|---|---|
 | The split leaves relatives across train and test | 47% of test sequences have a training sequence above 30% identity and 80% coverage; they are scored separately, not removed | Measure what a stricter partitioning would cost |
 | The interval covers test clusters only | One fitted model on one fixed split, and one training run for LoRA | Repeat over several split and training seeds |
-| A family nearly absent from training can fail completely, with high confidence | All 204 dermonecrotic toxins in test (EC 4.6) are predicted as EC 3.1, with a mean probability of 0.91 | Check per-family failures in calibration and flag low training support at inference |
+| Whole families can fail with high confidence | 8 of 239 large test clusters are mostly wrong at a mean confidence of 0.8 or above, even after calibration; all 204 dermonecrotic toxins (EC 4.6) are predicted as EC 3.1 | Flag low training support at inference, for example with the best hit from a sequence search |
+| One temperature does not fit every identity range | After scaling, ECE is 0.066 below 30% identity and 0.073 from 40 to 50%, in opposite directions | Test a temperature that depends on identity to the training set |
 | Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v2 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
 | Leakage gap not yet measured | Only the homology-aware split has been run | Random split on the same records, everything else unchanged |
@@ -217,7 +253,7 @@ Each limitation has a planned fix.
 - [x] ESM-2 650M + LoRA fine-tuning, tracked in MLflow
 - [x] Paired comparison of LoRA with both baselines, by identity to the training set
 - [ ] Random vs homology-aware split comparison
-- [ ] Calibration with ECE and reliability diagrams
+- [x] Calibration with ECE and reliability diagrams
 - [ ] Integrated gradients with a conservation cross-check
 - [ ] Inference API, Docker image, tests and CI
 
@@ -244,6 +280,7 @@ decodec/
 │   ├── probe.yaml                linear probe: poolings, C grid, class weights
 │   ├── similarity.yaml           no-relative subset and identity bins
 │   ├── comparison.yaml           LoRA vs baselines: predictions and bootstrap settings
+│   ├── calibration.yaml          temperature scaling: bins, thresholds, cluster check
 │   └── tracking.yaml             MLflow on/off and store folder
 ├── src/
 │   ├── config.py                 loads config/ and --set overrides
@@ -260,8 +297,9 @@ decodec/
 │   ├── training/
 │   │   ├── trainer.py            training loop, checkpoints, automatic resume
 │   │   └── benchmark.py          hardware test: memory, speed, estimated run time
-│   ├── visualisation/comparison_figure.py   README figure from the comparison results
-│   └── calibration/, interpretability/, inference/
+│   ├── calibration/temperature.py   temperature scaling, ECE, per-view and per-cluster checks
+│   ├── visualisation/            README figures from the saved results
+│   └── interpretability/, inference/
 │                                 placeholders for the planned parts
 ├── tests/                        offline tests, run in CI with networking off
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
@@ -269,7 +307,8 @@ decodec/
 │   ├── baseline_linear_probe/    linear probe on frozen embeddings (e0_previous_split/: first, historical run)
 │   ├── baseline_similarity/      nearest neighbour vs probe, by identity to train
 │   ├── lora/                     hardware test, 35M trial and 650M training results
-│   └── model_comparison/         LoRA vs both baselines, by identity to train
+│   ├── model_comparison/         LoRA vs both baselines, by identity to train
+│   └── calibration/              temperature, ECE before and after, reliability diagrams
 ├── pyproject.toml
 └── uv.lock
 ```
