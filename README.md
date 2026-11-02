@@ -102,7 +102,7 @@ What the numbers say:
 - **Similarity wins while it has something to work with.** With a hit at 50% identity or above, the neighbour beats LoRA clearly. For weaker hits, the intervals include zero.
 - **Language models help where the search finds nothing, and fine-tuning is not the reason.** With no hit, the neighbour scores 0.000, and LoRA and the frozen probe score about the same. That group is small, about 1% of the test set.
 - **Fine-tuning may help at middle identities.** LoRA is ahead of the probe from 30 to 50% identity, most clearly from 40 to 50%. This needs repeating before it counts as a finding.
-- **LoRA is worse than the frozen probe at 70% identity and above.** These should be the easiest sequences, and the cause is not known yet.
+- **LoRA is worse than the frozen probe at 70% identity and above, mostly because of one family.** All 204 test sequences of one cluster, spider and scorpion dermonecrotic toxins (EC 4.6), are predicted as EC 3.1, and 103 of them fall in this bin. Training holds only two sequences of this family, fragments of 71 and 161 residues that LoRA gets right, while the test sequences are 263 to 324 residues long. Their high identity covers only about 57% of each sequence, so the bin is not made up only of close full-length relatives. This was found after seeing the results, so it is exploratory and the tables above keep the cluster. Without it, accuracy in this bin is 0.953 for LoRA and 0.948 for the probe, and the macro-F1 difference shrinks to -0.024 (-0.070 to -0.001) on 1,253 sequences, 35 classes.
 - **These are single runs on one split,** so the intervals cover which test clusters were drawn, not training or split randomness.
 - **Exploratory, chosen after seeing the data:** on the 7.8% of sequences with a weak hit or none (E-value above 0.001), the probe beats the neighbour by 0.222 (0.183 to 0.297). A hybrid that trusts the search when its hit is strong and the probe otherwise scores 0.780 on sequences with no training relative, 0.041 (0.022 to 0.078) above the neighbour alone. Both need confirming with a threshold set on validation data.
 
@@ -196,7 +196,7 @@ Each limitation has a planned fix.
 |---|---|---|
 | The split leaves relatives across train and test | 47% of test sequences have a training sequence above 30% identity and 80% coverage; they are scored separately, not removed | Measure what a stricter partitioning would cost |
 | The interval covers test clusters only | One fitted model on one fixed split, and one training run for LoRA | Repeat over several split and training seeds |
-| LoRA loses to the frozen probe on the closest relatives | At 70% identity and above, macro-F1 is 0.060 (0.038 to 0.104) lower on 1,356 sequences, 36 classes, cause unknown | Inspect the errors in that bin by class and family |
+| A family nearly absent from training can fail completely, with high confidence | All 204 dermonecrotic toxins in test (EC 4.6) are predicted as EC 3.1, with a mean probability of 0.91 | Check per-family failures in calibration and flag low training support at inference |
 | Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v2 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
 | Leakage gap not yet measured | Only the homology-aware split has been run | Random split on the same records, everything else unchanged |
