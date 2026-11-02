@@ -1,0 +1,6205 @@
+{
+  "experiment": "Temperature scaling of ESM-2 + LoRA",
+  "git_commit": "e0712b3",
+  "dirty": false,
+  "temperature": 1.5534142594482514,
+  "config": {
+    "predictions_dir": "experiments/lora/r8_650M",
+    "n_bins": 15,
+    "confidence_thresholds": [
+      0.5,
+      0.9
+    ],
+    "min_cluster_size": 20,
+    "min_bin_sequences": 20,
+    "n_bootstrap": 1000,
+    "seed": 42,
+    "output_dir": "experiments/calibration/results"
+  },
+  "validation": {
+    "n_sequences": 28080,
+    "n_clusters": 2337,
+    "n_classes": 50,
+    "before": {
+      "ece": 0.08884834997554697,
+      "ci_low": 0.046998932906942036,
+      "ci_high": 0.14293261758580728,
+      "nll": 0.8904125593213069,
+      "mean_confidence": 0.9088269824541795,
+      "accuracy": 0.8199786324786325,
+      "thresholds": {
+        "0.5": {
+          "share_of_sequences": 0.9261039886039886,
+          "accuracy": 0.8679484714477985
+        },
+        "0.9": {
+          "share_of_sequences": 0.7966880341880341,
+          "accuracy": 0.9213267176254973
+        }
+      },
+      "bins": [
+        {
+          "low": 0.0,
+          "high": 0.06666666666666667,
+          "n_sequences": 0,
+          "mean_confidence": null,
+          "accuracy": null
+        },
+        {
+          "low": 0.06666666666666667,
+          "high": 0.13333333333333333,
+          "n_sequences": 5,
+          "mean_confidence": 0.12027253471703221,
+          "accuracy": 0.0
+        },
+        {
+          "low": 0.13333333333333333,
+          "high": 0.2,
+          "n_sequences": 33,
+          "mean_confidence": 0.17684112213531766,
+          "accuracy": 0.09090909090909091
+        },
+        {
+          "low": 0.2,
+          "high": 0.26666666666666666,
+          "n_sequences": 206,
+          "mean_confidence": 0.23954157738711915,
+          "accuracy": 0.18932038834951456
+        },
+        {
+          "low": 0.26666666666666666,
+          "high": 0.3333333333333333,
+          "n_sequences": 445,
+          "mean_confidence": 0.30238752354749543,
+          "accuracy": 0.19550561797752808
+        },
+        {
+          "low": 0.3333333333333333,
+          "high": 0.4,
+          "n_sequences": 565,
+          "mean_confidence": 0.36820685991962904,
+          "accuracy": 0.20176991150442478
+        },
+        {
+          "low": 0.4,
+          "high": 0.4666666666666667,
+          "n_sequences": 553,
+          "mean_confidence": 0.43248027853280074,
+          "accuracy": 0.21880650994575046
+        },
+        {
+          "low": 0.4666666666666667,
+          "high": 0.5333333333333333,
+          "n_sequences": 548,
+          "mean_confidence": 0.4997997443705692,
+          "accuracy": 0.3248175182481752
+        },
+        {
+          "low": 0.5333333333333333,
+          "high": 0.6,
+          "n_sequences": 544,
+          "mean_confidence": 0.5655568556678643,
+          "accuracy": 0.3639705882352941
+        },
+        {
+          "low": 0.6,
+          "high": 0.6666666666666666,
+          "n_sequences": 498,
+          "mean_confidence": 0.6317415105986298,
+          "accuracy": 0.43172690763052207
+        },
+        {
+          "low": 0.6666666666666666,
+          "high": 0.7333333333333333,
+          "n_sequences": 494,
+          "mean_confidence": 0.6979663376095946,
+          "accuracy": 0.5101214574898786
+        },
+        {
+          "low": 0.7333333333333333,
+          "high": 0.8,
+          "n_sequences": 548,
+          "mean_confidence": 0.768074938252254,
+          "accuracy": 0.6295620437956204
+        },
+        {
+          "low": 0.8,
+          "high": 0.8666666666666667,
+          "n_sequences": 708,
+          "mean_confidence": 0.8350064318555455,
+          "accuracy": 0.6779661016949152
+        },
+        {
+          "low": 0.8666666666666667,
+          "high": 0.9333333333333333,
+          "n_sequences": 1390,
+          "mean_confidence": 0.9044038682825846,
+          "accuracy": 0.6762589928057554
+        },
+        {
+          "low": 0.9333333333333333,
+          "high": 1.0,
+          "n_sequences": 21543,
+          "mean_confidence": 0.9920694070241515,
+          "accuracy": 0.9308360024137771
+        }
+      ]
+    },
+    "after": {
+      "ece": 0.02093427682141541,
+      "ci_low": 0.02096554803400556,
+      "ci_high": 0.07034611731762522,
+      "nll": 0.7560441826130817,
+      "mean_confidence": 0.8212612086299282,
+      "accuracy": 0.8199786324786325,
+      "thresholds": {
+        "0.5": {
+          "share_of_sequences": 0.8618589743589744,
+          "accuracy": 0.9031858187678196
+        },
+        "0.9": {
+          "share_of_sequences": 0.5873931623931624,
+          "accuracy": 0.9648963259367043
+        }
+      },
+      "bins": [
+        {
+          "low": 0.0,
+          "high": 0.06666666666666667,
+          "n_sequences": 1,
+          "mean_confidence": 0.06547200187654896,
+          "accuracy": 0.0
+        },
+        {
+          "low": 0.06666666666666667,
+          "high": 0.13333333333333333,
+          "n_sequences": 57,
+          "mean_confidence": 0.11246204336492777,
+          "accuracy": 0.12280701754385964
+        },
+        {
+          "low": 0.13333333333333333,
+          "high": 0.2,
+          "n_sequences": 541,
+          "mean_confidence": 0.17405315813223354,
+          "accuracy": 0.15157116451016636
+        },
+        {
+          "low": 0.2,
+          "high": 0.26666666666666666,
+          "n_sequences": 919,
+          "mean_confidence": 0.23351962656936628,
+          "accuracy": 0.22089227421109903
+        },
+        {
+          "low": 0.26666666666666666,
+          "high": 0.3333333333333333,
+          "n_sequences": 772,
+          "mean_confidence": 0.29876344621934914,
+          "accuracy": 0.2538860103626943
+        },
+        {
+          "low": 0.3333333333333333,
+          "high": 0.4,
+          "n_sequences": 707,
+          "mean_confidence": 0.36631996487773344,
+          "accuracy": 0.3408769448373409
+        },
+        {
+          "low": 0.4,
+          "high": 0.4666666666666667,
+          "n_sequences": 585,
+          "mean_confidence": 0.4327452625889795,
+          "accuracy": 0.4564102564102564
+        },
+        {
+          "low": 0.4666666666666667,
+          "high": 0.5333333333333333,
+          "n_sequences": 565,
+          "mean_confidence": 0.4989967615872623,
+          "accuracy": 0.5964601769911504
+        },
+        {
+          "low": 0.5333333333333333,
+          "high": 0.6,
+          "n_sequences": 640,
+          "mean_confidence": 0.5668465570657257,
+          "accuracy": 0.5984375
+        },
+        {
+          "low": 0.6,
+          "high": 0.6666666666666666,
+          "n_sequences": 669,
+          "mean_confidence": 0.6341570109529625,
+          "accuracy": 0.6532137518684604
+        },
+        {
+          "low": 0.6666666666666666,
+          "high": 0.7333333333333333,
+          "n_sequences": 933,
+          "mean_confidence": 0.7021322878782944,
+          "accuracy": 0.684887459807074
+        },
+        {
+          "low": 0.7333333333333333,
+          "high": 0.8,
+          "n_sequences": 1273,
+          "mean_confidence": 0.7689432836220684,
+          "accuracy": 0.7808326787117046
+        },
+        {
+          "low": 0.8,
+          "high": 0.8666666666666667,
+          "n_sequences": 2026,
+          "mean_confidence": 0.8372622658672007,
+          "accuracy": 0.8499506416584403
+        },
+        {
+          "low": 0.8666666666666667,
+          "high": 0.9333333333333333,
+          "n_sequences": 4464,
+          "mean_confidence": 0.9030844149031944,
+          "accuracy": 0.8539426523297491
+        },
+        {
+          "low": 0.9333333333333333,
+          "high": 1.0,
+          "n_sequences": 13928,
+          "mean_confidence": 0.9744686709980561,
+          "accuracy": 0.9839890867317633
+        }
+      ]
+    },
+    "ece_change": {
+      "difference": -0.06791407315413156,
+      "ci_low": -0.08367317340118563,
+      "ci_high": -0.004152572936283531
+    }
+  },
+  "views": {
+    "all": {
+      "n_sequences": 35785,
+      "n_clusters": 2406,
+      "n_classes": 50,
+      "before": {
+        "ece": 0.06619378976873011,
+        "ci_low": 0.02898643451620769,
+        "ci_high": 0.1168650201032924,
+        "nll": 0.8025954649228355,
+        "mean_confidence": 0.943346924073928,
+        "accuracy": 0.8771831773089284,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9612686879977644,
+            "accuracy": 0.9019448239774412
+          },
+          "0.9": {
+            "share_of_sequences": 0.8742210423361744,
+            "accuracy": 0.9290372075182202
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 4,
+            "mean_confidence": 0.11561388893799457,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 88,
+            "mean_confidence": 0.17680144793309335,
+            "accuracy": 0.1590909090909091
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 219,
+            "mean_confidence": 0.23247613428555475,
+            "accuracy": 0.0730593607305936
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 262,
+            "mean_confidence": 0.3018175511952344,
+            "accuracy": 0.1946564885496183
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 331,
+            "mean_confidence": 0.3671571319758256,
+            "accuracy": 0.28700906344410876
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 318,
+            "mean_confidence": 0.4326873991186559,
+            "accuracy": 0.36163522012578614
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 361,
+            "mean_confidence": 0.50172151038758,
+            "accuracy": 0.45429362880886426
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 352,
+            "mean_confidence": 0.5665221588340056,
+            "accuracy": 0.5625
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 347,
+            "mean_confidence": 0.633208315037592,
+            "accuracy": 0.5360230547550432
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 431,
+            "mean_confidence": 0.7003771998130637,
+            "accuracy": 0.6403712296983759
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 457,
+            "mean_confidence": 0.7661671177929493,
+            "accuracy": 0.6433260393873085
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 735,
+            "mean_confidence": 0.8359488927531356,
+            "accuracy": 0.6598639455782312
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 1510,
+            "mean_confidence": 0.9052583825156343,
+            "accuracy": 0.7516556291390728
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 30370,
+            "mean_confidence": 0.991732384899102,
+            "accuracy": 0.9338162660520251
+          }
+        ]
+      },
+      "after": {
+        "ece": 0.022095889450340623,
+        "ci_low": 0.01903367125416142,
+        "ci_high": 0.06703277075286143,
+        "nll": 0.654987912016072,
+        "mean_confidence": 0.8641509458507171,
+        "accuracy": 0.8771831773089284,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9234595500908201,
+            "accuracy": 0.9147854505840344
+          },
+          "0.9": {
+            "share_of_sequences": 0.6501047925108285,
+            "accuracy": 0.9619154057771664
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 1,
+            "mean_confidence": 0.06327244642953082,
+            "accuracy": 0.0
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 146,
+            "mean_confidence": 0.11852855258839855,
+            "accuracy": 0.14383561643835616
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 423,
+            "mean_confidence": 0.16604572690435662,
+            "accuracy": 0.1276595744680851
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 461,
+            "mean_confidence": 0.23485026828173491,
+            "accuracy": 0.2993492407809111
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 464,
+            "mean_confidence": 0.30114469248591375,
+            "accuracy": 0.4353448275862069
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 450,
+            "mean_confidence": 0.3670122468343072,
+            "accuracy": 0.5133333333333333
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 524,
+            "mean_confidence": 0.4342628559305817,
+            "accuracy": 0.6564885496183206
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 530,
+            "mean_confidence": 0.49947220418898625,
+            "accuracy": 0.6377358490566037
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 596,
+            "mean_confidence": 0.5689385033153327,
+            "accuracy": 0.6812080536912751
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 737,
+            "mean_confidence": 0.6337708326612349,
+            "accuracy": 0.7611940298507462
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 1069,
+            "mean_confidence": 0.7029769179536146,
+            "accuracy": 0.7595884003741815
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 1570,
+            "mean_confidence": 0.7691645259256112,
+            "accuracy": 0.8019108280254778
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 3109,
+            "mean_confidence": 0.8377263488351133,
+            "accuracy": 0.8391765841106466
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 5994,
+            "mean_confidence": 0.9041432274834912,
+            "accuracy": 0.8983983983983984
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 19711,
+            "mean_confidence": 0.9711042757932705,
+            "accuracy": 0.9654507635330526
+          }
+        ]
+      },
+      "ece_change": {
+        "difference": -0.04409790031838949,
+        "ci_low": -0.06105657224808455,
+        "ci_high": 0.020205506944508338
+      }
+    },
+    "relative_free": {
+      "n_sequences": 19094,
+      "n_clusters": 2105,
+      "n_classes": 50,
+      "before": {
+        "ece": 0.12978695076902436,
+        "ci_low": 0.06208060907206407,
+        "ci_high": 0.20843221199783746,
+        "nll": 1.4256934436071573,
+        "mean_confidence": 0.9119135303810231,
+        "accuracy": 0.7821828846758144,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9336440766733005,
+            "accuracy": 0.8212823245638639
+          },
+          "0.9": {
+            "share_of_sequences": 0.8032366188331413,
+            "accuracy": 0.8625546065071396
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 4,
+            "mean_confidence": 0.11561388893799457,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 81,
+            "mean_confidence": 0.17700494593827723,
+            "accuracy": 0.13580246913580246
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 206,
+            "mean_confidence": 0.23233185455453675,
+            "accuracy": 0.05339805825242718
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 245,
+            "mean_confidence": 0.30178823017982614,
+            "accuracy": 0.17142857142857143
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 305,
+            "mean_confidence": 0.36725044071954954,
+            "accuracy": 0.25901639344262295
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 279,
+            "mean_confidence": 0.43219059754761935,
+            "accuracy": 0.32616487455197135
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 325,
+            "mean_confidence": 0.5020758888245866,
+            "accuracy": 0.4276923076923077
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 303,
+            "mean_confidence": 0.5661273902099245,
+            "accuracy": 0.5313531353135313
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 301,
+            "mean_confidence": 0.6334584022678192,
+            "accuracy": 0.49169435215946844
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 349,
+            "mean_confidence": 0.6996144887928887,
+            "accuracy": 0.5931232091690545
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 378,
+            "mean_confidence": 0.7655034422663578,
+            "accuracy": 0.5846560846560847
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 571,
+            "mean_confidence": 0.8371949233561234,
+            "accuracy": 0.5954465849387041
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 1028,
+            "mean_confidence": 0.9048133945038133,
+            "accuracy": 0.6517509727626459
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 14719,
+            "mean_confidence": 0.9902705063261826,
+            "accuracy": 0.8705754467015422
+          }
+        ]
+      },
+      "after": {
+        "ece": 0.06141254935865567,
+        "ci_low": 0.029215319339108866,
+        "ci_high": 0.14036460016011368,
+        "nll": 1.1019977009191955,
+        "mean_confidence": 0.8191160858968375,
+        "accuracy": 0.7821828846758144,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.8758248664501938,
+            "accuracy": 0.8409974286910243
+          },
+          "0.9": {
+            "share_of_sequences": 0.5578715826961349,
+            "accuracy": 0.9233946676680436
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 1,
+            "mean_confidence": 0.06327244642953082,
+            "accuracy": 0.0
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 134,
+            "mean_confidence": 0.11842672971616669,
+            "accuracy": 0.11194029850746269
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 389,
+            "mean_confidence": 0.16590432347602083,
+            "accuracy": 0.08483290488431877
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 408,
+            "mean_confidence": 0.23503381128902157,
+            "accuracy": 0.26715686274509803
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 419,
+            "mean_confidence": 0.30118740721030224,
+            "accuracy": 0.38902147971360385
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 386,
+            "mean_confidence": 0.3674659315259718,
+            "accuracy": 0.45595854922279794
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 421,
+            "mean_confidence": 0.43430198472490616,
+            "accuracy": 0.6152019002375297
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 418,
+            "mean_confidence": 0.4995718435150274,
+            "accuracy": 0.5574162679425837
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 432,
+            "mean_confidence": 0.5680831494663401,
+            "accuracy": 0.6041666666666666
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 536,
+            "mean_confidence": 0.6330007619515571,
+            "accuracy": 0.6958955223880597
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 714,
+            "mean_confidence": 0.7029965401229938,
+            "accuracy": 0.6554621848739496
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 1069,
+            "mean_confidence": 0.769056449457557,
+            "accuracy": 0.7221702525724977
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 1804,
+            "mean_confidence": 0.8378858443957029,
+            "accuracy": 0.7322616407982262
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 3076,
+            "mean_confidence": 0.903042132570609,
+            "accuracy": 0.8094928478543563
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 8887,
+            "mean_confidence": 0.9683890072610148,
+            "accuracy": 0.9296725554180263
+          }
+        ]
+      },
+      "ece_change": {
+        "difference": -0.06837440141036868,
+        "ci_low": -0.08707095003921575,
+        "ci_high": -0.012658285207309316
+      }
+    },
+    "no_hit": {
+      "n_sequences": 406,
+      "n_clusters": 117,
+      "n_classes": 28,
+      "before": {
+        "ece": 0.250023330725496,
+        "ci_low": 0.17580852594964272,
+        "ci_high": 0.35680289978206586,
+        "nll": 3.5744054673803958,
+        "mean_confidence": 0.6817049696393087,
+        "accuracy": 0.43349753694581283,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.6699507389162561,
+            "accuracy": 0.5514705882352942
+          },
+          "0.9": {
+            "share_of_sequences": 0.37192118226600984,
+            "accuracy": 0.7947019867549668
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 15,
+            "mean_confidence": 0.16989027366229964,
+            "accuracy": 0.06666666666666667
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 25,
+            "mean_confidence": 0.2336873992686779,
+            "accuracy": 0.04
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 17,
+            "mean_confidence": 0.3000452225999258,
+            "accuracy": 0.11764705882352941
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 28,
+            "mean_confidence": 0.3641942856851865,
+            "accuracy": 0.14285714285714285
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 29,
+            "mean_confidence": 0.43556457584496566,
+            "accuracy": 0.4482758620689655
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 37,
+            "mean_confidence": 0.5009892843929891,
+            "accuracy": 0.2972972972972973
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 23,
+            "mean_confidence": 0.5649463806646584,
+            "accuracy": 0.21739130434782608
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 15,
+            "mean_confidence": 0.6332014602735428,
+            "accuracy": 0.13333333333333333
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 23,
+            "mean_confidence": 0.6996969210131014,
+            "accuracy": 0.21739130434782608
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 20,
+            "mean_confidence": 0.7624483944975708,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 16,
+            "mean_confidence": 0.8399117392144746,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 15,
+            "mean_confidence": 0.9031475235787926,
+            "accuracy": 0.4666666666666667
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 143,
+            "mean_confidence": 0.9866846655085515,
+            "accuracy": 0.8111888111888111
+          }
+        ]
+      },
+      "after": {
+        "ece": 0.13517815871790712,
+        "ci_low": 0.08944156373209289,
+        "ci_high": 0.22481920229795582,
+        "nll": 2.7993600493064554,
+        "mean_confidence": 0.5389117200126907,
+        "accuracy": 0.43349753694581283,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.46798029556650245,
+            "accuracy": 0.7105263157894737
+          },
+          "0.9": {
+            "share_of_sequences": 0.2413793103448276,
+            "accuracy": 0.9387755102040817
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 21,
+            "mean_confidence": 0.11698541524736344,
+            "accuracy": 0.047619047619047616
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 41,
+            "mean_confidence": 0.16359367817072704,
+            "accuracy": 0.07317073170731707
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 38,
+            "mean_confidence": 0.23270436835110053,
+            "accuracy": 0.23684210526315788
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 42,
+            "mean_confidence": 0.30453239100269414,
+            "accuracy": 0.40476190476190477
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 41,
+            "mean_confidence": 0.36547707066622703,
+            "accuracy": 0.12195121951219512
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 23,
+            "mean_confidence": 0.42696919333871247,
+            "accuracy": 0.2608695652173913
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 23,
+            "mean_confidence": 0.5025737665800919,
+            "accuracy": 0.34782608695652173
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 16,
+            "mean_confidence": 0.5608598122838447,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 8,
+            "mean_confidence": 0.6266972443276893,
+            "accuracy": 0.375
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 10,
+            "mean_confidence": 0.6961860585350009,
+            "accuracy": 0.5
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 17,
+            "mean_confidence": 0.7717813714701826,
+            "accuracy": 0.4117647058823529
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 20,
+            "mean_confidence": 0.8205537769477681,
+            "accuracy": 0.5
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 23,
+            "mean_confidence": 0.9057221083133745,
+            "accuracy": 0.6956521739130435
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 83,
+            "mean_confidence": 0.9677685123299531,
+            "accuracy": 0.9879518072289156
+          }
+        ]
+      },
+      "ece_change": {
+        "difference": -0.11484517200758887,
+        "ci_low": -0.14774176537027497,
+        "ci_high": -0.057175440595860993
+      }
+    },
+    "<30": {
+      "n_sequences": 6473,
+      "n_clusters": 965,
+      "n_classes": 49,
+      "before": {
+        "ece": 0.13438932906129464,
+        "ci_low": 0.059204222572616004,
+        "ci_high": 0.23431783717744356,
+        "nll": 1.5178420684962977,
+        "mean_confidence": 0.9051293259715373,
+        "accuracy": 0.7707399969102425,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9278541634481693,
+            "accuracy": 0.815018315018315
+          },
+          "0.9": {
+            "share_of_sequences": 0.7861887841804418,
+            "accuracy": 0.8575358616624091
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 2,
+            "mean_confidence": 0.12728709738339533,
+            "accuracy": 0.0
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 32,
+            "mean_confidence": 0.1811617469054495,
+            "accuracy": 0.125
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 81,
+            "mean_confidence": 0.23098348560477314,
+            "accuracy": 0.012345679012345678
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 92,
+            "mean_confidence": 0.3012466406649306,
+            "accuracy": 0.14130434782608695
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 111,
+            "mean_confidence": 0.3653125677029442,
+            "accuracy": 0.26126126126126126
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 101,
+            "mean_confidence": 0.4324778019331333,
+            "accuracy": 0.3069306930693069
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 109,
+            "mean_confidence": 0.5021921393220238,
+            "accuracy": 0.43119266055045874
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 94,
+            "mean_confidence": 0.5636235172762623,
+            "accuracy": 0.5
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 113,
+            "mean_confidence": 0.6329246870870363,
+            "accuracy": 0.4778761061946903
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 134,
+            "mean_confidence": 0.6993182374825339,
+            "accuracy": 0.6492537313432836
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 140,
+            "mean_confidence": 0.7666615161682895,
+            "accuracy": 0.5928571428571429
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 232,
+            "mean_confidence": 0.8362945698246744,
+            "accuracy": 0.625
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 396,
+            "mean_confidence": 0.9062436631714167,
+            "accuracy": 0.6439393939393939
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 4836,
+            "mean_confidence": 0.9902857610174226,
+            "accuracy": 0.8670388751033913
+          }
+        ]
+      },
+      "after": {
+        "ece": 0.06645648786765818,
+        "ci_low": 0.030148090017838726,
+        "ci_high": 0.16775841335818775,
+        "nll": 1.1718425516421034,
+        "mean_confidence": 0.8105504879667018,
+        "accuracy": 0.7707399969102425,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.8657500386219682,
+            "accuracy": 0.8342255531763026
+          },
+          "0.9": {
+            "share_of_sequences": 0.5462691178742469,
+            "accuracy": 0.9578619909502263
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 51,
+            "mean_confidence": 0.11999247838109073,
+            "accuracy": 0.0784313725490196
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 149,
+            "mean_confidence": 0.16457452824929014,
+            "accuracy": 0.04697986577181208
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 170,
+            "mean_confidence": 0.23428415238508038,
+            "accuracy": 0.25882352941176473
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 154,
+            "mean_confidence": 0.3021741214840067,
+            "accuracy": 0.38311688311688313
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 124,
+            "mean_confidence": 0.3665925648237479,
+            "accuracy": 0.5161290322580645
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 152,
+            "mean_confidence": 0.4343442221191348,
+            "accuracy": 0.6381578947368421
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 145,
+            "mean_confidence": 0.5004343077448423,
+            "accuracy": 0.5793103448275863
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 166,
+            "mean_confidence": 0.5686906691314949,
+            "accuracy": 0.572289156626506
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 207,
+            "mean_confidence": 0.6326264985868127,
+            "accuracy": 0.6714975845410628
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 248,
+            "mean_confidence": 0.7024218760415596,
+            "accuracy": 0.6612903225806451
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 347,
+            "mean_confidence": 0.7678521672884978,
+            "accuracy": 0.6887608069164265
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 604,
+            "mean_confidence": 0.8374481708346982,
+            "accuracy": 0.5993377483443708
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 945,
+            "mean_confidence": 0.9018419796907631,
+            "accuracy": 0.7619047619047619
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 3011,
+            "mean_confidence": 0.9703046040790373,
+            "accuracy": 0.9667884423779475
+          }
+        ]
+      },
+      "ece_change": {
+        "difference": -0.06793284119363646,
+        "ci_low": -0.08950574605615669,
+        "ci_high": -0.01290269737151737
+      }
+    },
+    "30-40": {
+      "n_sequences": 14406,
+      "n_clusters": 1212,
+      "n_classes": 50,
+      "before": {
+        "ece": 0.08632838633791606,
+        "ci_low": 0.027215655241047496,
+        "ci_high": 0.16394972521227252,
+        "nll": 1.0102911739174627,
+        "mean_confidence": 0.9490162353706174,
+        "accuracy": 0.8629043454116341,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9665417187283076,
+            "accuracy": 0.8845877621373168
+          },
+          "0.9": {
+            "share_of_sequences": 0.8856726364014994,
+            "accuracy": 0.9044595971471119
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 1,
+            "mean_confidence": 0.09338350283369358,
+            "accuracy": 0.0
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 31,
+            "mean_confidence": 0.1755024704047753,
+            "accuracy": 0.22580645161290322
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 78,
+            "mean_confidence": 0.2340077242874578,
+            "accuracy": 0.0641025641025641
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 91,
+            "mean_confidence": 0.30209436393618566,
+            "accuracy": 0.17582417582417584
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 119,
+            "mean_confidence": 0.36822654393812887,
+            "accuracy": 0.24369747899159663
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 117,
+            "mean_confidence": 0.432577194699858,
+            "accuracy": 0.3333333333333333
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 109,
+            "mean_confidence": 0.5036066042112606,
+            "accuracy": 0.43119266055045874
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 129,
+            "mean_confidence": 0.5658447665566138,
+            "accuracy": 0.5348837209302325
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 109,
+            "mean_confidence": 0.6359354583891599,
+            "accuracy": 0.5137614678899083
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 167,
+            "mean_confidence": 0.7020632966665835,
+            "accuracy": 0.688622754491018
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 188,
+            "mean_confidence": 0.7663576367225812,
+            "accuracy": 0.6595744680851063
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 278,
+            "mean_confidence": 0.8349467300471164,
+            "accuracy": 0.7014388489208633
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 551,
+            "mean_confidence": 0.9048338784826832,
+            "accuracy": 0.8257713248638838
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 12438,
+            "mean_confidence": 0.9918489887915362,
+            "accuracy": 0.9064158224794983
+          }
+        ]
+      },
+      "after": {
+        "ece": 0.04762422403673542,
+        "ci_low": 0.022121545279449765,
+        "ci_high": 0.11845843386554188,
+        "nll": 0.7814251061189948,
+        "mean_confidence": 0.8719449631698214,
+        "accuracy": 0.8629043454116341,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.930584478689435,
+            "accuracy": 0.8951215873489482
+          },
+          "0.9": {
+            "share_of_sequences": 0.684645286686103,
+            "accuracy": 0.9310554597992498
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 1,
+            "mean_confidence": 0.06327244642953082,
+            "accuracy": 0.0
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 52,
+            "mean_confidence": 0.11976575138326578,
+            "accuracy": 0.17307692307692307
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 153,
+            "mean_confidence": 0.1672316416638472,
+            "accuracy": 0.13071895424836602
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 174,
+            "mean_confidence": 0.23576687146999675,
+            "accuracy": 0.27586206896551724
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 145,
+            "mean_confidence": 0.29940916109284493,
+            "accuracy": 0.45517241379310347
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 167,
+            "mean_confidence": 0.36646930124361865,
+            "accuracy": 0.5209580838323353
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 188,
+            "mean_confidence": 0.4358151263067528,
+            "accuracy": 0.6595744680851063
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 225,
+            "mean_confidence": 0.49897023141651187,
+            "accuracy": 0.6444444444444445
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 237,
+            "mean_confidence": 0.5690865987614295,
+            "accuracy": 0.7088607594936709
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 282,
+            "mean_confidence": 0.6332946144219699,
+            "accuracy": 0.75177304964539
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 414,
+            "mean_confidence": 0.7011764334284818,
+            "accuracy": 0.7681159420289855
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 602,
+            "mean_confidence": 0.7695258793912503,
+            "accuracy": 0.8471760797342193
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 1012,
+            "mean_confidence": 0.8379550926689724,
+            "accuracy": 0.841897233201581
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 2336,
+            "mean_confidence": 0.9057457714013191,
+            "accuracy": 0.853595890410959
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 8418,
+            "mean_confidence": 0.9691951793578463,
+            "accuracy": 0.9358517462580185
+          }
+        ]
+      },
+      "ece_change": {
+        "difference": -0.03870416230118064,
+        "ci_low": -0.06491692901864352,
+        "ci_high": 0.029289713859420845
+      }
+    },
+    "40-50": {
+      "n_sequences": 8078,
+      "n_clusters": 684,
+      "n_classes": 49,
+      "before": {
+        "ece": 0.009338686877166538,
+        "ci_low": 0.005841563403534208,
+        "ci_high": 0.03026940721570548,
+        "nll": 0.2088720424801731,
+        "mean_confidence": 0.956193815109913,
+        "accuracy": 0.9512255508789305,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9738796731864323,
+            "accuracy": 0.9656794203635439
+          },
+          "0.9": {
+            "share_of_sequences": 0.9064124783362218,
+            "accuracy": 0.983884184649003
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 4,
+            "mean_confidence": 0.1869077115785988,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 17,
+            "mean_confidence": 0.23363886590267852,
+            "accuracy": 0.17647058823529413
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 45,
+            "mean_confidence": 0.3025311661343634,
+            "accuracy": 0.3111111111111111
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 58,
+            "mean_confidence": 0.3717453804993942,
+            "accuracy": 0.39655172413793105
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 51,
+            "mean_confidence": 0.4313641062659605,
+            "accuracy": 0.4117647058823529
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 77,
+            "mean_confidence": 0.5002429718659135,
+            "accuracy": 0.5714285714285714
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 70,
+            "mean_confidence": 0.5700912672437461,
+            "accuracy": 0.7142857142857143
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 72,
+            "mean_confidence": 0.6307246166688313,
+            "accuracy": 0.5972222222222222
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 74,
+            "mean_confidence": 0.6978708215814298,
+            "accuracy": 0.581081081081081
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 72,
+            "mean_confidence": 0.7653030275663549,
+            "accuracy": 0.75
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 116,
+            "mean_confidence": 0.8364603943661,
+            "accuracy": 0.8275862068965517
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 296,
+            "mean_confidence": 0.9080791182644934,
+            "accuracy": 0.8648648648648649
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 7126,
+            "mean_confidence": 0.9915572676748791,
+            "accuracy": 0.9873701936570306
+          }
+        ]
+      },
+      "after": {
+        "ece": 0.07313991312441098,
+        "ci_low": 0.04665988791935687,
+        "ci_high": 0.10183792217612347,
+        "nll": 0.2557309959000798,
+        "mean_confidence": 0.8780856377545195,
+        "accuracy": 0.9512255508789305,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9450358999752414,
+            "accuracy": 0.9748493581346608
+          },
+          "0.9": {
+            "share_of_sequences": 0.6323347363208714,
+            "accuracy": 0.9964761158966328
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 6,
+            "mean_confidence": 0.12307148540314454,
+            "accuracy": 0.16666666666666666
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 48,
+            "mean_confidence": 0.17075760447389454,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 57,
+            "mean_confidence": 0.23659188349577737,
+            "accuracy": 0.42105263157894735
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 94,
+            "mean_confidence": 0.30016712487332153,
+            "accuracy": 0.4787234042553192
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 87,
+            "mean_confidence": 0.36665344991259713,
+            "accuracy": 0.5977011494252874
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 105,
+            "mean_confidence": 0.4324908144906315,
+            "accuracy": 0.7142857142857143
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 94,
+            "mean_confidence": 0.4993086420619512,
+            "accuracy": 0.6914893617021277
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 136,
+            "mean_confidence": 0.5697819903185152,
+            "accuracy": 0.7573529411764706
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 141,
+            "mean_confidence": 0.6332883837064796,
+            "accuracy": 0.9078014184397163
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 216,
+            "mean_confidence": 0.7052544229858542,
+            "accuracy": 0.8981481481481481
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 354,
+            "mean_confidence": 0.7699483460813957,
+            "accuracy": 0.9011299435028248
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 895,
+            "mean_confidence": 0.8388803971085869,
+            "accuracy": 0.9575418994413408
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 1560,
+            "mean_confidence": 0.9012205391117019,
+            "accuracy": 0.9846153846153847
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 4285,
+            "mean_confidence": 0.973141531773308,
+            "accuracy": 0.9971995332555426
+          }
+        ]
+      },
+      "ece_change": {
+        "difference": 0.06380122624724445,
+        "ci_low": 0.01953865222386736,
+        "ci_high": 0.09011383770273777
+      }
+    },
+    "50-70": {
+      "n_sequences": 5066,
+      "n_clusters": 449,
+      "n_classes": 46,
+      "before": {
+        "ece": 0.009388505338262134,
+        "ci_low": 0.004982675258429001,
+        "ci_high": 0.026017308635798726,
+        "nll": 0.12377130072877236,
+        "mean_confidence": 0.9730024189772478,
+        "accuracy": 0.9703908409001184,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9855902092380576,
+            "accuracy": 0.9771680352493491
+          },
+          "0.9": {
+            "share_of_sequences": 0.9429530201342282,
+            "accuracy": 0.9880678249947666
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 4,
+            "mean_confidence": 0.16982652866536957,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 12,
+            "mean_confidence": 0.23010432555998403,
+            "accuracy": 0.4166666666666667
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 12,
+            "mean_confidence": 0.30317828995215135,
+            "accuracy": 0.4166666666666667
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 13,
+            "mean_confidence": 0.3573012905398973,
+            "accuracy": 0.6153846153846154
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 19,
+            "mean_confidence": 0.434340512125472,
+            "accuracy": 0.5789473684210527
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 25,
+            "mean_confidence": 0.4968141838464238,
+            "accuracy": 0.52
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 20,
+            "mean_confidence": 0.5728852548141796,
+            "accuracy": 0.6
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 24,
+            "mean_confidence": 0.6314510179917232,
+            "accuracy": 0.75
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 29,
+            "mean_confidence": 0.7038282554208334,
+            "accuracy": 0.7931034482758621
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 28,
+            "mean_confidence": 0.7647877038532707,
+            "accuracy": 0.7857142857142857
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 46,
+            "mean_confidence": 0.8339546477358878,
+            "accuracy": 0.6956521739130435
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 155,
+            "mean_confidence": 0.9051380765527912,
+            "accuracy": 0.864516129032258
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 4679,
+            "mean_confidence": 0.993746077287808,
+            "accuracy": 0.9899551186150887
+          }
+        ]
+      },
+      "after": {
+        "ece": 0.05993134697853581,
+        "ci_low": 0.0431607848392527,
+        "ci_high": 0.08154215800876176,
+        "nll": 0.170095657022511,
+        "mean_confidence": 0.9104594939215825,
+        "accuracy": 0.9703908409001184,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9696012633241216,
+            "accuracy": 0.9816775244299675
+          },
+          "0.9": {
+            "share_of_sequences": 0.7605606000789578,
+            "accuracy": 0.9968855437321568
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 9,
+            "mean_confidence": 0.112985989110516,
+            "accuracy": 0.4444444444444444
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 24,
+            "mean_confidence": 0.16424896324936294,
+            "accuracy": 0.4166666666666667
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 20,
+            "mean_confidence": 0.2323680237559421,
+            "accuracy": 0.6
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 23,
+            "mean_confidence": 0.3034775838961108,
+            "accuracy": 0.5217391304347826
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 24,
+            "mean_confidence": 0.37138607490761827,
+            "accuracy": 0.7083333333333334
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 35,
+            "mean_confidence": 0.43331924502194985,
+            "accuracy": 0.6285714285714286
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 36,
+            "mean_confidence": 0.49789741739200255,
+            "accuracy": 0.8888888888888888
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 34,
+            "mean_confidence": 0.5683468340337802,
+            "accuracy": 0.8529411764705882
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 72,
+            "mean_confidence": 0.6377683676982042,
+            "accuracy": 0.8333333333333334
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 119,
+            "mean_confidence": 0.7036727201922266,
+            "accuracy": 0.907563025210084
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 180,
+            "mean_confidence": 0.7702950169262498,
+            "accuracy": 0.9111111111111111
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 315,
+            "mean_confidence": 0.8367136284153178,
+            "accuracy": 0.9142857142857143
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 913,
+            "mean_confidence": 0.9062931097476236,
+            "accuracy": 0.9912376779846659
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 3262,
+            "mean_confidence": 0.9733765120021278,
+            "accuracy": 0.9972409564684243
+          }
+        ]
+      },
+      "ece_change": {
+        "difference": 0.05054284164027368,
+        "ci_low": 0.021226282987615613,
+        "ci_high": 0.07205962287169347
+      }
+    },
+    ">=70": {
+      "n_sequences": 1356,
+      "n_clusters": 175,
+      "n_classes": 36,
+      "before": {
+        "ece": 0.0944151558098809,
+        "ci_low": 0.05443991835614508,
+        "ci_high": 0.16533683197176113,
+        "nll": 0.4248746040036325,
+        "mean_confidence": 0.9565660424428203,
+        "accuracy": 0.8805309734513275,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9859882005899705,
+            "accuracy": 0.8885564697083022
+          },
+          "0.9": {
+            "share_of_sequences": 0.8746312684365781,
+            "accuracy": 0.9409780775716695
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 1,
+            "mean_confidence": 0.11449785815149406,
+            "accuracy": 1.0
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 2,
+            "mean_confidence": 0.1727419343397136,
+            "accuracy": 0.0
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 6,
+            "mean_confidence": 0.22911849522431005,
+            "accuracy": 0.16666666666666666
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 5,
+            "mean_confidence": 0.30362192282280204,
+            "accuracy": 0.2
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 2,
+            "mean_confidence": 0.3783840475826824,
+            "accuracy": 1.0
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 1,
+            "mean_confidence": 0.4193912951507713,
+            "accuracy": 0.0
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 4,
+            "mean_confidence": 0.5034338131029567,
+            "accuracy": 0.5
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 16,
+            "mean_confidence": 0.567709615072824,
+            "accuracy": 0.9375
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 14,
+            "mean_confidence": 0.6300579983378956,
+            "accuracy": 0.9285714285714286
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 4,
+            "mean_confidence": 0.6907173414800503,
+            "accuracy": 0.75
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 9,
+            "mean_confidence": 0.7739648090390604,
+            "accuracy": 0.6666666666666666
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 47,
+            "mean_confidence": 0.8395105883272728,
+            "accuracy": 0.2765957446808511
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 97,
+            "mean_confidence": 0.8955584145681835,
+            "accuracy": 0.28865979381443296
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 1148,
+            "mean_confidence": 0.9900714061566047,
+            "accuracy": 0.9660278745644599
+          }
+        ]
+      },
+      "after": {
+        "ece": 0.08645246163481497,
+        "ci_low": 0.07897182875186425,
+        "ci_high": 0.1411671671503399,
+        "nll": 0.39244524527304697,
+        "mean_confidence": 0.8785747882906374,
+        "accuracy": 0.8805309734513275,
+        "thresholds": {
+          "0.5": {
+            "share_of_sequences": 0.9587020648967551,
+            "accuracy": 0.8892307692307693
+          },
+          "0.9": {
+            "share_of_sequences": 0.5943952802359882,
+            "accuracy": 0.9739454094292804
+          }
+        },
+        "bins": [
+          {
+            "low": 0.0,
+            "high": 0.06666666666666667,
+            "n_sequences": 0,
+            "mean_confidence": null,
+            "accuracy": null
+          },
+          {
+            "low": 0.06666666666666667,
+            "high": 0.13333333333333333,
+            "n_sequences": 7,
+            "mean_confidence": 0.10653381056179925,
+            "accuracy": 0.2857142857142857
+          },
+          {
+            "low": 0.13333333333333333,
+            "high": 0.2,
+            "n_sequences": 8,
+            "mean_confidence": 0.16045195738731755,
+            "accuracy": 0.25
+          },
+          {
+            "low": 0.2,
+            "high": 0.26666666666666666,
+            "n_sequences": 2,
+            "mean_confidence": 0.21918415245837075,
+            "accuracy": 0.5
+          },
+          {
+            "low": 0.26666666666666666,
+            "high": 0.3333333333333333,
+            "n_sequences": 6,
+            "mean_confidence": 0.2993232761080876,
+            "accuracy": 0.5
+          },
+          {
+            "low": 0.3333333333333333,
+            "high": 0.4,
+            "n_sequences": 7,
+            "mean_confidence": 0.3858548417307279,
+            "accuracy": 0.8571428571428571
+          },
+          {
+            "low": 0.4,
+            "high": 0.4666666666666667,
+            "n_sequences": 21,
+            "mean_confidence": 0.43819859313199366,
+            "accuracy": 0.9523809523809523
+          },
+          {
+            "low": 0.4666666666666667,
+            "high": 0.5333333333333333,
+            "n_sequences": 7,
+            "mean_confidence": 0.49578221673825745,
+            "accuracy": 0.5714285714285714
+          },
+          {
+            "low": 0.5333333333333333,
+            "high": 0.6,
+            "n_sequences": 7,
+            "mean_confidence": 0.5747532795204641,
+            "accuracy": 1.0
+          },
+          {
+            "low": 0.6,
+            "high": 0.6666666666666666,
+            "n_sequences": 27,
+            "mean_confidence": 0.6414731357540219,
+            "accuracy": 0.7037037037037037
+          },
+          {
+            "low": 0.6666666666666666,
+            "high": 0.7333333333333333,
+            "n_sequences": 62,
+            "mean_confidence": 0.7090449506701006,
+            "accuracy": 0.3709677419354839
+          },
+          {
+            "low": 0.7333333333333333,
+            "high": 0.8,
+            "n_sequences": 70,
+            "mean_confidence": 0.7650560483719455,
+            "accuracy": 0.2857142857142857
+          },
+          {
+            "low": 0.8,
+            "high": 0.8666666666666667,
+            "n_sequences": 263,
+            "mean_confidence": 0.8360765994724099,
+            "accuracy": 0.9125475285171103
+          },
+          {
+            "low": 0.8666666666666667,
+            "high": 0.9333333333333333,
+            "n_sequences": 217,
+            "mean_confidence": 0.908711769722354,
+            "accuracy": 0.9861751152073732
+          },
+          {
+            "low": 0.9333333333333333,
+            "high": 1.0,
+            "n_sequences": 652,
+            "mean_confidence": 0.9751131366899912,
+            "accuracy": 0.9708588957055214
+          }
+        ]
+      },
+      "ece_change": {
+        "difference": -0.007962694175065926,
+        "ci_low": -0.03507009106010544,
+        "ci_high": 0.05303912330160778
+      }
+    }
+  },
+  "cluster_check": {
+    "before": {
+      "min_cluster_size": 20,
+      "n_clusters": 239,
+      "n_sequences": 28519,
+      "mean_absolute_gap": 0.10787227925231616,
+      "n_mostly_wrong_and_confident": 15,
+      "clusters": [
+        {
+          "cluster": "Q8EWQ5",
+          "n_sequences": 92,
+          "subclass": "6.3",
+          "example_name": "Aspartate--ammonia ligase",
+          "mean_confidence": 0.999945688667556,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "P0A8N7",
+          "n_sequences": 46,
+          "subclass": "6.3",
+          "example_name": "Elongation factor P--(R)-beta-lysine ligase",
+          "mean_confidence": 0.9991946541978246,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q8L9A9",
+          "n_sequences": 46,
+          "subclass": "2.4",
+          "example_name": "Probable xyloglucan endotransglucosylase/hydrolase protein 17",
+          "mean_confidence": 0.9977661130606346,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "P0A6L4",
+          "n_sequences": 30,
+          "subclass": "4.1",
+          "example_name": "N-acetylneuraminate lyase",
+          "mean_confidence": 0.9927011568371071,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "P72139",
+          "n_sequences": 526,
+          "subclass": "4.3",
+          "example_name": "Imidazole glycerol phosphate synthase subunit HisF",
+          "mean_confidence": 0.9906654910675029,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "C4Y459",
+          "n_sequences": 561,
+          "subclass": "6.3",
+          "example_name": "Glutamyl-tRNA(Gln) amidotransferase subunit B, mitochondrial",
+          "mean_confidence": 0.9794804718891241,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "P11718",
+          "n_sequences": 30,
+          "subclass": "7.1",
+          "example_name": "ATPase 2, plasma membrane-type",
+          "mean_confidence": 0.9996163575173178,
+          "accuracy": 0.03333333333333333
+        },
+        {
+          "cluster": "Q07UU1",
+          "n_sequences": 153,
+          "subclass": "2.7",
+          "example_name": "Sulfate adenylyltransferase subunit 2",
+          "mean_confidence": 0.953710855014805,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q937F6",
+          "n_sequences": 41,
+          "subclass": "4.1",
+          "example_name": "Xylulose-5-phosphate/fructose-6-phosphate phosphoketolase",
+          "mean_confidence": 0.9187689661991638,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "C0JB52",
+          "n_sequences": 204,
+          "subclass": "4.6",
+          "example_name": "Dermonecrotic toxin StSicTox-betaIB1i",
+          "mean_confidence": 0.9071383206598984,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "B0R5F0",
+          "n_sequences": 38,
+          "subclass": "6.3",
+          "example_name": "Glutamyl-tRNA(Gln) amidotransferase subunit E",
+          "mean_confidence": 0.8707622183986276,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "B1I057",
+          "n_sequences": 188,
+          "subclass": "2.2",
+          "example_name": "Transaldolase",
+          "mean_confidence": 0.92255890967302,
+          "accuracy": 0.09042553191489362
+        },
+        {
+          "cluster": "O57809",
+          "n_sequences": 74,
+          "subclass": "4.4",
+          "example_name": "D-cysteine desulfhydrase",
+          "mean_confidence": 0.8335980041244914,
+          "accuracy": 0.02702702702702703
+        },
+        {
+          "cluster": "O27606",
+          "n_sequences": 22,
+          "subclass": "1.18",
+          "example_name": "Nitrogenase molybdenum-iron protein beta chain",
+          "mean_confidence": 0.8672986844082868,
+          "accuracy": 0.09090909090909091
+        },
+        {
+          "cluster": "A9B4J6",
+          "n_sequences": 54,
+          "subclass": "1.13",
+          "example_name": "Tryptophan 2,3-dioxygenase",
+          "mean_confidence": 0.7759333856862631,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "O04865",
+          "n_sequences": 20,
+          "subclass": "3.1",
+          "example_name": "Phospholipase D beta 2",
+          "mean_confidence": 0.7381971003873116,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "A2VD33",
+          "n_sequences": 37,
+          "subclass": "2.8",
+          "example_name": "Molybdenum cofactor sulfurase",
+          "mean_confidence": 0.7375381467578642,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q54W07",
+          "n_sequences": 20,
+          "subclass": "3.6",
+          "example_name": "EKC/KEOPS complex subunit TP53RK",
+          "mean_confidence": 0.8280890256456667,
+          "accuracy": 0.1
+        },
+        {
+          "cluster": "A5UC01",
+          "n_sequences": 44,
+          "subclass": "3.5",
+          "example_name": "N(4)-acetylcytidine amidohydrolase",
+          "mean_confidence": 0.6538867608488176,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q6FUV3",
+          "n_sequences": 40,
+          "subclass": "1.14",
+          "example_name": "Deoxyhypusine hydroxylase",
+          "mean_confidence": 0.5801378419844492,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "O29054",
+          "n_sequences": 35,
+          "subclass": "2.5",
+          "example_name": "Flavin prenyltransferase UbiX",
+          "mean_confidence": 0.5706375611114154,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "A5FXV3",
+          "n_sequences": 94,
+          "subclass": "1.17",
+          "example_name": "Heme A synthase",
+          "mean_confidence": 0.47700292894708357,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q87A63",
+          "n_sequences": 74,
+          "subclass": "2.7",
+          "example_name": "Polyphosphate kinase",
+          "mean_confidence": 0.6648550730166247,
+          "accuracy": 0.1891891891891892
+        },
+        {
+          "cluster": "Q95NN1",
+          "n_sequences": 29,
+          "subclass": "1.13",
+          "example_name": "Tryptophan 2,3-dioxygenase",
+          "mean_confidence": 0.3754083173123832,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q4KIP4",
+          "n_sequences": 49,
+          "subclass": "3.5",
+          "example_name": "Kynurenine formamidase",
+          "mean_confidence": 0.3876822844960697,
+          "accuracy": 0.02040816326530612
+        },
+        {
+          "cluster": "A2SKR5",
+          "n_sequences": 215,
+          "subclass": "1.1",
+          "example_name": "Shikimate dehydrogenase (NADP(+))",
+          "mean_confidence": 0.3938698808504463,
+          "accuracy": 0.037209302325581395
+        },
+        {
+          "cluster": "O49675",
+          "n_sequences": 21,
+          "subclass": "1.13",
+          "example_name": "9-cis-epoxycarotenoid dioxygenase NCED3, chloroplastic",
+          "mean_confidence": 0.996270042192136,
+          "accuracy": 0.7142857142857143
+        },
+        {
+          "cluster": "A5GR50",
+          "n_sequences": 295,
+          "subclass": "4.2",
+          "example_name": "3-dehydroquinate dehydratase",
+          "mean_confidence": 0.28666559977199574,
+          "accuracy": 0.06779661016949153
+        },
+        {
+          "cluster": "A0A1D6K6U5",
+          "n_sequences": 35,
+          "subclass": "5.5",
+          "example_name": "Syn-copalyl diphosphate synthase, chloroplastic",
+          "mean_confidence": 0.9499849186219054,
+          "accuracy": 0.7714285714285715
+        },
+        {
+          "cluster": "Q38707",
+          "n_sequences": 109,
+          "subclass": "1.1",
+          "example_name": "NADP-dependent alcohol dehydrogenase 7",
+          "mean_confidence": 0.9544589872738827,
+          "accuracy": 0.8715596330275229
+        },
+        {
+          "cluster": "Q638R8",
+          "n_sequences": 74,
+          "subclass": "4.1",
+          "example_name": "4-hydroxy-4-methyl-2-oxoglutarate aldolase",
+          "mean_confidence": 0.5941700958728117,
+          "accuracy": 0.5405405405405406
+        },
+        {
+          "cluster": "A0A5J6BJN2",
+          "n_sequences": 45,
+          "subclass": "1.14",
+          "example_name": "AA9 family lytic polysaccharide monooxygenase A",
+          "mean_confidence": 0.9978071747512456,
+          "accuracy": 0.9777777777777777
+        },
+        {
+          "cluster": "O29313",
+          "n_sequences": 65,
+          "subclass": "6.3",
+          "example_name": "Glutamine synthetase",
+          "mean_confidence": 0.9997566297498345,
+          "accuracy": 0.9846153846153847
+        },
+        {
+          "cluster": "A5G9B8",
+          "n_sequences": 73,
+          "subclass": "1.5",
+          "example_name": "F(420)H(2) dehydrogenase subunit B",
+          "mean_confidence": 0.9974534051497087,
+          "accuracy": 0.9863013698630136
+        },
+        {
+          "cluster": "S5M744",
+          "n_sequences": 107,
+          "subclass": "6.2",
+          "example_name": "Medium-chain acyl-CoA ligase ACSF2, mitochondrial",
+          "mean_confidence": 0.9967932714548186,
+          "accuracy": 0.9906542056074766
+        },
+        {
+          "cluster": "Q8GAK7",
+          "n_sequences": 302,
+          "subclass": "1.2",
+          "example_name": "4-trimethylaminobutyraldehyde dehydrogenase",
+          "mean_confidence": 0.998829811505756,
+          "accuracy": 0.9933774834437086
+        },
+        {
+          "cluster": "Q9C6S7",
+          "n_sequences": 21,
+          "subclass": "2.1",
+          "example_name": "Probable pectin methyltransferase QUA3",
+          "mean_confidence": 0.9999438113004769,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P16294",
+          "n_sequences": 47,
+          "subclass": "3.4",
+          "example_name": "Coagulation factor IX",
+          "mean_confidence": 0.9999423416088462,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A6GVR5",
+          "n_sequences": 491,
+          "subclass": "2.1",
+          "example_name": "Dimethyladenosine transferase 1, mitochondrial",
+          "mean_confidence": 0.9999124177963641,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q74IX0",
+          "n_sequences": 25,
+          "subclass": "2.1",
+          "example_name": "Ribosomal protein L11 methyltransferase",
+          "mean_confidence": 0.9998898733811207,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A4SQM2",
+          "n_sequences": 84,
+          "subclass": "2.1",
+          "example_name": "Ribosomal RNA large subunit methyltransferase G",
+          "mean_confidence": 0.9998664905212938,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q19825",
+          "n_sequences": 52,
+          "subclass": "6.1",
+          "example_name": "Arginine--tRNA ligase, cytoplasmic",
+          "mean_confidence": 0.9998627691875063,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5FHL5",
+          "n_sequences": 86,
+          "subclass": "6.1",
+          "example_name": "Proline--tRNA ligase",
+          "mean_confidence": 0.9998422824008703,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B2I923",
+          "n_sequences": 46,
+          "subclass": "2.8",
+          "example_name": "Lipoyl synthase",
+          "mean_confidence": 0.9998358381958379,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "D4GWJ7",
+          "n_sequences": 28,
+          "subclass": "3.5",
+          "example_name": "GTP cyclohydrolase MptA",
+          "mean_confidence": 0.9998285800738699,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q07536",
+          "n_sequences": 50,
+          "subclass": "1.2",
+          "example_name": "Methylmalonate-semialdehyde/malonate-semialdehyde dehydrogenase [acylating], mitochondrial",
+          "mean_confidence": 0.9998100500902859,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0JWY8",
+          "n_sequences": 63,
+          "subclass": "3.4",
+          "example_name": "Depupylase",
+          "mean_confidence": 0.9839343327008865,
+          "accuracy": 0.9841269841269841
+        },
+        {
+          "cluster": "Q9HKM5",
+          "n_sequences": 379,
+          "subclass": "2.5",
+          "example_name": "Porphobilinogen deaminase",
+          "mean_confidence": 0.9997895571077482,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O33367",
+          "n_sequences": 26,
+          "subclass": "5.6",
+          "example_name": "DNA gyrase subunit B",
+          "mean_confidence": 0.999775906477654,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q13XD0",
+          "n_sequences": 66,
+          "subclass": "3.1",
+          "example_name": "Ribonuclease HII",
+          "mean_confidence": 0.9997753645666734,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O94746",
+          "n_sequences": 34,
+          "subclass": "5.2",
+          "example_name": "Peptidyl-prolyl cis-trans isomerase FKBP1A",
+          "mean_confidence": 0.9996835111939423,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A5D193",
+          "n_sequences": 317,
+          "subclass": "5.1",
+          "example_name": "Diaminopimelate epimerase",
+          "mean_confidence": 0.9996691753686203,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B6JF93",
+          "n_sequences": 362,
+          "subclass": "2.8",
+          "example_name": "Ribosomal protein uS12 methylthiotransferase RimO",
+          "mean_confidence": 0.9996557000705437,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C0QSS1",
+          "n_sequences": 36,
+          "subclass": "3.1",
+          "example_name": "Endoribonuclease YbeY",
+          "mean_confidence": 0.9996554011647384,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2RHZ3",
+          "n_sequences": 572,
+          "subclass": "6.1",
+          "example_name": "Alanine--tRNA ligase, mitochondrial",
+          "mean_confidence": 0.9996372412857983,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9Z528",
+          "n_sequences": 110,
+          "subclass": "5.4",
+          "example_name": "tRNA pseudouridine synthase B",
+          "mean_confidence": 0.9996192911743612,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "I1KEV6",
+          "n_sequences": 32,
+          "subclass": "2.4",
+          "example_name": "Anthocyanidin 3-O-glucoside 2'''-O-xylosyltransferase",
+          "mean_confidence": 0.9996149991668394,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1YGQ4",
+          "n_sequences": 24,
+          "subclass": "6.3",
+          "example_name": "tRNA(Ile)-lysidine synthase",
+          "mean_confidence": 0.9995913781338928,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q921J4",
+          "n_sequences": 23,
+          "subclass": "2.3",
+          "example_name": "Ubiquitin-conjugating enzyme E2 S",
+          "mean_confidence": 0.9995838888651787,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q11126",
+          "n_sequences": 23,
+          "subclass": "2.4",
+          "example_name": "4-galactosyl-N-acetylglucosaminide 3-alpha-L-fucosyltransferase FUT6",
+          "mean_confidence": 0.999580269731204,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q67JG9",
+          "n_sequences": 22,
+          "subclass": "6.3",
+          "example_name": "tRNA(Ile)-lysidine synthase",
+          "mean_confidence": 0.9995703414103217,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q0JI49",
+          "n_sequences": 57,
+          "subclass": "2.7",
+          "example_name": "CBL-interacting serine/threonine-protein kinase 13",
+          "mean_confidence": 0.9995687824818887,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q3AF87",
+          "n_sequences": 298,
+          "subclass": "6.1",
+          "example_name": "Valine--tRNA ligase",
+          "mean_confidence": 0.9995676517058169,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2NJM5",
+          "n_sequences": 138,
+          "subclass": "2.3",
+          "example_name": "tRNA N6-adenosine threonylcarbamoyltransferase",
+          "mean_confidence": 0.9995510655099331,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A8NK72",
+          "n_sequences": 22,
+          "subclass": "1.11",
+          "example_name": "Manganese peroxidase 1",
+          "mean_confidence": 0.9995500210718443,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P21642",
+          "n_sequences": 81,
+          "subclass": "4.1",
+          "example_name": "Phosphoenolpyruvate carboxykinase, cytosolic [GTP]",
+          "mean_confidence": 0.9995121574860653,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6CJA8",
+          "n_sequences": 65,
+          "subclass": "2.7",
+          "example_name": "Mitogen-activated protein kinase 10",
+          "mean_confidence": 0.9995121121877837,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q17446",
+          "n_sequences": 95,
+          "subclass": "2.7",
+          "example_name": "Mitogen-activated protein kinase 3",
+          "mean_confidence": 0.9995039899015866,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A8I9X4",
+          "n_sequences": 137,
+          "subclass": "6.3",
+          "example_name": "Aspartyl/glutamyl-tRNA(Asn/Gln) amidotransferase subunit C",
+          "mean_confidence": 0.9994981443072887,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A5VRR6",
+          "n_sequences": 38,
+          "subclass": "3.1",
+          "example_name": "Peptidyl-tRNA hydrolase",
+          "mean_confidence": 0.9994861433370431,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "D4H6M0",
+          "n_sequences": 36,
+          "subclass": "2.4",
+          "example_name": "Sucrose synthase 2",
+          "mean_confidence": 0.9994810312896383,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q41741",
+          "n_sequences": 165,
+          "subclass": "3.6",
+          "example_name": "ATP-dependent RNA helicase DDX39A",
+          "mean_confidence": 0.9994797464050849,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q887N8",
+          "n_sequences": 119,
+          "subclass": "3.6",
+          "example_name": "Probable ATP-dependent RNA helicase DDX49",
+          "mean_confidence": 0.9994719849482141,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q694A3",
+          "n_sequences": 173,
+          "subclass": "1.15",
+          "example_name": "Superoxide dismutase [Mn], mitochondrial",
+          "mean_confidence": 0.9994625311143607,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9NL98",
+          "n_sequences": 64,
+          "subclass": "1.11",
+          "example_name": "Peroxiredoxin-2",
+          "mean_confidence": 0.9994524177686444,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B8EJT0",
+          "n_sequences": 45,
+          "subclass": "1.7",
+          "example_name": "NADPH-dependent 7-cyano-7-deazaguanine reductase",
+          "mean_confidence": 0.9994460010212519,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P9WJP1",
+          "n_sequences": 47,
+          "subclass": "2.1",
+          "example_name": "Ribosomal RNA small subunit methyltransferase H",
+          "mean_confidence": 0.9994396612004031,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q3JCY2",
+          "n_sequences": 151,
+          "subclass": "2.1",
+          "example_name": "23S rRNA (uracil(1939)-C(5))-methyltransferase RlmD",
+          "mean_confidence": 0.9994357073165837,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P31677",
+          "n_sequences": 41,
+          "subclass": "2.4",
+          "example_name": "Trehalose-6-phosphate synthase",
+          "mean_confidence": 0.9994330805467794,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q21CC1",
+          "n_sequences": 66,
+          "subclass": "2.1",
+          "example_name": "Acetyl-coenzyme A carboxylase carboxyl transferase subunit beta",
+          "mean_confidence": 0.9993837121976692,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P54166",
+          "n_sequences": 23,
+          "subclass": "2.4",
+          "example_name": "Processive diacylglycerol beta-glucosyltransferase",
+          "mean_confidence": 0.9993609255536984,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6H5U3",
+          "n_sequences": 20,
+          "subclass": "1.14",
+          "example_name": "Sphingolipid delta(4)-desaturase/C4-monooxygenase DES2",
+          "mean_confidence": 0.9993540393952621,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A8FCN9",
+          "n_sequences": 25,
+          "subclass": "2.7",
+          "example_name": "Probable molybdenum cofactor guanylyltransferase",
+          "mean_confidence": 0.9993521186345514,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P0CO20",
+          "n_sequences": 37,
+          "subclass": "2.7",
+          "example_name": "Mannose-1-phosphate guanylyltransferase catalytic subunit beta",
+          "mean_confidence": 0.9993477227341995,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q891S7",
+          "n_sequences": 45,
+          "subclass": "2.4",
+          "example_name": "Nicotinate-nucleotide--dimethylbenzimidazole phosphoribosyltransferase",
+          "mean_confidence": 0.999329861282593,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q92RA4",
+          "n_sequences": 132,
+          "subclass": "1.8",
+          "example_name": "Peptide methionine sulfoxide reductase MsrB",
+          "mean_confidence": 0.9992906859556578,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q0J969",
+          "n_sequences": 30,
+          "subclass": "3.1",
+          "example_name": "Acyl-protein thioesterase 1",
+          "mean_confidence": 0.9992881319439688,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P56725",
+          "n_sequences": 85,
+          "subclass": "2.4",
+          "example_name": "Flavonol 7-O-beta-glucosyltransferase UGT74F1",
+          "mean_confidence": 0.9992830442618399,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q1AXT1",
+          "n_sequences": 116,
+          "subclass": "6.3",
+          "example_name": "Glutamyl-tRNA(Gln) amidotransferase subunit C",
+          "mean_confidence": 0.9992612074566044,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q83HU9",
+          "n_sequences": 33,
+          "subclass": "3.1",
+          "example_name": "Ribonuclease YqgF",
+          "mean_confidence": 0.9992528537591691,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8TWG9",
+          "n_sequences": 23,
+          "subclass": "6.3",
+          "example_name": "7-cyano-7-deazaguanine synthase",
+          "mean_confidence": 0.9991738872747599,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6AK68",
+          "n_sequences": 121,
+          "subclass": "2.7",
+          "example_name": "Phosphoenolpyruvate synthase regulatory protein",
+          "mean_confidence": 0.9991730535461525,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q83GS7",
+          "n_sequences": 26,
+          "subclass": "6.1",
+          "example_name": "Tyrosine--tRNA ligase, mitochondrial",
+          "mean_confidence": 0.9991383022657676,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6AXR4",
+          "n_sequences": 21,
+          "subclass": "3.2",
+          "example_name": "Beta-hexosaminidase subunit alpha",
+          "mean_confidence": 0.9991291920599578,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O59391",
+          "n_sequences": 37,
+          "subclass": "4.2",
+          "example_name": "Methanogen homoaconitase large subunit",
+          "mean_confidence": 0.9990826345040215,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8P2A6",
+          "n_sequences": 27,
+          "subclass": "2.1",
+          "example_name": "Ribosomal RNA small subunit methyltransferase I",
+          "mean_confidence": 0.999045824841019,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7VBZ5",
+          "n_sequences": 634,
+          "subclass": "6.1",
+          "example_name": "Leucine--tRNA ligase, mitochondrial",
+          "mean_confidence": 0.9990413545947012,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5WW20",
+          "n_sequences": 140,
+          "subclass": "6.3",
+          "example_name": "Phosphoribosylaminoimidazole-succinocarboxamide synthase",
+          "mean_confidence": 0.9989730042297834,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1LBK1",
+          "n_sequences": 34,
+          "subclass": "3.1",
+          "example_name": "Ribonuclease P protein component",
+          "mean_confidence": 0.9989691479246251,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0B6S6",
+          "n_sequences": 26,
+          "subclass": "2.1",
+          "example_name": "tRNA (pseudouridine(54)-N(1))-methyltransferase",
+          "mean_confidence": 0.9988848541264246,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P03940",
+          "n_sequences": 31,
+          "subclass": "1.14",
+          "example_name": "Steroid 17-alpha-hydroxylase/17,20 lyase",
+          "mean_confidence": 0.998819789984156,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O26687",
+          "n_sequences": 338,
+          "subclass": "6.1",
+          "example_name": "Methionine--tRNA ligase",
+          "mean_confidence": 0.9987882544764293,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9UMQ6",
+          "n_sequences": 38,
+          "subclass": "3.4",
+          "example_name": "Calpain-1 catalytic subunit",
+          "mean_confidence": 0.9987444381420328,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8UHD5",
+          "n_sequences": 29,
+          "subclass": "3.1",
+          "example_name": "Exodeoxyribonuclease 7 small subunit",
+          "mean_confidence": 0.9987395408730694,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0PZS6",
+          "n_sequences": 33,
+          "subclass": "2.7",
+          "example_name": "Anti-sigma F factor",
+          "mean_confidence": 0.9986701737740354,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q814Q2",
+          "n_sequences": 51,
+          "subclass": "3.5",
+          "example_name": "Guanidino acid hydrolase, mitochondrial",
+          "mean_confidence": 0.9986616216052296,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C5E0G6",
+          "n_sequences": 23,
+          "subclass": "3.4",
+          "example_name": "Vacuolar membrane protease",
+          "mean_confidence": 0.9986282260450873,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5FQN4",
+          "n_sequences": 33,
+          "subclass": "7.6",
+          "example_name": "Cytochrome c biogenesis ATP-binding export protein CcmA",
+          "mean_confidence": 0.9985643611280748,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C5D6L2",
+          "n_sequences": 21,
+          "subclass": "3.1",
+          "example_name": "3'-5' exoribonuclease YhaM",
+          "mean_confidence": 0.998562485859444,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8SS24",
+          "n_sequences": 30,
+          "subclass": "3.6",
+          "example_name": "dITP/XTP pyrophosphatase",
+          "mean_confidence": 0.9985607770175017,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9WY79",
+          "n_sequences": 187,
+          "subclass": "6.3",
+          "example_name": "UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate ligase",
+          "mean_confidence": 0.9985371008577338,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9PNJ0",
+          "n_sequences": 25,
+          "subclass": "2.7",
+          "example_name": "4-diphosphocytidyl-2-C-methyl-D-erythritol kinase",
+          "mean_confidence": 0.998495220968766,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q0URQ5",
+          "n_sequences": 35,
+          "subclass": "3.4",
+          "example_name": "Vacuolar membrane protease",
+          "mean_confidence": 0.9984833564772162,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A3MLY7",
+          "n_sequences": 110,
+          "subclass": "3.5",
+          "example_name": "N-succinylarginine dihydrolase",
+          "mean_confidence": 0.9984776690874707,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P80506",
+          "n_sequences": 294,
+          "subclass": "1.2",
+          "example_name": "Glyceraldehyde-3-phosphate dehydrogenase",
+          "mean_confidence": 0.9984738245722927,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q4X0C2",
+          "n_sequences": 35,
+          "subclass": "3.6",
+          "example_name": "Probable ATP-dependent RNA helicase DDX56",
+          "mean_confidence": 0.9983726579142786,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P45614",
+          "n_sequences": 22,
+          "subclass": "5.4",
+          "example_name": "Ribosomal large subunit pseudouridine synthase C",
+          "mean_confidence": 0.9983680007761632,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P50214",
+          "n_sequences": 20,
+          "subclass": "1.1",
+          "example_name": "Isocitrate dehydrogenase [NADP]",
+          "mean_confidence": 0.9983429496270446,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B0G189",
+          "n_sequences": 651,
+          "subclass": "3.6",
+          "example_name": "Elongation factor 4",
+          "mean_confidence": 0.9983062897596785,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O26965",
+          "n_sequences": 54,
+          "subclass": "2.7",
+          "example_name": "Uridylate kinase",
+          "mean_confidence": 0.9982860358810259,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q31EK3",
+          "n_sequences": 184,
+          "subclass": "3.1",
+          "example_name": "Putative pre-16S rRNA nuclease",
+          "mean_confidence": 0.998230476914529,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C3PNH0",
+          "n_sequences": 29,
+          "subclass": "2.7",
+          "example_name": "NAD kinase",
+          "mean_confidence": 0.9982225209956255,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B9DIP2",
+          "n_sequences": 422,
+          "subclass": "5.3",
+          "example_name": "1-(5-phosphoribosyl)-5-[(5-phosphoribosylamino)methylideneamino] imidazole-4-carboxamide isomerase",
+          "mean_confidence": 0.9981477696000776,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1L6Z7",
+          "n_sequences": 38,
+          "subclass": "2.5",
+          "example_name": "Digeranylgeranylglyceryl phosphate synthase",
+          "mean_confidence": 0.9981056958209885,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P74505",
+          "n_sequences": 53,
+          "subclass": "2.4",
+          "example_name": "Undecaprenyl-phosphate 4-deoxy-4-formamido-L-arabinose transferase",
+          "mean_confidence": 0.9981010892685238,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A2Z212",
+          "n_sequences": 75,
+          "subclass": "1.14",
+          "example_name": "3-epi-6-deoxocathasterone 23-monooxygenase CYP90D1",
+          "mean_confidence": 0.997844648281213,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q11L82",
+          "n_sequences": 307,
+          "subclass": "2.7",
+          "example_name": "Tetraacyldisaccharide 4'-kinase",
+          "mean_confidence": 0.9978021001366196,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C0ZIL2",
+          "n_sequences": 492,
+          "subclass": "5.4",
+          "example_name": "tRNA pseudouridine synthase A",
+          "mean_confidence": 0.9976868675523157,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P13063",
+          "n_sequences": 22,
+          "subclass": "1.12",
+          "example_name": "Hydrogenase-1 small chain",
+          "mean_confidence": 0.9976863822607651,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P59520",
+          "n_sequences": 96,
+          "subclass": "5.3",
+          "example_name": "1-(5-phosphoribosyl)-5-[(5-phosphoribosylamino)methylideneamino] imidazole-4-carboxamide isomerase",
+          "mean_confidence": 0.9976466767174985,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A9BI45",
+          "n_sequences": 315,
+          "subclass": "3.4",
+          "example_name": "ATP-dependent protease subunit HslV",
+          "mean_confidence": 0.9974040517188069,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P0C7M7",
+          "n_sequences": 206,
+          "subclass": "6.2",
+          "example_name": "Acyl-coenzyme A synthetase ACSM3, mitochondrial",
+          "mean_confidence": 0.9973840348092609,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q1AW87",
+          "n_sequences": 343,
+          "subclass": "2.3",
+          "example_name": "Beta-ketoacyl-[acyl-carrier-protein] synthase III 2",
+          "mean_confidence": 0.9973768403885361,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q3SK37",
+          "n_sequences": 310,
+          "subclass": "4.6",
+          "example_name": "2-C-methyl-D-erythritol 2,4-cyclodiphosphate synthase",
+          "mean_confidence": 0.9973633020339493,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5L6Q8",
+          "n_sequences": 139,
+          "subclass": "3.4",
+          "example_name": "Lipoprotein signal peptidase",
+          "mean_confidence": 0.9973036787310633,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q58730",
+          "n_sequences": 32,
+          "subclass": "2.7",
+          "example_name": "UTP--glucose-1-phosphate uridylyltransferase",
+          "mean_confidence": 0.9972892546068899,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q88EI9",
+          "n_sequences": 24,
+          "subclass": "2.7",
+          "example_name": "Aspartokinase 2",
+          "mean_confidence": 0.9972417942564243,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5E9L5",
+          "n_sequences": 30,
+          "subclass": "2.1",
+          "example_name": "Protein arginine N-methyltransferase 6",
+          "mean_confidence": 0.9971757641494281,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9ZPY2",
+          "n_sequences": 44,
+          "subclass": "1.10",
+          "example_name": "Laccase-4",
+          "mean_confidence": 0.9971696845292772,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P20711",
+          "n_sequences": 33,
+          "subclass": "4.1",
+          "example_name": "Aromatic-L-amino-acid decarboxylase",
+          "mean_confidence": 0.9970880303657911,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7MKQ9",
+          "n_sequences": 46,
+          "subclass": "2.7",
+          "example_name": "N-acetyl-D-glucosamine kinase",
+          "mean_confidence": 0.9970267664194702,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A4VQZ7",
+          "n_sequences": 304,
+          "subclass": "2.3",
+          "example_name": "Octanoyltransferase LIP2, mitochondrial",
+          "mean_confidence": 0.9966948552602818,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q97CL5",
+          "n_sequences": 32,
+          "subclass": "2.8",
+          "example_name": "Molybdopterin synthase catalytic subunit",
+          "mean_confidence": 0.9964503276718358,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8VZJ2",
+          "n_sequences": 39,
+          "subclass": "3.2",
+          "example_name": "Glucan endo-1,3-beta-glucosidase, acidic isoform",
+          "mean_confidence": 0.9964312504469215,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0QPN1",
+          "n_sequences": 95,
+          "subclass": "5.6",
+          "example_name": "DNA gyrase subunit A",
+          "mean_confidence": 0.9963641929729076,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7VD93",
+          "n_sequences": 62,
+          "subclass": "4.2",
+          "example_name": "Pterin-4-alpha-carbinolamine dehydratase 2",
+          "mean_confidence": 0.9961205455053601,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A7GW99",
+          "n_sequences": 23,
+          "subclass": "2.5",
+          "example_name": "tRNA dimethylallyltransferase",
+          "mean_confidence": 0.9960531406922172,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2N6Q7",
+          "n_sequences": 284,
+          "subclass": "3.1",
+          "example_name": "Exodeoxyribonuclease 7 large subunit",
+          "mean_confidence": 0.995957276370674,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A5FZN7",
+          "n_sequences": 30,
+          "subclass": "6.3",
+          "example_name": "Dethiobiotin synthetase",
+          "mean_confidence": 0.9957673330109837,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O88451",
+          "n_sequences": 21,
+          "subclass": "1.1",
+          "example_name": "17-beta-hydroxysteroid dehydrogenase type 6",
+          "mean_confidence": 0.9956856929320927,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6N1Y2",
+          "n_sequences": 86,
+          "subclass": "2.7",
+          "example_name": "Homoserine kinase",
+          "mean_confidence": 0.9952973523518973,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B9KHN3",
+          "n_sequences": 138,
+          "subclass": "3.5",
+          "example_name": "dCTP deaminase",
+          "mean_confidence": 0.9952907802437101,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8S9G6",
+          "n_sequences": 22,
+          "subclass": "2.3",
+          "example_name": "Spermidine sinapoyl-CoA acyltransferase",
+          "mean_confidence": 0.9951438738882614,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A9WB45",
+          "n_sequences": 207,
+          "subclass": "2.2",
+          "example_name": "2-succinyl-5-enolpyruvyl-6-hydroxy-3-cyclohexene-1-carboxylate synthase",
+          "mean_confidence": 0.9950928444717895,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P89116",
+          "n_sequences": 25,
+          "subclass": "3.4",
+          "example_name": "Caspase-3",
+          "mean_confidence": 0.994954159441967,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9PHY2",
+          "n_sequences": 304,
+          "subclass": "1.1",
+          "example_name": "L-lactate dehydrogenase A chain",
+          "mean_confidence": 0.9949045244452016,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2FL43",
+          "n_sequences": 149,
+          "subclass": "7.1",
+          "example_name": "V-type proton ATPase catalytic subunit A",
+          "mean_confidence": 0.9878951553510692,
+          "accuracy": 0.9932885906040269
+        },
+        {
+          "cluster": "Q1B5T7",
+          "n_sequences": 123,
+          "subclass": "3.1",
+          "example_name": "Oligoribonuclease",
+          "mean_confidence": 0.9945975160855339,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P09391",
+          "n_sequences": 27,
+          "subclass": "3.4",
+          "example_name": "Rhomboid protease GlpG",
+          "mean_confidence": 0.9943844191564173,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6D3R5",
+          "n_sequences": 104,
+          "subclass": "6.3",
+          "example_name": "Ribosomal protein bS6--L-glutamate ligase",
+          "mean_confidence": 0.9940994618416696,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q049G8",
+          "n_sequences": 125,
+          "subclass": "6.3",
+          "example_name": "tRNA(Met) cytidine acetate ligase",
+          "mean_confidence": 0.8980640153989895,
+          "accuracy": 0.904
+        },
+        {
+          "cluster": "A1WXV9",
+          "n_sequences": 143,
+          "subclass": "7.1",
+          "example_name": "NADH-quinone oxidoreductase subunit 9",
+          "mean_confidence": 0.9940149903834888,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q19VC7",
+          "n_sequences": 124,
+          "subclass": "1.10",
+          "example_name": "Photosystem II D2 protein",
+          "mean_confidence": 0.9939568119649622,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O52354",
+          "n_sequences": 131,
+          "subclass": "1.1",
+          "example_name": "L-lactate dehydrogenase",
+          "mean_confidence": 0.9935877349291411,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P73335",
+          "n_sequences": 39,
+          "subclass": "3.1",
+          "example_name": "3'-5' ssDNA/RNA exonuclease TatD",
+          "mean_confidence": 0.9934569103704772,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O34980",
+          "n_sequences": 85,
+          "subclass": "3.5",
+          "example_name": "IAA-amino acid hydrolase ILR1-like 4",
+          "mean_confidence": 0.9684417958394688,
+          "accuracy": 0.9764705882352941
+        },
+        {
+          "cluster": "P9WFS0",
+          "n_sequences": 88,
+          "subclass": "2.4",
+          "example_name": "Thymidine phosphorylase",
+          "mean_confidence": 0.9910598010115605,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2S2I3",
+          "n_sequences": 286,
+          "subclass": "3.1",
+          "example_name": "Fructose-1,6-bisphosphatase 1",
+          "mean_confidence": 0.991026684076935,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8DE84",
+          "n_sequences": 89,
+          "subclass": "1.8",
+          "example_name": "Mitochondrial peptide methionine sulfoxide reductase",
+          "mean_confidence": 0.9904495109646122,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P28206",
+          "n_sequences": 23,
+          "subclass": "3.1",
+          "example_name": "Tyrosine-protein phosphatase 6",
+          "mean_confidence": 0.9894382716444207,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q73QZ3",
+          "n_sequences": 356,
+          "subclass": "3.4",
+          "example_name": "Cytosol aminopeptidase",
+          "mean_confidence": 0.9894229187411292,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O25441",
+          "n_sequences": 38,
+          "subclass": "5.4",
+          "example_name": "Ribosomal large subunit pseudouridine synthase D",
+          "mean_confidence": 0.9887856361906934,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A3CSX5",
+          "n_sequences": 46,
+          "subclass": "2.1",
+          "example_name": "Fibrillarin-like rRNA/tRNA 2'-O-methyltransferase",
+          "mean_confidence": 0.9884424597180058,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1L7J8",
+          "n_sequences": 62,
+          "subclass": "2.7",
+          "example_name": "Glycerol-3-phosphate cytidylyltransferase",
+          "mean_confidence": 0.987989926379785,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2GEH7",
+          "n_sequences": 704,
+          "subclass": "6.3",
+          "example_name": "Adenylosuccinate synthetase isozyme 2",
+          "mean_confidence": 0.9877022643660598,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q15ZU3",
+          "n_sequences": 65,
+          "subclass": "2.8",
+          "example_name": "Thiosulfate sulfurtransferase GlpE",
+          "mean_confidence": 0.9874807324301608,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9LMB9",
+          "n_sequences": 43,
+          "subclass": "2.7",
+          "example_name": "Cysteine-rich receptor-like protein kinase 6",
+          "mean_confidence": 0.98669903695151,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8JFZ2",
+          "n_sequences": 50,
+          "subclass": "2.5",
+          "example_name": "Glutathione S-transferase A1",
+          "mean_confidence": 0.9866532373634701,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9PQ25",
+          "n_sequences": 312,
+          "subclass": "3.5",
+          "example_name": "Peptide deformylase",
+          "mean_confidence": 0.9863321793527918,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B5ES07",
+          "n_sequences": 463,
+          "subclass": "2.1",
+          "example_name": "3-methyl-2-oxobutanoate hydroxymethyltransferase",
+          "mean_confidence": 0.9860369095541659,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7UGV1",
+          "n_sequences": 399,
+          "subclass": "2.5",
+          "example_name": "6,7-dimethyl-8-ribityllumazine synthase",
+          "mean_confidence": 0.985744100112095,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "D7PHZ8",
+          "n_sequences": 32,
+          "subclass": "3.1",
+          "example_name": "Endoribonuclease LACTB2",
+          "mean_confidence": 0.9857159408398912,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B0SM60",
+          "n_sequences": 369,
+          "subclass": "1.1",
+          "example_name": "1-deoxy-D-xylulose 5-phosphate reductoisomerase",
+          "mean_confidence": 0.9854679292919343,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2RP80",
+          "n_sequences": 237,
+          "subclass": "3.1",
+          "example_name": "Hydroxyacylglutathione hydrolase, mitochondrial",
+          "mean_confidence": 0.9845888239478315,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9AMS6",
+          "n_sequences": 260,
+          "subclass": "4.1",
+          "example_name": "Aspartate 1-decarboxylase",
+          "mean_confidence": 0.942218586788436,
+          "accuracy": 0.9576923076923077
+        },
+        {
+          "cluster": "Q75JN8",
+          "n_sequences": 140,
+          "subclass": "2.7",
+          "example_name": "Ribose-phosphate pyrophosphokinase 2",
+          "mean_confidence": 0.9838601937696639,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P38709",
+          "n_sequences": 20,
+          "subclass": "2.7",
+          "example_name": "UTP--glucose-1-phosphate uridylyltransferase",
+          "mean_confidence": 0.9822340604527907,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O26377",
+          "n_sequences": 36,
+          "subclass": "1.3",
+          "example_name": "Digeranylgeranylglycerophospholipid reductase",
+          "mean_confidence": 0.9809951013628323,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B4F0A6",
+          "n_sequences": 106,
+          "subclass": "2.7",
+          "example_name": "Galactokinase",
+          "mean_confidence": 0.9805174413461627,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9UYX0",
+          "n_sequences": 143,
+          "subclass": "1.1",
+          "example_name": "L-threonine 3-dehydrogenase",
+          "mean_confidence": 0.9804702999467128,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9KR61",
+          "n_sequences": 40,
+          "subclass": "2.7",
+          "example_name": "N-acetylmannosamine kinase",
+          "mean_confidence": 0.980176173023289,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P44710",
+          "n_sequences": 60,
+          "subclass": "3.6",
+          "example_name": "NAD-capped RNA hydrolase NudC",
+          "mean_confidence": 0.9801103214357983,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q399M3",
+          "n_sequences": 89,
+          "subclass": "7.6",
+          "example_name": "Macrolide export ATP-binding/permease protein MacB",
+          "mean_confidence": 0.9799891887579749,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7MSC2",
+          "n_sequences": 320,
+          "subclass": "3.5",
+          "example_name": "Succinyl-diaminopimelate desuccinylase",
+          "mean_confidence": 0.979979874441355,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8NR94",
+          "n_sequences": 26,
+          "subclass": "1.14",
+          "example_name": "3-(3-hydroxy-phenyl)propionate/3-hydroxycinnamic acid hydroxylase",
+          "mean_confidence": 0.9798727045249577,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "E9AGH7",
+          "n_sequences": 32,
+          "subclass": "1.3",
+          "example_name": "12-oxophytodienoate reductase 1",
+          "mean_confidence": 0.7603282052604928,
+          "accuracy": 0.78125
+        },
+        {
+          "cluster": "W7MWX7",
+          "n_sequences": 27,
+          "subclass": "3.1",
+          "example_name": "Esterase OVCA2",
+          "mean_confidence": 0.9757081067557637,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9YGI5",
+          "n_sequences": 23,
+          "subclass": "3.1",
+          "example_name": "Deoxyribonuclease-1",
+          "mean_confidence": 0.9752310277570255,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A1S8N5",
+          "n_sequences": 51,
+          "subclass": "7.2",
+          "example_name": "Na(+)-translocating NADH-quinone reductase subunit A",
+          "mean_confidence": 0.9750806428495861,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q0A9A9",
+          "n_sequences": 345,
+          "subclass": "4.2",
+          "example_name": "3-isopropylmalate dehydratase small subunit",
+          "mean_confidence": 0.9716642156127929,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B2A4J5",
+          "n_sequences": 416,
+          "subclass": "3.1",
+          "example_name": "5'/3'-nucleotidase SurE",
+          "mean_confidence": 0.9708513063522796,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O34354",
+          "n_sequences": 24,
+          "subclass": "1.1",
+          "example_name": "Altronate oxidoreductase",
+          "mean_confidence": 0.9699844012400937,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A8YIE1",
+          "n_sequences": 23,
+          "subclass": "3.1",
+          "example_name": "2-hydroxy-3-keto-5-methylthiopentenyl-1-phosphate phosphatase",
+          "mean_confidence": 0.969342243231676,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q02636",
+          "n_sequences": 52,
+          "subclass": "2.6",
+          "example_name": "Aspartate aminotransferase, mitochondrial",
+          "mean_confidence": 0.9648419610229089,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A1RZJ9",
+          "n_sequences": 49,
+          "subclass": "1.1",
+          "example_name": "Glycerol-1-phosphate dehydrogenase [NAD(P)+]",
+          "mean_confidence": 0.96239585976033,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q1AYM8",
+          "n_sequences": 37,
+          "subclass": "1.4",
+          "example_name": "D-amino-acid oxidase",
+          "mean_confidence": 0.934030140809326,
+          "accuracy": 0.972972972972973
+        },
+        {
+          "cluster": "P20360",
+          "n_sequences": 262,
+          "subclass": "3.6",
+          "example_name": "Actin, gamma-enteric smooth muscle",
+          "mean_confidence": 0.9606857669305636,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8KL44",
+          "n_sequences": 312,
+          "subclass": "5.4",
+          "example_name": "Phosphoglycerate mutase 1",
+          "mean_confidence": 0.8327585306291869,
+          "accuracy": 0.875
+        },
+        {
+          "cluster": "P0A8B2",
+          "n_sequences": 48,
+          "subclass": "3.1",
+          "example_name": "Ribosome rescue factor SmrB",
+          "mean_confidence": 0.9574519013702297,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q892D0",
+          "n_sequences": 32,
+          "subclass": "4.3",
+          "example_name": "Ethanolamine ammonia-lyase small subunit",
+          "mean_confidence": 0.9549188570864049,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q3IPI7",
+          "n_sequences": 260,
+          "subclass": "4.6",
+          "example_name": "Cyclic pyranopterin monophosphate synthase",
+          "mean_confidence": 0.9514930382697661,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P62414",
+          "n_sequences": 600,
+          "subclass": "2.7",
+          "example_name": "Phosphoglycerate kinase 1",
+          "mean_confidence": 0.9434559519836179,
+          "accuracy": 0.9966666666666667
+        },
+        {
+          "cluster": "P26939",
+          "n_sequences": 310,
+          "subclass": "4.1",
+          "example_name": "Indole-3-glycerol phosphate synthase",
+          "mean_confidence": 0.5586019970199005,
+          "accuracy": 0.6129032258064516
+        },
+        {
+          "cluster": "A6L9B7",
+          "n_sequences": 213,
+          "subclass": "2.6",
+          "example_name": "Phosphoserine aminotransferase",
+          "mean_confidence": 0.9435825991893432,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q4PH43",
+          "n_sequences": 28,
+          "subclass": "2.4",
+          "example_name": "S-methyl-5'-thioadenosine phosphorylase",
+          "mean_confidence": 0.9433997388717381,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0Q119",
+          "n_sequences": 45,
+          "subclass": "2.7",
+          "example_name": "DNA-directed RNA polymerase subunit omega",
+          "mean_confidence": 0.8322060039424086,
+          "accuracy": 0.8888888888888888
+        },
+        {
+          "cluster": "O58522",
+          "n_sequences": 34,
+          "subclass": "3.6",
+          "example_name": "Cancer-related nucleoside-triphosphatase",
+          "mean_confidence": 0.9429060617045174,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q1QPC1",
+          "n_sequences": 53,
+          "subclass": "1.14",
+          "example_name": "tRNA uridine(34) hydroxylase",
+          "mean_confidence": 0.9421162726599079,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P17166",
+          "n_sequences": 450,
+          "subclass": "4.2",
+          "example_name": "Tryptophan synthase alpha chain",
+          "mean_confidence": 0.9362112952205798,
+          "accuracy": 0.9955555555555555
+        },
+        {
+          "cluster": "P09029",
+          "n_sequences": 22,
+          "subclass": "6.3",
+          "example_name": "N5-carboxyaminoimidazole ribonucleotide synthase",
+          "mean_confidence": 0.9406395060516451,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P75517",
+          "n_sequences": 50,
+          "subclass": "5.1",
+          "example_name": "UDP-glucose 4-epimerase",
+          "mean_confidence": 0.9077377848189779,
+          "accuracy": 0.98
+        },
+        {
+          "cluster": "C3MIE4",
+          "n_sequences": 103,
+          "subclass": "1.1",
+          "example_name": "Oxygen-dependent choline dehydrogenase",
+          "mean_confidence": 0.9004928129044849,
+          "accuracy": 0.9805825242718447
+        },
+        {
+          "cluster": "P78540",
+          "n_sequences": 36,
+          "subclass": "3.5",
+          "example_name": "Arginase-1",
+          "mean_confidence": 0.8851390981495879,
+          "accuracy": 0.9722222222222222
+        },
+        {
+          "cluster": "B1GYV7",
+          "n_sequences": 140,
+          "subclass": "1.4",
+          "example_name": "Probable glycine dehydrogenase (decarboxylating) subunit 1",
+          "mean_confidence": 0.8946812375145005,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5LJ16",
+          "n_sequences": 61,
+          "subclass": "5.3",
+          "example_name": "4-deoxy-L-threo-5-hexosulose-uronate ketol-isomerase",
+          "mean_confidence": 0.8520987216107782,
+          "accuracy": 0.9672131147540983
+        },
+        {
+          "cluster": "A1WQL7",
+          "n_sequences": 64,
+          "subclass": "2.7",
+          "example_name": "DNA-directed RNA polymerase subunit omega",
+          "mean_confidence": 0.7423462160090205,
+          "accuracy": 0.859375
+        },
+        {
+          "cluster": "B5YK85",
+          "n_sequences": 427,
+          "subclass": "2.8",
+          "example_name": "Biotin synthase",
+          "mean_confidence": 0.8406756740679471,
+          "accuracy": 0.9578454332552693
+        },
+        {
+          "cluster": "C5D7C7",
+          "n_sequences": 24,
+          "subclass": "3.1",
+          "example_name": "Putative phosphoesterase YjcG",
+          "mean_confidence": 0.8781775038479941,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A1WFL2",
+          "n_sequences": 35,
+          "subclass": "4.2",
+          "example_name": "L-rhamnonate dehydratase",
+          "mean_confidence": 0.8738250515639239,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O14124",
+          "n_sequences": 26,
+          "subclass": "3.4",
+          "example_name": "Dipeptidase 1",
+          "mean_confidence": 0.4488454773053284,
+          "accuracy": 0.5769230769230769
+        },
+        {
+          "cluster": "Q9YFQ8",
+          "n_sequences": 25,
+          "subclass": "5.6",
+          "example_name": "ATP-dependent DNA helicase Hel308",
+          "mean_confidence": 0.8060813193688274,
+          "accuracy": 0.96
+        },
+        {
+          "cluster": "P27372",
+          "n_sequences": 31,
+          "subclass": "7.1",
+          "example_name": "NAD(P)H-quinone oxidoreductase subunit L",
+          "mean_confidence": 0.45869010411157674,
+          "accuracy": 0.6129032258064516
+        },
+        {
+          "cluster": "Q8ZQU2",
+          "n_sequences": 24,
+          "subclass": "1.3",
+          "example_name": "Succinate dehydrogenase iron-sulfur subunit",
+          "mean_confidence": 0.4598745303357991,
+          "accuracy": 0.625
+        },
+        {
+          "cluster": "I1RJR2",
+          "n_sequences": 35,
+          "subclass": "1.14",
+          "example_name": "Lanosterol 14-alpha demethylase",
+          "mean_confidence": 0.824533928524871,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q54NY7",
+          "n_sequences": 89,
+          "subclass": "4.2",
+          "example_name": "Methylthioribulose-1-phosphate dehydratase",
+          "mean_confidence": 0.7464599180360885,
+          "accuracy": 0.9775280898876404
+        },
+        {
+          "cluster": "B0TAN9",
+          "n_sequences": 186,
+          "subclass": "3.5",
+          "example_name": "5-oxoprolinase subunit A",
+          "mean_confidence": 0.5770635256066403,
+          "accuracy": 0.8817204301075269
+        },
+        {
+          "cluster": "Q838L2",
+          "n_sequences": 53,
+          "subclass": "5.3",
+          "example_name": "L-rhamnose isomerase",
+          "mean_confidence": 0.6719580999399464,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q05531",
+          "n_sequences": 33,
+          "subclass": "1.7",
+          "example_name": "Nitrate reductase [NADH] 1",
+          "mean_confidence": 0.6355503219309999,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q94511",
+          "n_sequences": 25,
+          "subclass": "7.1",
+          "example_name": "NADH-ubiquinone oxidoreductase 75 kDa subunit, mitochondrial",
+          "mean_confidence": 0.5861463303089236,
+          "accuracy": 1.0
+        }
+      ]
+    },
+    "after": {
+      "min_cluster_size": 20,
+      "n_clusters": 239,
+      "n_sequences": 28519,
+      "mean_absolute_gap": 0.15054019275093933,
+      "n_mostly_wrong_and_confident": 8,
+      "clusters": [
+        {
+          "cluster": "Q8EWQ5",
+          "n_sequences": 92,
+          "subclass": "6.3",
+          "example_name": "Aspartate--ammonia ligase",
+          "mean_confidence": 0.9955215515495606,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "P0A8N7",
+          "n_sequences": 46,
+          "subclass": "6.3",
+          "example_name": "Elongation factor P--(R)-beta-lysine ligase",
+          "mean_confidence": 0.9808495206959804,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "P11718",
+          "n_sequences": 30,
+          "subclass": "7.1",
+          "example_name": "ATPase 2, plasma membrane-type",
+          "mean_confidence": 0.9855119574988235,
+          "accuracy": 0.03333333333333333
+        },
+        {
+          "cluster": "Q8L9A9",
+          "n_sequences": 46,
+          "subclass": "2.4",
+          "example_name": "Probable xyloglucan endotransglucosylase/hydrolase protein 17",
+          "mean_confidence": 0.9467434249608798,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "P0A6L4",
+          "n_sequences": 30,
+          "subclass": "4.1",
+          "example_name": "N-acetylneuraminate lyase",
+          "mean_confidence": 0.9391627207868567,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "P72139",
+          "n_sequences": 526,
+          "subclass": "4.3",
+          "example_name": "Imidazole glycerol phosphate synthase subunit HisF",
+          "mean_confidence": 0.9299956404002132,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "C4Y459",
+          "n_sequences": 561,
+          "subclass": "6.3",
+          "example_name": "Glutamyl-tRNA(Gln) amidotransferase subunit B, mitochondrial",
+          "mean_confidence": 0.861492218228748,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q07UU1",
+          "n_sequences": 153,
+          "subclass": "2.7",
+          "example_name": "Sulfate adenylyltransferase subunit 2",
+          "mean_confidence": 0.836880594589442,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q937F6",
+          "n_sequences": 41,
+          "subclass": "4.1",
+          "example_name": "Xylulose-5-phosphate/fructose-6-phosphate phosphoketolase",
+          "mean_confidence": 0.7955949162733972,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "C0JB52",
+          "n_sequences": 204,
+          "subclass": "4.6",
+          "example_name": "Dermonecrotic toxin StSicTox-betaIB1i",
+          "mean_confidence": 0.7787181352293013,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "O27606",
+          "n_sequences": 22,
+          "subclass": "1.18",
+          "example_name": "Nitrogenase molybdenum-iron protein beta chain",
+          "mean_confidence": 0.739944791534488,
+          "accuracy": 0.09090909090909091
+        },
+        {
+          "cluster": "B0R5F0",
+          "n_sequences": 38,
+          "subclass": "6.3",
+          "example_name": "Glutamyl-tRNA(Gln) amidotransferase subunit E",
+          "mean_confidence": 0.6486831036644061,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q54W07",
+          "n_sequences": 20,
+          "subclass": "3.6",
+          "example_name": "EKC/KEOPS complex subunit TP53RK",
+          "mean_confidence": 0.7373755783751268,
+          "accuracy": 0.1
+        },
+        {
+          "cluster": "B1I057",
+          "n_sequences": 188,
+          "subclass": "2.2",
+          "example_name": "Transaldolase",
+          "mean_confidence": 0.6987572418026334,
+          "accuracy": 0.09042553191489362
+        },
+        {
+          "cluster": "O57809",
+          "n_sequences": 74,
+          "subclass": "4.4",
+          "example_name": "D-cysteine desulfhydrase",
+          "mean_confidence": 0.6073944035298725,
+          "accuracy": 0.02702702702702703
+        },
+        {
+          "cluster": "O04865",
+          "n_sequences": 20,
+          "subclass": "3.1",
+          "example_name": "Phospholipase D beta 2",
+          "mean_confidence": 0.5430282318733988,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "A5UC01",
+          "n_sequences": 44,
+          "subclass": "3.5",
+          "example_name": "N(4)-acetylcytidine amidohydrolase",
+          "mean_confidence": 0.5177088229985255,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "A9B4J6",
+          "n_sequences": 54,
+          "subclass": "1.13",
+          "example_name": "Tryptophan 2,3-dioxygenase",
+          "mean_confidence": 0.47690302446156685,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "A2VD33",
+          "n_sequences": 37,
+          "subclass": "2.8",
+          "example_name": "Molybdenum cofactor sulfurase",
+          "mean_confidence": 0.4488393201169178,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q87A63",
+          "n_sequences": 74,
+          "subclass": "2.7",
+          "example_name": "Polyphosphate kinase",
+          "mean_confidence": 0.5474185163020632,
+          "accuracy": 0.1891891891891892
+        },
+        {
+          "cluster": "O29054",
+          "n_sequences": 35,
+          "subclass": "2.5",
+          "example_name": "Flavin prenyltransferase UbiX",
+          "mean_confidence": 0.3540949012155669,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q6FUV3",
+          "n_sequences": 40,
+          "subclass": "1.14",
+          "example_name": "Deoxyhypusine hydroxylase",
+          "mean_confidence": 0.34474472175018844,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "A5FXV3",
+          "n_sequences": 94,
+          "subclass": "1.17",
+          "example_name": "Heme A synthase",
+          "mean_confidence": 0.3127633457214553,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "Q4KIP4",
+          "n_sequences": 49,
+          "subclass": "3.5",
+          "example_name": "Kynurenine formamidase",
+          "mean_confidence": 0.2566282654298594,
+          "accuracy": 0.02040816326530612
+        },
+        {
+          "cluster": "O49675",
+          "n_sequences": 21,
+          "subclass": "1.13",
+          "example_name": "9-cis-epoxycarotenoid dioxygenase NCED3, chloroplastic",
+          "mean_confidence": 0.9366038756389174,
+          "accuracy": 0.7142857142857143
+        },
+        {
+          "cluster": "Q95NN1",
+          "n_sequences": 29,
+          "subclass": "1.13",
+          "example_name": "Tryptophan 2,3-dioxygenase",
+          "mean_confidence": 0.21500977361449838,
+          "accuracy": 0.0
+        },
+        {
+          "cluster": "A2SKR5",
+          "n_sequences": 215,
+          "subclass": "1.1",
+          "example_name": "Shikimate dehydrogenase (NADP(+))",
+          "mean_confidence": 0.2244635157383005,
+          "accuracy": 0.037209302325581395
+        },
+        {
+          "cluster": "A5GR50",
+          "n_sequences": 295,
+          "subclass": "4.2",
+          "example_name": "3-dehydroquinate dehydratase",
+          "mean_confidence": 0.1633700435847088,
+          "accuracy": 0.06779661016949153
+        },
+        {
+          "cluster": "A0A1D6K6U5",
+          "n_sequences": 35,
+          "subclass": "5.5",
+          "example_name": "Syn-copalyl diphosphate synthase, chloroplastic",
+          "mean_confidence": 0.8300978846181718,
+          "accuracy": 0.7714285714285715
+        },
+        {
+          "cluster": "O29313",
+          "n_sequences": 65,
+          "subclass": "6.3",
+          "example_name": "Glutamine synthetase",
+          "mean_confidence": 0.9880885509478239,
+          "accuracy": 0.9846153846153847
+        },
+        {
+          "cluster": "Q9C6S7",
+          "n_sequences": 21,
+          "subclass": "2.1",
+          "example_name": "Probable pectin methyltransferase QUA3",
+          "mean_confidence": 0.9953352647065821,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P16294",
+          "n_sequences": 47,
+          "subclass": "3.4",
+          "example_name": "Coagulation factor IX",
+          "mean_confidence": 0.9949469319349233,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A6GVR5",
+          "n_sequences": 491,
+          "subclass": "2.1",
+          "example_name": "Dimethyladenosine transferase 1, mitochondrial",
+          "mean_confidence": 0.9942658801565419,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A4SQM2",
+          "n_sequences": 84,
+          "subclass": "2.1",
+          "example_name": "Ribosomal RNA large subunit methyltransferase G",
+          "mean_confidence": 0.9940459335691701,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q74IX0",
+          "n_sequences": 25,
+          "subclass": "2.1",
+          "example_name": "Ribosomal protein L11 methyltransferase",
+          "mean_confidence": 0.9937879889868347,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q13XD0",
+          "n_sequences": 66,
+          "subclass": "3.1",
+          "example_name": "Ribonuclease HII",
+          "mean_confidence": 0.9931617427884676,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q19825",
+          "n_sequences": 52,
+          "subclass": "6.1",
+          "example_name": "Arginine--tRNA ligase, cytoplasmic",
+          "mean_confidence": 0.9927132626543472,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5FHL5",
+          "n_sequences": 86,
+          "subclass": "6.1",
+          "example_name": "Proline--tRNA ligase",
+          "mean_confidence": 0.992344177063638,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "D4GWJ7",
+          "n_sequences": 28,
+          "subclass": "3.5",
+          "example_name": "GTP cyclohydrolase MptA",
+          "mean_confidence": 0.990409130815453,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B2I923",
+          "n_sequences": 46,
+          "subclass": "2.8",
+          "example_name": "Lipoyl synthase",
+          "mean_confidence": 0.9903787928618111,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q07536",
+          "n_sequences": 50,
+          "subclass": "1.2",
+          "example_name": "Methylmalonate-semialdehyde/malonate-semialdehyde dehydrogenase [acylating], mitochondrial",
+          "mean_confidence": 0.9899545126016119,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9HKM5",
+          "n_sequences": 379,
+          "subclass": "2.5",
+          "example_name": "Porphobilinogen deaminase",
+          "mean_confidence": 0.9897980472776033,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O33367",
+          "n_sequences": 26,
+          "subclass": "5.6",
+          "example_name": "DNA gyrase subunit B",
+          "mean_confidence": 0.9887144633873042,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C0QSS1",
+          "n_sequences": 36,
+          "subclass": "3.1",
+          "example_name": "Endoribonuclease YbeY",
+          "mean_confidence": 0.9880114484565036,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q0JI49",
+          "n_sequences": 57,
+          "subclass": "2.7",
+          "example_name": "CBL-interacting serine/threonine-protein kinase 13",
+          "mean_confidence": 0.9870297772504738,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q921J4",
+          "n_sequences": 23,
+          "subclass": "2.3",
+          "example_name": "Ubiquitin-conjugating enzyme E2 S",
+          "mean_confidence": 0.9868575066544275,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B6JF93",
+          "n_sequences": 362,
+          "subclass": "2.8",
+          "example_name": "Ribosomal protein uS12 methylthiotransferase RimO",
+          "mean_confidence": 0.9866750090178492,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9Z528",
+          "n_sequences": 110,
+          "subclass": "5.4",
+          "example_name": "tRNA pseudouridine synthase B",
+          "mean_confidence": 0.9860494938862923,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2RHZ3",
+          "n_sequences": 572,
+          "subclass": "6.1",
+          "example_name": "Alanine--tRNA ligase, mitochondrial",
+          "mean_confidence": 0.9855136734544057,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q3AF87",
+          "n_sequences": 298,
+          "subclass": "6.1",
+          "example_name": "Valine--tRNA ligase",
+          "mean_confidence": 0.9855057830277275,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2NJM5",
+          "n_sequences": 138,
+          "subclass": "2.3",
+          "example_name": "tRNA N6-adenosine threonylcarbamoyltransferase",
+          "mean_confidence": 0.9854368777398692,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q3JCY2",
+          "n_sequences": 151,
+          "subclass": "2.1",
+          "example_name": "23S rRNA (uracil(1939)-C(5))-methyltransferase RlmD",
+          "mean_confidence": 0.9854231697755993,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P9WJP1",
+          "n_sequences": 47,
+          "subclass": "2.1",
+          "example_name": "Ribosomal RNA small subunit methyltransferase H",
+          "mean_confidence": 0.985241544046764,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q17446",
+          "n_sequences": 95,
+          "subclass": "2.7",
+          "example_name": "Mitogen-activated protein kinase 3",
+          "mean_confidence": 0.9850702656342454,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q83HU9",
+          "n_sequences": 33,
+          "subclass": "3.1",
+          "example_name": "Ribonuclease YqgF",
+          "mean_confidence": 0.9849905553117826,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A5VRR6",
+          "n_sequences": 38,
+          "subclass": "3.1",
+          "example_name": "Peptidyl-tRNA hydrolase",
+          "mean_confidence": 0.9849176406760655,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O94746",
+          "n_sequences": 34,
+          "subclass": "5.2",
+          "example_name": "Peptidyl-prolyl cis-trans isomerase FKBP1A",
+          "mean_confidence": 0.9848593477441104,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q11126",
+          "n_sequences": 23,
+          "subclass": "2.4",
+          "example_name": "4-galactosyl-N-acetylglucosaminide 3-alpha-L-fucosyltransferase FUT6",
+          "mean_confidence": 0.9847119177189979,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6CJA8",
+          "n_sequences": 65,
+          "subclass": "2.7",
+          "example_name": "Mitogen-activated protein kinase 10",
+          "mean_confidence": 0.9846759418769809,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A5D193",
+          "n_sequences": 317,
+          "subclass": "5.1",
+          "example_name": "Diaminopimelate epimerase",
+          "mean_confidence": 0.9845098322208878,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A8I9X4",
+          "n_sequences": 137,
+          "subclass": "6.3",
+          "example_name": "Aspartyl/glutamyl-tRNA(Asn/Gln) amidotransferase subunit C",
+          "mean_confidence": 0.9844392204938528,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A8NK72",
+          "n_sequences": 22,
+          "subclass": "1.11",
+          "example_name": "Manganese peroxidase 1",
+          "mean_confidence": 0.9834457938622286,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6AK68",
+          "n_sequences": 121,
+          "subclass": "2.7",
+          "example_name": "Phosphoenolpyruvate synthase regulatory protein",
+          "mean_confidence": 0.9829773168449966,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q887N8",
+          "n_sequences": 119,
+          "subclass": "3.6",
+          "example_name": "Probable ATP-dependent RNA helicase DDX49",
+          "mean_confidence": 0.9828505046009047,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q41741",
+          "n_sequences": 165,
+          "subclass": "3.6",
+          "example_name": "ATP-dependent RNA helicase DDX39A",
+          "mean_confidence": 0.9826517150751412,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P21642",
+          "n_sequences": 81,
+          "subclass": "4.1",
+          "example_name": "Phosphoenolpyruvate carboxykinase, cytosolic [GTP]",
+          "mean_confidence": 0.9824765232586219,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A8FCN9",
+          "n_sequences": 25,
+          "subclass": "2.7",
+          "example_name": "Probable molybdenum cofactor guanylyltransferase",
+          "mean_confidence": 0.9822904807861081,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1YGQ4",
+          "n_sequences": 24,
+          "subclass": "6.3",
+          "example_name": "tRNA(Ile)-lysidine synthase",
+          "mean_confidence": 0.9821832445798785,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "I1KEV6",
+          "n_sequences": 32,
+          "subclass": "2.4",
+          "example_name": "Anthocyanidin 3-O-glucoside 2'''-O-xylosyltransferase",
+          "mean_confidence": 0.9818350826771768,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P0CO20",
+          "n_sequences": 37,
+          "subclass": "2.7",
+          "example_name": "Mannose-1-phosphate guanylyltransferase catalytic subunit beta",
+          "mean_confidence": 0.9814956043518077,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q694A3",
+          "n_sequences": 173,
+          "subclass": "1.15",
+          "example_name": "Superoxide dismutase [Mn], mitochondrial",
+          "mean_confidence": 0.9814682448641938,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "D4H6M0",
+          "n_sequences": 36,
+          "subclass": "2.4",
+          "example_name": "Sucrose synthase 2",
+          "mean_confidence": 0.9814553043970198,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q67JG9",
+          "n_sequences": 22,
+          "subclass": "6.3",
+          "example_name": "tRNA(Ile)-lysidine synthase",
+          "mean_confidence": 0.9807409953997777,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8GAK7",
+          "n_sequences": 302,
+          "subclass": "1.2",
+          "example_name": "4-trimethylaminobutyraldehyde dehydrogenase",
+          "mean_confidence": 0.9739811738921417,
+          "accuracy": 0.9933774834437086
+        },
+        {
+          "cluster": "P54166",
+          "n_sequences": 23,
+          "subclass": "2.4",
+          "example_name": "Processive diacylglycerol beta-glucosyltransferase",
+          "mean_confidence": 0.9803424632718275,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q1AXT1",
+          "n_sequences": 116,
+          "subclass": "6.3",
+          "example_name": "Glutamyl-tRNA(Gln) amidotransferase subunit C",
+          "mean_confidence": 0.9800573956685589,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1LBK1",
+          "n_sequences": 34,
+          "subclass": "3.1",
+          "example_name": "Ribonuclease P protein component",
+          "mean_confidence": 0.9794656841402611,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9NL98",
+          "n_sequences": 64,
+          "subclass": "1.11",
+          "example_name": "Peroxiredoxin-2",
+          "mean_confidence": 0.9792724967102377,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O26965",
+          "n_sequences": 54,
+          "subclass": "2.7",
+          "example_name": "Uridylate kinase",
+          "mean_confidence": 0.9788864378820166,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P31677",
+          "n_sequences": 41,
+          "subclass": "2.4",
+          "example_name": "Trehalose-6-phosphate synthase",
+          "mean_confidence": 0.9783773999403246,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5WW20",
+          "n_sequences": 140,
+          "subclass": "6.3",
+          "example_name": "Phosphoribosylaminoimidazole-succinocarboxamide synthase",
+          "mean_confidence": 0.9783462411111972,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8TWG9",
+          "n_sequences": 23,
+          "subclass": "6.3",
+          "example_name": "7-cyano-7-deazaguanine synthase",
+          "mean_confidence": 0.9782150349961793,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q0J969",
+          "n_sequences": 30,
+          "subclass": "3.1",
+          "example_name": "Acyl-protein thioesterase 1",
+          "mean_confidence": 0.9779320387046051,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q21CC1",
+          "n_sequences": 66,
+          "subclass": "2.1",
+          "example_name": "Acetyl-coenzyme A carboxylase carboxyl transferase subunit beta",
+          "mean_confidence": 0.977806516167212,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B8EJT0",
+          "n_sequences": 45,
+          "subclass": "1.7",
+          "example_name": "NADPH-dependent 7-cyano-7-deazaguanine reductase",
+          "mean_confidence": 0.977147878298559,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8P2A6",
+          "n_sequences": 27,
+          "subclass": "2.1",
+          "example_name": "Ribosomal RNA small subunit methyltransferase I",
+          "mean_confidence": 0.9767566172214223,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6AXR4",
+          "n_sequences": 21,
+          "subclass": "3.2",
+          "example_name": "Beta-hexosaminidase subunit alpha",
+          "mean_confidence": 0.9765601331815992,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9PNJ0",
+          "n_sequences": 25,
+          "subclass": "2.7",
+          "example_name": "4-diphosphocytidyl-2-C-methyl-D-erythritol kinase",
+          "mean_confidence": 0.9765395333282556,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q92RA4",
+          "n_sequences": 132,
+          "subclass": "1.8",
+          "example_name": "Peptide methionine sulfoxide reductase MsrB",
+          "mean_confidence": 0.9763212367933413,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q891S7",
+          "n_sequences": 45,
+          "subclass": "2.4",
+          "example_name": "Nicotinate-nucleotide--dimethylbenzimidazole phosphoribosyltransferase",
+          "mean_confidence": 0.9762574547786664,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O59391",
+          "n_sequences": 37,
+          "subclass": "4.2",
+          "example_name": "Methanogen homoaconitase large subunit",
+          "mean_confidence": 0.9762141927041359,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q83GS7",
+          "n_sequences": 26,
+          "subclass": "6.1",
+          "example_name": "Tyrosine--tRNA ligase, mitochondrial",
+          "mean_confidence": 0.9755854697529749,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q31EK3",
+          "n_sequences": 184,
+          "subclass": "3.1",
+          "example_name": "Putative pre-16S rRNA nuclease",
+          "mean_confidence": 0.975429955132933,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6H5U3",
+          "n_sequences": 20,
+          "subclass": "1.14",
+          "example_name": "Sphingolipid delta(4)-desaturase/C4-monooxygenase DES2",
+          "mean_confidence": 0.9750865703737709,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P56725",
+          "n_sequences": 85,
+          "subclass": "2.4",
+          "example_name": "Flavonol 7-O-beta-glucosyltransferase UGT74F1",
+          "mean_confidence": 0.9749357670695233,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7VBZ5",
+          "n_sequences": 634,
+          "subclass": "6.1",
+          "example_name": "Leucine--tRNA ligase, mitochondrial",
+          "mean_confidence": 0.9738281018202344,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0A5J6BJN2",
+          "n_sequences": 45,
+          "subclass": "1.14",
+          "example_name": "AA9 family lytic polysaccharide monooxygenase A",
+          "mean_confidence": 0.9515877102862973,
+          "accuracy": 0.9777777777777777
+        },
+        {
+          "cluster": "B0G189",
+          "n_sequences": 651,
+          "subclass": "3.6",
+          "example_name": "Elongation factor 4",
+          "mean_confidence": 0.9734310646585437,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0PZS6",
+          "n_sequences": 33,
+          "subclass": "2.7",
+          "example_name": "Anti-sigma F factor",
+          "mean_confidence": 0.973375683707116,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0B6S6",
+          "n_sequences": 26,
+          "subclass": "2.1",
+          "example_name": "tRNA (pseudouridine(54)-N(1))-methyltransferase",
+          "mean_confidence": 0.9720846112946735,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q4X0C2",
+          "n_sequences": 35,
+          "subclass": "3.6",
+          "example_name": "Probable ATP-dependent RNA helicase DDX56",
+          "mean_confidence": 0.9718533087815284,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q814Q2",
+          "n_sequences": 51,
+          "subclass": "3.5",
+          "example_name": "Guanidino acid hydrolase, mitochondrial",
+          "mean_confidence": 0.9717597003204738,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C5D6L2",
+          "n_sequences": 21,
+          "subclass": "3.1",
+          "example_name": "3'-5' exoribonuclease YhaM",
+          "mean_confidence": 0.9717194553128818,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9WY79",
+          "n_sequences": 187,
+          "subclass": "6.3",
+          "example_name": "UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate ligase",
+          "mean_confidence": 0.9708397152145359,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8SS24",
+          "n_sequences": 30,
+          "subclass": "3.6",
+          "example_name": "dITP/XTP pyrophosphatase",
+          "mean_confidence": 0.9707182039168804,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q88EI9",
+          "n_sequences": 24,
+          "subclass": "2.7",
+          "example_name": "Aspartokinase 2",
+          "mean_confidence": 0.9701281010435956,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5FQN4",
+          "n_sequences": 33,
+          "subclass": "7.6",
+          "example_name": "Cytochrome c biogenesis ATP-binding export protein CcmA",
+          "mean_confidence": 0.9695451463428363,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P03940",
+          "n_sequences": 31,
+          "subclass": "1.14",
+          "example_name": "Steroid 17-alpha-hydroxylase/17,20 lyase",
+          "mean_confidence": 0.9693936907538969,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O26687",
+          "n_sequences": 338,
+          "subclass": "6.1",
+          "example_name": "Methionine--tRNA ligase",
+          "mean_confidence": 0.9692131824431016,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C3PNH0",
+          "n_sequences": 29,
+          "subclass": "2.7",
+          "example_name": "NAD kinase",
+          "mean_confidence": 0.9689771086763234,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8UHD5",
+          "n_sequences": 29,
+          "subclass": "3.1",
+          "example_name": "Exodeoxyribonuclease 7 small subunit",
+          "mean_confidence": 0.9674099945791497,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A7GW99",
+          "n_sequences": 23,
+          "subclass": "2.5",
+          "example_name": "tRNA dimethylallyltransferase",
+          "mean_confidence": 0.9670921634589855,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9UMQ6",
+          "n_sequences": 38,
+          "subclass": "3.4",
+          "example_name": "Calpain-1 catalytic subunit",
+          "mean_confidence": 0.966918260296901,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A3MLY7",
+          "n_sequences": 110,
+          "subclass": "3.5",
+          "example_name": "N-succinylarginine dihydrolase",
+          "mean_confidence": 0.9659023523974254,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q0URQ5",
+          "n_sequences": 35,
+          "subclass": "3.4",
+          "example_name": "Vacuolar membrane protease",
+          "mean_confidence": 0.9658019628338679,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q11L82",
+          "n_sequences": 307,
+          "subclass": "2.7",
+          "example_name": "Tetraacyldisaccharide 4'-kinase",
+          "mean_confidence": 0.9654059687346279,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P45614",
+          "n_sequences": 22,
+          "subclass": "5.4",
+          "example_name": "Ribosomal large subunit pseudouridine synthase C",
+          "mean_confidence": 0.9651023113504575,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P80506",
+          "n_sequences": 294,
+          "subclass": "1.2",
+          "example_name": "Glyceraldehyde-3-phosphate dehydrogenase",
+          "mean_confidence": 0.9649560704188085,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B9DIP2",
+          "n_sequences": 422,
+          "subclass": "5.3",
+          "example_name": "1-(5-phosphoribosyl)-5-[(5-phosphoribosylamino)methylideneamino] imidazole-4-carboxamide isomerase",
+          "mean_confidence": 0.9643390978699297,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C5E0G6",
+          "n_sequences": 23,
+          "subclass": "3.4",
+          "example_name": "Vacuolar membrane protease",
+          "mean_confidence": 0.9640586891307489,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1L6Z7",
+          "n_sequences": 38,
+          "subclass": "2.5",
+          "example_name": "Digeranylgeranylglyceryl phosphate synthase",
+          "mean_confidence": 0.9639062837945369,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A5G9B8",
+          "n_sequences": 73,
+          "subclass": "1.5",
+          "example_name": "F(420)H(2) dehydrogenase subunit B",
+          "mean_confidence": 0.9487940775850188,
+          "accuracy": 0.9863013698630136
+        },
+        {
+          "cluster": "Q58730",
+          "n_sequences": 32,
+          "subclass": "2.7",
+          "example_name": "UTP--glucose-1-phosphate uridylyltransferase",
+          "mean_confidence": 0.9619125987343707,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P50214",
+          "n_sequences": 20,
+          "subclass": "1.1",
+          "example_name": "Isocitrate dehydrogenase [NADP]",
+          "mean_confidence": 0.9617902478043693,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P74505",
+          "n_sequences": 53,
+          "subclass": "2.4",
+          "example_name": "Undecaprenyl-phosphate 4-deoxy-4-formamido-L-arabinose transferase",
+          "mean_confidence": 0.961465276700704,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7MKQ9",
+          "n_sequences": 46,
+          "subclass": "2.7",
+          "example_name": "N-acetyl-D-glucosamine kinase",
+          "mean_confidence": 0.9606113173628874,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P59520",
+          "n_sequences": 96,
+          "subclass": "5.3",
+          "example_name": "1-(5-phosphoribosyl)-5-[(5-phosphoribosylamino)methylideneamino] imidazole-4-carboxamide isomerase",
+          "mean_confidence": 0.9603910656892894,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5L6Q8",
+          "n_sequences": 139,
+          "subclass": "3.4",
+          "example_name": "Lipoprotein signal peptidase",
+          "mean_confidence": 0.9599146207659659,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q5E9L5",
+          "n_sequences": 30,
+          "subclass": "2.1",
+          "example_name": "Protein arginine N-methyltransferase 6",
+          "mean_confidence": 0.9587220120403411,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A4VQZ7",
+          "n_sequences": 304,
+          "subclass": "2.3",
+          "example_name": "Octanoyltransferase LIP2, mitochondrial",
+          "mean_confidence": 0.9586743322594382,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A9BI45",
+          "n_sequences": 315,
+          "subclass": "3.4",
+          "example_name": "ATP-dependent protease subunit HslV",
+          "mean_confidence": 0.9579063263628945,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C0ZIL2",
+          "n_sequences": 492,
+          "subclass": "5.4",
+          "example_name": "tRNA pseudouridine synthase A",
+          "mean_confidence": 0.957862985427566,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P13063",
+          "n_sequences": 22,
+          "subclass": "1.12",
+          "example_name": "Hydrogenase-1 small chain",
+          "mean_confidence": 0.9563113913504394,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q1AW87",
+          "n_sequences": 343,
+          "subclass": "2.3",
+          "example_name": "Beta-ketoacyl-[acyl-carrier-protein] synthase III 2",
+          "mean_confidence": 0.9559166002383276,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A2Z212",
+          "n_sequences": 75,
+          "subclass": "1.14",
+          "example_name": "3-epi-6-deoxocathasterone 23-monooxygenase CYP90D1",
+          "mean_confidence": 0.9545559778662365,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9ZPY2",
+          "n_sequences": 44,
+          "subclass": "1.10",
+          "example_name": "Laccase-4",
+          "mean_confidence": 0.9490890306739813,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A5FZN7",
+          "n_sequences": 30,
+          "subclass": "6.3",
+          "example_name": "Dethiobiotin synthetase",
+          "mean_confidence": 0.9478729415992846,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "S5M744",
+          "n_sequences": 107,
+          "subclass": "6.2",
+          "example_name": "Medium-chain acyl-CoA ligase ACSF2, mitochondrial",
+          "mean_confidence": 0.9381637958589288,
+          "accuracy": 0.9906542056074766
+        },
+        {
+          "cluster": "Q1B5T7",
+          "n_sequences": 123,
+          "subclass": "3.1",
+          "example_name": "Oligoribonuclease",
+          "mean_confidence": 0.9469557992552438,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0QPN1",
+          "n_sequences": 95,
+          "subclass": "5.6",
+          "example_name": "DNA gyrase subunit A",
+          "mean_confidence": 0.946917945798739,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8VZJ2",
+          "n_sequences": 39,
+          "subclass": "3.2",
+          "example_name": "Glucan endo-1,3-beta-glucosidase, acidic isoform",
+          "mean_confidence": 0.946575008052304,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P73335",
+          "n_sequences": 39,
+          "subclass": "3.1",
+          "example_name": "3'-5' ssDNA/RNA exonuclease TatD",
+          "mean_confidence": 0.9457768564589666,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A9WB45",
+          "n_sequences": 207,
+          "subclass": "2.2",
+          "example_name": "2-succinyl-5-enolpyruvyl-6-hydroxy-3-cyclohexene-1-carboxylate synthase",
+          "mean_confidence": 0.9450662506508664,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q3SK37",
+          "n_sequences": 310,
+          "subclass": "4.6",
+          "example_name": "2-C-methyl-D-erythritol 2,4-cyclodiphosphate synthase",
+          "mean_confidence": 0.9447014595787827,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A3CSX5",
+          "n_sequences": 46,
+          "subclass": "2.1",
+          "example_name": "Fibrillarin-like rRNA/tRNA 2'-O-methyltransferase",
+          "mean_confidence": 0.9445994777740718,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6D3R5",
+          "n_sequences": 104,
+          "subclass": "6.3",
+          "example_name": "Ribosomal protein bS6--L-glutamate ligase",
+          "mean_confidence": 0.943543647858476,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P20711",
+          "n_sequences": 33,
+          "subclass": "4.1",
+          "example_name": "Aromatic-L-amino-acid decarboxylase",
+          "mean_confidence": 0.9422918019893347,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q97CL5",
+          "n_sequences": 32,
+          "subclass": "2.8",
+          "example_name": "Molybdopterin synthase catalytic subunit",
+          "mean_confidence": 0.9415657770925419,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2N6Q7",
+          "n_sequences": 284,
+          "subclass": "3.1",
+          "example_name": "Exodeoxyribonuclease 7 large subunit",
+          "mean_confidence": 0.9415221538569661,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9PHY2",
+          "n_sequences": 304,
+          "subclass": "1.1",
+          "example_name": "L-lactate dehydrogenase A chain",
+          "mean_confidence": 0.9413044656449062,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7VD93",
+          "n_sequences": 62,
+          "subclass": "4.2",
+          "example_name": "Pterin-4-alpha-carbinolamine dehydratase 2",
+          "mean_confidence": 0.9409621515404571,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2S2I3",
+          "n_sequences": 286,
+          "subclass": "3.1",
+          "example_name": "Fructose-1,6-bisphosphatase 1",
+          "mean_confidence": 0.9403258707828588,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P0C7M7",
+          "n_sequences": 206,
+          "subclass": "6.2",
+          "example_name": "Acyl-coenzyme A synthetase ACSM3, mitochondrial",
+          "mean_confidence": 0.9400083033092288,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q6N1Y2",
+          "n_sequences": 86,
+          "subclass": "2.7",
+          "example_name": "Homoserine kinase",
+          "mean_confidence": 0.9388137475813823,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8S9G6",
+          "n_sequences": 22,
+          "subclass": "2.3",
+          "example_name": "Spermidine sinapoyl-CoA acyltransferase",
+          "mean_confidence": 0.9377502916315329,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O88451",
+          "n_sequences": 21,
+          "subclass": "1.1",
+          "example_name": "17-beta-hydroxysteroid dehydrogenase type 6",
+          "mean_confidence": 0.9372818808762873,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q19VC7",
+          "n_sequences": 124,
+          "subclass": "1.10",
+          "example_name": "Photosystem II D2 protein",
+          "mean_confidence": 0.9356064111607284,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B9KHN3",
+          "n_sequences": 138,
+          "subclass": "3.5",
+          "example_name": "dCTP deaminase",
+          "mean_confidence": 0.9346861390364968,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O52354",
+          "n_sequences": 131,
+          "subclass": "1.1",
+          "example_name": "L-lactate dehydrogenase",
+          "mean_confidence": 0.9325789614022376,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P89116",
+          "n_sequences": 25,
+          "subclass": "3.4",
+          "example_name": "Caspase-3",
+          "mean_confidence": 0.9296584174245388,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A0JWY8",
+          "n_sequences": 63,
+          "subclass": "3.4",
+          "example_name": "Depupylase",
+          "mean_confidence": 0.9134342264491488,
+          "accuracy": 0.9841269841269841
+        },
+        {
+          "cluster": "Q73QZ3",
+          "n_sequences": 356,
+          "subclass": "3.4",
+          "example_name": "Cytosol aminopeptidase",
+          "mean_confidence": 0.9249597076557761,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2FL43",
+          "n_sequences": 149,
+          "subclass": "7.1",
+          "example_name": "V-type proton ATPase catalytic subunit A",
+          "mean_confidence": 0.9145852918962156,
+          "accuracy": 0.9932885906040269
+        },
+        {
+          "cluster": "P09391",
+          "n_sequences": 27,
+          "subclass": "3.4",
+          "example_name": "Rhomboid protease GlpG",
+          "mean_confidence": 0.9212578203592577,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1L7J8",
+          "n_sequences": 62,
+          "subclass": "2.7",
+          "example_name": "Glycerol-3-phosphate cytidylyltransferase",
+          "mean_confidence": 0.919795131349091,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q75JN8",
+          "n_sequences": 140,
+          "subclass": "2.7",
+          "example_name": "Ribose-phosphate pyrophosphokinase 2",
+          "mean_confidence": 0.9179937944488313,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q38707",
+          "n_sequences": 109,
+          "subclass": "1.1",
+          "example_name": "NADP-dependent alcohol dehydrogenase 7",
+          "mean_confidence": 0.7894960153324487,
+          "accuracy": 0.8715596330275229
+        },
+        {
+          "cluster": "A1WXV9",
+          "n_sequences": 143,
+          "subclass": "7.1",
+          "example_name": "NADH-quinone oxidoreductase subunit 9",
+          "mean_confidence": 0.9167728178715392,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7MSC2",
+          "n_sequences": 320,
+          "subclass": "3.5",
+          "example_name": "Succinyl-diaminopimelate desuccinylase",
+          "mean_confidence": 0.9145683377032056,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "D7PHZ8",
+          "n_sequences": 32,
+          "subclass": "3.1",
+          "example_name": "Endoribonuclease LACTB2",
+          "mean_confidence": 0.9089796339311789,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2RP80",
+          "n_sequences": 237,
+          "subclass": "3.1",
+          "example_name": "Hydroxyacylglutathione hydrolase, mitochondrial",
+          "mean_confidence": 0.9042603361693402,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O25441",
+          "n_sequences": 38,
+          "subclass": "5.4",
+          "example_name": "Ribosomal large subunit pseudouridine synthase D",
+          "mean_confidence": 0.9041951410284202,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B5ES07",
+          "n_sequences": 463,
+          "subclass": "2.1",
+          "example_name": "3-methyl-2-oxobutanoate hydroxymethyltransferase",
+          "mean_confidence": 0.9036796589497874,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P38709",
+          "n_sequences": 20,
+          "subclass": "2.7",
+          "example_name": "UTP--glucose-1-phosphate uridylyltransferase",
+          "mean_confidence": 0.9012358340219878,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P28206",
+          "n_sequences": 23,
+          "subclass": "3.1",
+          "example_name": "Tyrosine-protein phosphatase 6",
+          "mean_confidence": 0.8986574276042516,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P9WFS0",
+          "n_sequences": 88,
+          "subclass": "2.4",
+          "example_name": "Thymidine phosphorylase",
+          "mean_confidence": 0.8986506967010238,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8DE84",
+          "n_sequences": 89,
+          "subclass": "1.8",
+          "example_name": "Mitochondrial peptide methionine sulfoxide reductase",
+          "mean_confidence": 0.8982203282578662,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B4F0A6",
+          "n_sequences": 106,
+          "subclass": "2.7",
+          "example_name": "Galactokinase",
+          "mean_confidence": 0.8965780304993473,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8JFZ2",
+          "n_sequences": 50,
+          "subclass": "2.5",
+          "example_name": "Glutathione S-transferase A1",
+          "mean_confidence": 0.8965424375642523,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q049G8",
+          "n_sequences": 125,
+          "subclass": "6.3",
+          "example_name": "tRNA(Met) cytidine acetate ligase",
+          "mean_confidence": 0.7996868982268345,
+          "accuracy": 0.904
+        },
+        {
+          "cluster": "Q9PQ25",
+          "n_sequences": 312,
+          "subclass": "3.5",
+          "example_name": "Peptide deformylase",
+          "mean_confidence": 0.8940344206595844,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O34980",
+          "n_sequences": 85,
+          "subclass": "3.5",
+          "example_name": "IAA-amino acid hydrolase ILR1-like 4",
+          "mean_confidence": 0.8678374560956125,
+          "accuracy": 0.9764705882352941
+        },
+        {
+          "cluster": "Q9KR61",
+          "n_sequences": 40,
+          "subclass": "2.7",
+          "example_name": "N-acetylmannosamine kinase",
+          "mean_confidence": 0.8896532606858901,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9LMB9",
+          "n_sequences": 43,
+          "subclass": "2.7",
+          "example_name": "Cysteine-rich receptor-like protein kinase 6",
+          "mean_confidence": 0.8894699098833673,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "W7MWX7",
+          "n_sequences": 27,
+          "subclass": "3.1",
+          "example_name": "Esterase OVCA2",
+          "mean_confidence": 0.889436415735045,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q15ZU3",
+          "n_sequences": 65,
+          "subclass": "2.8",
+          "example_name": "Thiosulfate sulfurtransferase GlpE",
+          "mean_confidence": 0.8890505138121122,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q7UGV1",
+          "n_sequences": 399,
+          "subclass": "2.5",
+          "example_name": "6,7-dimethyl-8-ribityllumazine synthase",
+          "mean_confidence": 0.8861356888271165,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B0SM60",
+          "n_sequences": 369,
+          "subclass": "1.1",
+          "example_name": "1-deoxy-D-xylulose 5-phosphate reductoisomerase",
+          "mean_confidence": 0.8818050866118021,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q2GEH7",
+          "n_sequences": 704,
+          "subclass": "6.3",
+          "example_name": "Adenylosuccinate synthetase isozyme 2",
+          "mean_confidence": 0.88115945556821,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B2A4J5",
+          "n_sequences": 416,
+          "subclass": "3.1",
+          "example_name": "5'/3'-nucleotidase SurE",
+          "mean_confidence": 0.8751389495389049,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q0A9A9",
+          "n_sequences": 345,
+          "subclass": "4.2",
+          "example_name": "3-isopropylmalate dehydratase small subunit",
+          "mean_confidence": 0.8722747959334406,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q1AYM8",
+          "n_sequences": 37,
+          "subclass": "1.4",
+          "example_name": "D-amino-acid oxidase",
+          "mean_confidence": 0.8449233923784656,
+          "accuracy": 0.972972972972973
+        },
+        {
+          "cluster": "P44710",
+          "n_sequences": 60,
+          "subclass": "3.6",
+          "example_name": "NAD-capped RNA hydrolase NudC",
+          "mean_confidence": 0.865509700289307,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O26377",
+          "n_sequences": 36,
+          "subclass": "1.3",
+          "example_name": "Digeranylgeranylglycerophospholipid reductase",
+          "mean_confidence": 0.863266257645365,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q399M3",
+          "n_sequences": 89,
+          "subclass": "7.6",
+          "example_name": "Macrolide export ATP-binding/permease protein MacB",
+          "mean_confidence": 0.8623069513226853,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q638R8",
+          "n_sequences": 74,
+          "subclass": "4.1",
+          "example_name": "4-hydroxy-4-methyl-2-oxoglutarate aldolase",
+          "mean_confidence": 0.40087334124435714,
+          "accuracy": 0.5405405405405406
+        },
+        {
+          "cluster": "A8YIE1",
+          "n_sequences": 23,
+          "subclass": "3.1",
+          "example_name": "2-hydroxy-3-keto-5-methylthiopentenyl-1-phosphate phosphatase",
+          "mean_confidence": 0.8555564770840874,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9UYX0",
+          "n_sequences": 143,
+          "subclass": "1.1",
+          "example_name": "L-threonine 3-dehydrogenase",
+          "mean_confidence": 0.8465601211600956,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9YGI5",
+          "n_sequences": 23,
+          "subclass": "3.1",
+          "example_name": "Deoxyribonuclease-1",
+          "mean_confidence": 0.8420728065725787,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q9AMS6",
+          "n_sequences": 260,
+          "subclass": "4.1",
+          "example_name": "Aspartate 1-decarboxylase",
+          "mean_confidence": 0.7996857603434335,
+          "accuracy": 0.9576923076923077
+        },
+        {
+          "cluster": "A1S8N5",
+          "n_sequences": 51,
+          "subclass": "7.2",
+          "example_name": "Na(+)-translocating NADH-quinone reductase subunit A",
+          "mean_confidence": 0.8410588202085278,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O58522",
+          "n_sequences": 34,
+          "subclass": "3.6",
+          "example_name": "Cancer-related nucleoside-triphosphatase",
+          "mean_confidence": 0.8381974355102791,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A1RZJ9",
+          "n_sequences": 49,
+          "subclass": "1.1",
+          "example_name": "Glycerol-1-phosphate dehydrogenase [NAD(P)+]",
+          "mean_confidence": 0.8363339446957618,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P20360",
+          "n_sequences": 262,
+          "subclass": "3.6",
+          "example_name": "Actin, gamma-enteric smooth muscle",
+          "mean_confidence": 0.8265079513796176,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q02636",
+          "n_sequences": 52,
+          "subclass": "2.6",
+          "example_name": "Aspartate aminotransferase, mitochondrial",
+          "mean_confidence": 0.8242319187636089,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8NR94",
+          "n_sequences": 26,
+          "subclass": "1.14",
+          "example_name": "3-(3-hydroxy-phenyl)propionate/3-hydroxycinnamic acid hydroxylase",
+          "mean_confidence": 0.8240698623947311,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q1QPC1",
+          "n_sequences": 53,
+          "subclass": "1.14",
+          "example_name": "tRNA uridine(34) hydroxylase",
+          "mean_confidence": 0.8191573021079653,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "E9AGH7",
+          "n_sequences": 32,
+          "subclass": "1.3",
+          "example_name": "12-oxophytodienoate reductase 1",
+          "mean_confidence": 0.595660536967371,
+          "accuracy": 0.78125
+        },
+        {
+          "cluster": "Q8KL44",
+          "n_sequences": 312,
+          "subclass": "5.4",
+          "example_name": "Phosphoglycerate mutase 1",
+          "mean_confidence": 0.6831244035601611,
+          "accuracy": 0.875
+        },
+        {
+          "cluster": "O34354",
+          "n_sequences": 24,
+          "subclass": "1.1",
+          "example_name": "Altronate oxidoreductase",
+          "mean_confidence": 0.7988242320606388,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P78540",
+          "n_sequences": 36,
+          "subclass": "3.5",
+          "example_name": "Arginase-1",
+          "mean_confidence": 0.7702784584904366,
+          "accuracy": 0.9722222222222222
+        },
+        {
+          "cluster": "P0A8B2",
+          "n_sequences": 48,
+          "subclass": "3.1",
+          "example_name": "Ribosome rescue factor SmrB",
+          "mean_confidence": 0.7939628195307552,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "O14124",
+          "n_sequences": 26,
+          "subclass": "3.4",
+          "example_name": "Dipeptidase 1",
+          "mean_confidence": 0.36956334295638527,
+          "accuracy": 0.5769230769230769
+        },
+        {
+          "cluster": "Q4PH43",
+          "n_sequences": 28,
+          "subclass": "2.4",
+          "example_name": "S-methyl-5'-thioadenosine phosphorylase",
+          "mean_confidence": 0.7902026765913952,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P26939",
+          "n_sequences": 310,
+          "subclass": "4.1",
+          "example_name": "Indole-3-glycerol phosphate synthase",
+          "mean_confidence": 0.3985024166404826,
+          "accuracy": 0.6129032258064516
+        },
+        {
+          "cluster": "Q892D0",
+          "n_sequences": 32,
+          "subclass": "4.3",
+          "example_name": "Ethanolamine ammonia-lyase small subunit",
+          "mean_confidence": 0.7726943297001868,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q3IPI7",
+          "n_sequences": 260,
+          "subclass": "4.6",
+          "example_name": "Cyclic pyranopterin monophosphate synthase",
+          "mean_confidence": 0.7725089697472811,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "A6L9B7",
+          "n_sequences": 213,
+          "subclass": "2.6",
+          "example_name": "Phosphoserine aminotransferase",
+          "mean_confidence": 0.7689637568214747,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P75517",
+          "n_sequences": 50,
+          "subclass": "5.1",
+          "example_name": "UDP-glucose 4-epimerase",
+          "mean_confidence": 0.7432412962028679,
+          "accuracy": 0.98
+        },
+        {
+          "cluster": "P17166",
+          "n_sequences": 450,
+          "subclass": "4.2",
+          "example_name": "Tryptophan synthase alpha chain",
+          "mean_confidence": 0.7582779014242494,
+          "accuracy": 0.9955555555555555
+        },
+        {
+          "cluster": "P09029",
+          "n_sequences": 22,
+          "subclass": "6.3",
+          "example_name": "N5-carboxyaminoimidazole ribonucleotide synthase",
+          "mean_confidence": 0.7589239462752837,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "P62414",
+          "n_sequences": 600,
+          "subclass": "2.7",
+          "example_name": "Phosphoglycerate kinase 1",
+          "mean_confidence": 0.7442538685392596,
+          "accuracy": 0.9966666666666667
+        },
+        {
+          "cluster": "A0Q119",
+          "n_sequences": 45,
+          "subclass": "2.7",
+          "example_name": "DNA-directed RNA polymerase subunit omega",
+          "mean_confidence": 0.6207825824127917,
+          "accuracy": 0.8888888888888888
+        },
+        {
+          "cluster": "B5YK85",
+          "n_sequences": 427,
+          "subclass": "2.8",
+          "example_name": "Biotin synthase",
+          "mean_confidence": 0.6789551985741155,
+          "accuracy": 0.9578454332552693
+        },
+        {
+          "cluster": "Q9YFQ8",
+          "n_sequences": 25,
+          "subclass": "5.6",
+          "example_name": "ATP-dependent DNA helicase Hel308",
+          "mean_confidence": 0.6758520226666539,
+          "accuracy": 0.96
+        },
+        {
+          "cluster": "Q5LJ16",
+          "n_sequences": 61,
+          "subclass": "5.3",
+          "example_name": "4-deoxy-L-threo-5-hexosulose-uronate ketol-isomerase",
+          "mean_confidence": 0.6636715686654845,
+          "accuracy": 0.9672131147540983
+        },
+        {
+          "cluster": "C5D7C7",
+          "n_sequences": 24,
+          "subclass": "3.1",
+          "example_name": "Putative phosphoesterase YjcG",
+          "mean_confidence": 0.6769674810787327,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q8ZQU2",
+          "n_sequences": 24,
+          "subclass": "1.3",
+          "example_name": "Succinate dehydrogenase iron-sulfur subunit",
+          "mean_confidence": 0.2875195801021481,
+          "accuracy": 0.625
+        },
+        {
+          "cluster": "P27372",
+          "n_sequences": 31,
+          "subclass": "7.1",
+          "example_name": "NAD(P)H-quinone oxidoreductase subunit L",
+          "mean_confidence": 0.26916676472321954,
+          "accuracy": 0.6129032258064516
+        },
+        {
+          "cluster": "A1WQL7",
+          "n_sequences": 64,
+          "subclass": "2.7",
+          "example_name": "DNA-directed RNA polymerase subunit omega",
+          "mean_confidence": 0.5129066604902683,
+          "accuracy": 0.859375
+        },
+        {
+          "cluster": "A1WFL2",
+          "n_sequences": 35,
+          "subclass": "4.2",
+          "example_name": "L-rhamnonate dehydratase",
+          "mean_confidence": 0.6482943832943366,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "B1GYV7",
+          "n_sequences": 140,
+          "subclass": "1.4",
+          "example_name": "Probable glycine dehydrogenase (decarboxylating) subunit 1",
+          "mean_confidence": 0.6421506359830197,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "C3MIE4",
+          "n_sequences": 103,
+          "subclass": "1.1",
+          "example_name": "Oxygen-dependent choline dehydrogenase",
+          "mean_confidence": 0.6178619615121972,
+          "accuracy": 0.9805825242718447
+        },
+        {
+          "cluster": "I1RJR2",
+          "n_sequences": 35,
+          "subclass": "1.14",
+          "example_name": "Lanosterol 14-alpha demethylase",
+          "mean_confidence": 0.5643332867587948,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q54NY7",
+          "n_sequences": 89,
+          "subclass": "4.2",
+          "example_name": "Methylthioribulose-1-phosphate dehydratase",
+          "mean_confidence": 0.4992672798563949,
+          "accuracy": 0.9775280898876404
+        },
+        {
+          "cluster": "B0TAN9",
+          "n_sequences": 186,
+          "subclass": "3.5",
+          "example_name": "5-oxoprolinase subunit A",
+          "mean_confidence": 0.35632076464488394,
+          "accuracy": 0.8817204301075269
+        },
+        {
+          "cluster": "Q838L2",
+          "n_sequences": 53,
+          "subclass": "5.3",
+          "example_name": "L-rhamnose isomerase",
+          "mean_confidence": 0.45061263241465666,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q05531",
+          "n_sequences": 33,
+          "subclass": "1.7",
+          "example_name": "Nitrate reductase [NADH] 1",
+          "mean_confidence": 0.4502056315776318,
+          "accuracy": 1.0
+        },
+        {
+          "cluster": "Q94511",
+          "n_sequences": 25,
+          "subclass": "7.1",
+          "example_name": "NADH-ubiquinone oxidoreductase 75 kDa subunit, mitochondrial",
+          "mean_confidence": 0.36032657037154336,
+          "accuracy": 1.0
+        }
+      ]
+    }
+  }
+}
