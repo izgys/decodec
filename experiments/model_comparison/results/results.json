@@ -1,0 +1,410 @@
+{
+  "experiment": "E3 ESM-2 + LoRA vs linear probe and nearest neighbour",
+  "git_commit": "0d6f495",
+  "dirty": false,
+  "sources": {
+    "lora": "experiments/lora/r8_650M/test_predictions.npz",
+    "probe": "experiments/baseline_linear_probe/results/test_predictions_mean.npz",
+    "neighbour": "experiments/baseline_similarity/results/test_predictions_neighbour.npz"
+  },
+  "config": {
+    "lora_predictions": "experiments/lora/r8_650M/test_predictions.npz",
+    "n_bootstrap": 1000,
+    "seed": 42,
+    "output_dir": "experiments/model_comparison/results"
+  },
+  "views": {
+    "all": {
+      "n_sequences": 35785,
+      "n_clusters": 2406,
+      "n_classes": 50,
+      "models": {
+        "lora": {
+          "macro_f1": 0.7733891056753777,
+          "ci_low": 0.7159333773957527,
+          "ci_high": 0.8090148161061325,
+          "accuracy": 0.8771831773089284
+        },
+        "probe": {
+          "macro_f1": 0.754565095808095,
+          "ci_low": 0.6920510733515323,
+          "ci_high": 0.781932600630836,
+          "accuracy": 0.8546877183177309
+        },
+        "neighbour": {
+          "macro_f1": 0.8146443913521314,
+          "ci_low": 0.7535789045650034,
+          "ci_high": 0.8352727076230797,
+          "accuracy": 0.8898980019561269
+        }
+      },
+      "lora_minus_probe": {
+        "macro_f1": {
+          "difference": 0.01882400986728261,
+          "ci_low": -0.006206165970875364,
+          "ci_high": 0.05742622113934295
+        },
+        "accuracy": {
+          "difference": 0.02249545899119743,
+          "ci_low": -0.0028006873647457007,
+          "ci_high": 0.055467314759685464
+        }
+      },
+      "lora_minus_neighbour": {
+        "macro_f1": {
+          "difference": -0.04125528567675374,
+          "ci_low": -0.07464775098371453,
+          "ci_high": 0.010340923261996237
+        },
+        "accuracy": {
+          "difference": -0.012714824647198546,
+          "ci_low": -0.05140278119100713,
+          "ci_high": 0.021403390794478862
+        }
+      }
+    },
+    "relative_free": {
+      "n_sequences": 19094,
+      "n_clusters": 2105,
+      "n_classes": 50,
+      "models": {
+        "lora": {
+          "macro_f1": 0.6716679797121412,
+          "ci_low": 0.6094018116955456,
+          "ci_high": 0.7208860374334096,
+          "accuracy": 0.7821828846758144
+        },
+        "probe": {
+          "macro_f1": 0.6589776278358628,
+          "ci_low": 0.5936977798219257,
+          "ci_high": 0.702276386033919,
+          "accuracy": 0.7635906567508117
+        },
+        "neighbour": {
+          "macro_f1": 0.739138193878686,
+          "ci_low": 0.6603740169668492,
+          "ci_high": 0.7624952299240344,
+          "accuracy": 0.812035194301875
+        }
+      },
+      "lora_minus_probe": {
+        "macro_f1": {
+          "difference": 0.012690351876278427,
+          "ci_low": -0.019552548249064466,
+          "ci_high": 0.05898628498268682
+        },
+        "accuracy": {
+          "difference": 0.01859222792500262,
+          "ci_low": -0.026027466701903708,
+          "ci_high": 0.07515672932248237
+        }
+      },
+      "lora_minus_neighbour": {
+        "macro_f1": {
+          "difference": -0.06747021416654475,
+          "ci_low": -0.09381521415018303,
+          "ci_high": 0.008038262881690733
+        },
+        "accuracy": {
+          "difference": -0.029852309626060544,
+          "ci_low": -0.10207280219695156,
+          "ci_high": 0.026049743535901074
+        }
+      }
+    },
+    "no_hit": {
+      "n_sequences": 406,
+      "n_clusters": 117,
+      "n_classes": 28,
+      "models": {
+        "lora": {
+          "macro_f1": 0.39661298616146645,
+          "ci_low": 0.31657416906617286,
+          "ci_high": 0.4389476904981839,
+          "accuracy": 0.43349753694581283
+        },
+        "probe": {
+          "macro_f1": 0.36729567136125896,
+          "ci_low": 0.306167623586145,
+          "ci_high": 0.42595995073774856,
+          "accuracy": 0.37438423645320196
+        },
+        "neighbour": {
+          "macro_f1": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "accuracy": 0.0
+        }
+      },
+      "lora_minus_probe": {
+        "macro_f1": {
+          "difference": 0.029317314800207495,
+          "ci_low": -0.05010026740341338,
+          "ci_high": 0.07731973792195446
+        },
+        "accuracy": {
+          "difference": 0.059113300492610835,
+          "ci_low": 0.0,
+          "ci_high": 0.12301247095096753
+        }
+      },
+      "lora_minus_neighbour": {
+        "macro_f1": {
+          "difference": 0.39661298616146645,
+          "ci_low": 0.31657416906617286,
+          "ci_high": 0.4389476904981839
+        },
+        "accuracy": {
+          "difference": 0.43349753694581283,
+          "ci_low": 0.31115194645779753,
+          "ci_high": 0.5639150432900433
+        }
+      }
+    },
+    "<30": {
+      "n_sequences": 6473,
+      "n_clusters": 965,
+      "n_classes": 49,
+      "models": {
+        "lora": {
+          "macro_f1": 0.6492677813167285,
+          "ci_low": 0.5803570461650236,
+          "ci_high": 0.7015357324455929,
+          "accuracy": 0.7707399969102425
+        },
+        "probe": {
+          "macro_f1": 0.6324706272312057,
+          "ci_low": 0.570012006567561,
+          "ci_high": 0.6739495598379838,
+          "accuracy": 0.7639425305113549
+        },
+        "neighbour": {
+          "macro_f1": 0.6371194130184178,
+          "ci_low": 0.5738990998213875,
+          "ci_high": 0.6824133921588306,
+          "accuracy": 0.759925845821103
+        }
+      },
+      "lora_minus_probe": {
+        "macro_f1": {
+          "difference": 0.016797154085522736,
+          "ci_low": -0.016376840191708607,
+          "ci_high": 0.05553084108183966
+        },
+        "accuracy": {
+          "difference": 0.006797466398887687,
+          "ci_low": -0.033129986756543606,
+          "ci_high": 0.04127591076933372
+        }
+      },
+      "lora_minus_neighbour": {
+        "macro_f1": {
+          "difference": 0.012148368298310674,
+          "ci_low": -0.03684264306278795,
+          "ci_high": 0.06455659996680586
+        },
+        "accuracy": {
+          "difference": 0.010814151089139502,
+          "ci_low": -0.03841150250584133,
+          "ci_high": 0.058252756071250036
+        }
+      }
+    },
+    "30-40": {
+      "n_sequences": 14406,
+      "n_clusters": 1212,
+      "n_classes": 50,
+      "models": {
+        "lora": {
+          "macro_f1": 0.7499421626911991,
+          "ci_low": 0.6897204064751487,
+          "ci_high": 0.7932248407628392,
+          "accuracy": 0.8629043454116341
+        },
+        "probe": {
+          "macro_f1": 0.7123599476530995,
+          "ci_low": 0.6504675678274195,
+          "ci_high": 0.7549443473535405,
+          "accuracy": 0.8359711231431348
+        },
+        "neighbour": {
+          "macro_f1": 0.7825642321023615,
+          "ci_low": 0.7180458142563709,
+          "ci_high": 0.8100992342531362,
+          "accuracy": 0.8940024989587672
+        }
+      },
+      "lora_minus_probe": {
+        "macro_f1": {
+          "difference": 0.03758221503809955,
+          "ci_low": 0.0005566840316911535,
+          "ci_high": 0.0783764105485671
+        },
+        "accuracy": {
+          "difference": 0.026933222268499236,
+          "ci_low": -0.0019940352638225327,
+          "ci_high": 0.06767774016996407
+        }
+      },
+      "lora_minus_neighbour": {
+        "macro_f1": {
+          "difference": -0.03262206941116241,
+          "ci_low": -0.0726471826628127,
+          "ci_high": 0.029305661358864896
+        },
+        "accuracy": {
+          "difference": -0.031098153547133137,
+          "ci_low": -0.09985644032390677,
+          "ci_high": 0.021313941165929395
+        }
+      }
+    },
+    "40-50": {
+      "n_sequences": 8078,
+      "n_clusters": 684,
+      "n_classes": 49,
+      "models": {
+        "lora": {
+          "macro_f1": 0.819925035913363,
+          "ci_low": 0.7567672774805722,
+          "ci_high": 0.8445647298025508,
+          "accuracy": 0.9512255508789305
+        },
+        "probe": {
+          "macro_f1": 0.7567029740488044,
+          "ci_low": 0.7002181455953422,
+          "ci_high": 0.7891632689514244,
+          "accuracy": 0.9078979945531072
+        },
+        "neighbour": {
+          "macro_f1": 0.845651086925059,
+          "ci_low": 0.7790715311698779,
+          "ci_high": 0.8682041604408471,
+          "accuracy": 0.9538252042584798
+        }
+      },
+      "lora_minus_probe": {
+        "macro_f1": {
+          "difference": 0.06322206186455859,
+          "ci_low": 0.014036606982840647,
+          "ci_high": 0.1000146149286582
+        },
+        "accuracy": {
+          "difference": 0.043327556325823226,
+          "ci_low": -0.0012584770914524437,
+          "ci_high": 0.10206675650003313
+        }
+      },
+      "lora_minus_neighbour": {
+        "macro_f1": {
+          "difference": -0.025726051011696005,
+          "ci_low": -0.06471190202099275,
+          "ci_high": 0.02284084341489884
+        },
+        "accuracy": {
+          "difference": -0.0025996533795493936,
+          "ci_low": -0.031282162625362264,
+          "ci_high": 0.022944213197892763
+        }
+      }
+    },
+    "50-70": {
+      "n_sequences": 5066,
+      "n_clusters": 449,
+      "n_classes": 46,
+      "models": {
+        "lora": {
+          "macro_f1": 0.8984424290318634,
+          "ci_low": 0.8455066521961312,
+          "ci_high": 0.922195982074784,
+          "accuracy": 0.9703908409001184
+        },
+        "probe": {
+          "macro_f1": 0.8854703270094505,
+          "ci_low": 0.8359325094356417,
+          "ci_high": 0.9244767569334343,
+          "accuracy": 0.9518357678641927
+        },
+        "neighbour": {
+          "macro_f1": 0.964761891338058,
+          "ci_low": 0.9303112894011039,
+          "ci_high": 0.977657833415797,
+          "accuracy": 0.9873667587840506
+        }
+      },
+      "lora_minus_probe": {
+        "macro_f1": {
+          "difference": 0.012972102022412946,
+          "ci_low": -0.039282227161939985,
+          "ci_high": 0.0488716069312812
+        },
+        "accuracy": {
+          "difference": 0.018555073035925778,
+          "ci_low": -0.007551065861860976,
+          "ci_high": 0.050128546461205556
+        }
+      },
+      "lora_minus_neighbour": {
+        "macro_f1": {
+          "difference": -0.06631946230619457,
+          "ci_low": -0.11277411025037665,
+          "ci_high": -0.033034326421849065
+        },
+        "accuracy": {
+          "difference": -0.016975917883932098,
+          "ci_low": -0.032232558875965434,
+          "ci_high": -0.00424082067902782
+        }
+      }
+    },
+    ">=70": {
+      "n_sequences": 1356,
+      "n_clusters": 175,
+      "n_classes": 36,
+      "models": {
+        "lora": {
+          "macro_f1": 0.8372011764849698,
+          "ci_low": 0.7556093684496527,
+          "ci_high": 0.8525679793351677,
+          "accuracy": 0.8805309734513275
+        },
+        "probe": {
+          "macro_f1": 0.8968087352767609,
+          "ci_low": 0.8207807926115507,
+          "ci_high": 0.9179720930281826,
+          "accuracy": 0.950589970501475
+        },
+        "neighbour": {
+          "macro_f1": 0.9706991481270852,
+          "ci_low": 0.935989555129899,
+          "ci_high": 0.9865244410357683,
+          "accuracy": 0.9882005899705014
+        }
+      },
+      "lora_minus_probe": {
+        "macro_f1": {
+          "difference": -0.05960755879179103,
+          "ci_low": -0.10395706243266449,
+          "ci_high": -0.03754187552732382
+        },
+        "accuracy": {
+          "difference": -0.0700589970501475,
+          "ci_low": -0.10771612149532708,
+          "ci_high": -0.04823904603438715
+        }
+      },
+      "lora_minus_neighbour": {
+        "macro_f1": {
+          "difference": -0.1334979716421154,
+          "ci_low": -0.20754744396060668,
+          "ci_high": -0.11483401928411324
+        },
+        "accuracy": {
+          "difference": -0.10766961651917405,
+          "ci_low": -0.16796420952499216,
+          "ci_high": -0.07151345602831023
+        }
+      }
+    }
+  }
+}
