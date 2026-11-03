@@ -55,7 +55,7 @@ A few things worth knowing:
 | ESM-2 + LoRA training with resumable checkpoints | Built |
 | Sequence-similarity baseline and search of test against train | Built |
 | Paired comparison of LoRA with both baselines, by identity to train | Built |
-| Random vs homology-aware split comparison | Planned |
+| Random vs homology-aware split comparison, for both baselines | Built |
 | Calibration (temperature scaling, ECE), by identity and by cluster | Built |
 | Integrated gradients with conservation check | Planned |
 | Hybrid of search and language model, with its threshold set on validation | Planned |
@@ -136,9 +136,28 @@ What the numbers say:
 - **Confidence is more useful after scaling.** Predictions at 0.9 or above cover 65.0% of test sequences at 96.2% accuracy, against 87.4% at 92.9% before.
 - **Whole families can still fail with high confidence.** Of the 239 test clusters with at least 20 sequences, 15 (2,071 sequences) are mostly wrong with a mean confidence of 0.8 or above before scaling, and 8 (1,484 sequences) after. The others mostly just fall below that line: the toxin cluster above stays at 0% accuracy, with mean confidence moving from 0.91 to 0.78. A high score is not a guarantee for a family with little support in training.
 
+### What a random split would have reported
+
+The same 212,917 records, 50 classes and split sizes, with the same probe procedure and search. Only the split changes, here to a random one stratified by class. Each test set is resampled on its own, because the two hold different sequences.
+
+| Test macro-F1 (95% CI) | Random split | Homology-aware split | Inflation (random minus homology-aware) |
+|---|---|---|---|
+| Linear probe, all test sequences (35,785) | 0.974 (0.965 to 0.977) | 0.755 (0.689 to 0.781) | **+0.219 (0.190 to 0.282)** |
+| Nearest neighbour, all test sequences (35,785) | 0.983 (0.976 to 0.986) | 0.815 (0.753 to 0.834) | **+0.168 (0.147 to 0.229)** |
+| Linear probe, no training relative | 0.628 (0.581 to 0.663), 1,385 sequences, 48 classes | 0.659 (0.596 to 0.700), 19,094 sequences, 50 classes | -0.031 (-0.087 to 0.038) |
+| Nearest neighbour, no training relative | 0.708 (0.666 to 0.744), 1,385 sequences, 48 classes | 0.739 (0.663 to 0.759), 19,094 sequences, 50 classes | -0.031 (-0.069 to 0.057) |
+
+Homology-aware intervals differ slightly from the tables above because they use a separate bootstrap seed here.
+
+- **A random split makes this task look almost solved.** The probe's macro-F1 rises by about 0.22, and even copying a label scores 0.983.
+- **Close relatives explain the rise.** At 70% identity or above to the best training hit, a random split has 25,129 test sequences (70.2%), against 1,356 (3.8%) on the homology-aware split. A training sequence at 90% identity or above covering at least 80% of both sequences exists for 14,751 test sequences, against 21.
+- **Without relatives, the inflation disappears.** On sequences with no training relative, the two splits do not clearly differ for either model, although that group is small on the random split.
+
+This is one random split with one seed. LoRA was not retrained on it.
+
 The first version of the probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
 
-The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [LoRA against both baselines](experiments/model_comparison/results/results.json), [LoRA training](experiments/lora/r8_650M/results.json), [calibration](experiments/calibration/results/results.json), [probe](experiments/baseline_linear_probe/results/results.json), [neighbour](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
+The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [LoRA against both baselines](experiments/model_comparison/results/results.json), [LoRA training](experiments/lora/r8_650M/results.json), [calibration](experiments/calibration/results/results.json), [random split](experiments/random_split/results/results.json), [probe](experiments/baseline_linear_probe/results/results.json), [neighbour](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
 
 ## Quick start
 
@@ -209,13 +228,19 @@ uv run python -m src.calibration.temperature
 uv run python -m src.visualisation.reliability_figure
 ```
 
+Measure how much a random split inflates the baselines (under an hour, Docker needed):
+
+```bash
+uv run python experiments/random_split/run_random_split.py
+```
+
 Results land in each experiment's folder (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
 
 ## Design choices
 
 **Sub-classes, not top-level classes.** Seven top-level classes make the task too easy to learn much from. Sub-classes are harder and still leave enough sequences for most classes.
 
-**Homology-aware splits first, random splits only as a comparison.** A random split mostly tests memory. The gap between the two will be measured directly on the same data, with nothing else changed.
+**Homology-aware splits first, random splits only as a comparison.** A random split mostly tests memory. The gap between the two is measured directly on the same data, with only the split changed.
 
 **A fair baseline before fine-tuning.** If the baseline is weak, any fine-tuned model looks good. The linear probe gets tuned before it is used as the reference.
 
@@ -237,7 +262,6 @@ Each limitation has a planned fix.
 | One temperature does not fit every identity range | After scaling, ECE is 0.066 below 30% identity and 0.073 from 40 to 50%, in opposite directions | Test a temperature that depends on identity to the training set |
 | Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v3 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
-| Leakage gap not yet measured | Only the homology-aware split has been run | Random split on the same records, everything else unchanged |
 | MMseqs2 version not pinned | The Docker image uses the `latest` tag | Pin the version and store checksums for every pipeline stage |
 | Low confidence is a weak signal for unknown families | Families absent from Swiss-Prot cannot be predicted correctly | Calibrated low-confidence flag, documented as a limit rather than a detector |
 
@@ -256,7 +280,7 @@ Each limitation has a planned fix.
 - [x] Paired comparison of LoRA with both baselines, by identity to the training set
 - [x] Calibration with ECE and reliability diagrams
 - [x] Tests and CI, run with networking off
-- [ ] Random vs homology-aware split comparison
+- [x] Random vs homology-aware split comparison, for both baselines
 - [ ] Hybrid of search and language model, with its threshold set on validation
 - [ ] Integrated gradients with a conservation cross-check, on selected families and failing clusters
 - [ ] Inference API and Docker image, returning the prediction with its evidence: best hit, identity, calibrated confidence and a low-support flag
@@ -296,6 +320,7 @@ decodec/
 │   ├── probe.yaml                linear probe: poolings, C grid, class weights
 │   ├── similarity.yaml           no-relative subset and identity bins
 │   ├── comparison.yaml           LoRA vs baselines: predictions and bootstrap settings
+│   ├── random_split.yaml         random split: seed and folders
 │   ├── calibration.yaml          temperature scaling: bins, thresholds, cluster check
 │   └── tracking.yaml             MLflow on/off and store folder
 ├── src/
@@ -324,7 +349,8 @@ decodec/
 │   ├── baseline_similarity/      nearest neighbour vs probe, by identity to train
 │   ├── lora/                     hardware test, 35M trial and 650M training results
 │   ├── model_comparison/         LoRA vs both baselines, by identity to train
-│   └── calibration/              temperature, ECE before and after, reliability diagrams
+│   ├── calibration/              temperature, ECE before and after, reliability diagrams
+│   └── random_split/             random vs homology-aware split, for both baselines
 ├── pyproject.toml
 └── uv.lock
 ```
