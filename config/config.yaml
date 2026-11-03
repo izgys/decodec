@@ -11,4 +11,5 @@ defaults:
   - comparison
   - calibration
   - random_split
+  - hybrid
   - _self_
