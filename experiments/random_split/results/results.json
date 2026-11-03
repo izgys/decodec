@@ -1,0 +1,387 @@
+{
+  "experiment": "E5 random vs homology-aware split, linear probe and nearest neighbour",
+  "git_commit": "620f0ff",
+  "dirty": false,
+  "n_train": 149052,
+  "n_val": 28080,
+  "n_test": 35785,
+  "n_classes": 50,
+  "best_C": 10.0,
+  "C_sweep": [
+    {
+      "C": 0.001,
+      "val_macro_f1": 0.9047790689396861,
+      "n_iter": 116,
+      "converged": true,
+      "fit_seconds": 33.77146363258362
+    },
+    {
+      "C": 0.01,
+      "val_macro_f1": 0.9545151882927874,
+      "n_iter": 108,
+      "converged": true,
+      "fit_seconds": 32.20630884170532
+    },
+    {
+      "C": 0.1,
+      "val_macro_f1": 0.9748573553795242,
+      "n_iter": 88,
+      "converged": true,
+      "fit_seconds": 26.977136373519897
+    },
+    {
+      "C": 1.0,
+      "val_macro_f1": 0.9739181656783404,
+      "n_iter": 89,
+      "converged": true,
+      "fit_seconds": 27.79082155227661
+    },
+    {
+      "C": 10.0,
+      "val_macro_f1": 0.9754937636791238,
+      "n_iter": 87,
+      "converged": true,
+      "fit_seconds": 26.017630100250244
+    }
+  ],
+  "config": {
+    "seed": 42,
+    "n_bootstrap": 1000,
+    "work_dir": "data/random_split",
+    "output_dir": "experiments/random_split/results"
+  },
+  "random": {
+    "all": {
+      "n_sequences": 35785,
+      "n_clusters": 6764,
+      "n_classes": 50,
+      "models": {
+        "probe": {
+          "macro_f1": 0.9737545734006303,
+          "ci_low": 0.964858138471627,
+          "ci_high": 0.9773602767215228,
+          "accuracy": 0.9845465977364818
+        },
+        "neighbour": {
+          "macro_f1": 0.9829595288567723,
+          "ci_low": 0.9760043733689977,
+          "ci_high": 0.9863500364509993,
+          "accuracy": 0.9921475478552466
+        }
+      }
+    },
+    "relative_free": {
+      "n_sequences": 1385,
+      "n_clusters": 1300,
+      "n_classes": 48,
+      "models": {
+        "probe": {
+          "macro_f1": 0.627936197335165,
+          "ci_low": 0.580635897523516,
+          "ci_high": 0.6625029594414127,
+          "accuracy": 0.8115523465703971
+        },
+        "neighbour": {
+          "macro_f1": 0.7077491649915876,
+          "ci_low": 0.666360006500518,
+          "ci_high": 0.7442623493895113,
+          "accuracy": 0.8534296028880867
+        }
+      }
+    },
+    "no_hit": {
+      "n_sequences": 34,
+      "n_clusters": 33,
+      "n_classes": 11,
+      "models": {
+        "probe": {
+          "macro_f1": 0.4420912420912421,
+          "ci_low": 0.2929222292858656,
+          "ci_high": 0.5347565970711905,
+          "accuracy": 0.5
+        },
+        "neighbour": {
+          "macro_f1": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    "<30": {
+      "n_sequences": 433,
+      "n_clusters": 419,
+      "n_classes": 44,
+      "models": {
+        "probe": {
+          "macro_f1": 0.5643277268960325,
+          "ci_low": 0.5144778865381072,
+          "ci_high": 0.6032058624599141,
+          "accuracy": 0.7944572748267898
+        },
+        "neighbour": {
+          "macro_f1": 0.6260753445035738,
+          "ci_low": 0.5936527739756935,
+          "ci_high": 0.6642088780216222,
+          "accuracy": 0.815242494226328
+        }
+      }
+    },
+    "30-40": {
+      "n_sequences": 1299,
+      "n_clusters": 1134,
+      "n_classes": 50,
+      "models": {
+        "probe": {
+          "macro_f1": 0.8134520075603965,
+          "ci_low": 0.7757732409409092,
+          "ci_high": 0.846967733034343,
+          "accuracy": 0.9006928406466512
+        },
+        "neighbour": {
+          "macro_f1": 0.8646993815214503,
+          "ci_low": 0.8258805326581209,
+          "ci_high": 0.892802383508153,
+          "accuracy": 0.9268668206312548
+        }
+      }
+    },
+    "40-50": {
+      "n_sequences": 1961,
+      "n_clusters": 1337,
+      "n_classes": 49,
+      "models": {
+        "probe": {
+          "macro_f1": 0.8898488282329045,
+          "ci_low": 0.8587833730267094,
+          "ci_high": 0.9129607102821299,
+          "accuracy": 0.9479857215706272
+        },
+        "neighbour": {
+          "macro_f1": 0.9409009220117264,
+          "ci_low": 0.9233457025740949,
+          "ci_high": 0.9574027285804375,
+          "accuracy": 0.9821519632840388
+        }
+      }
+    },
+    "50-70": {
+      "n_sequences": 6929,
+      "n_clusters": 2525,
+      "n_classes": 50,
+      "models": {
+        "probe": {
+          "macro_f1": 0.9731398028481724,
+          "ci_low": 0.9506091529033797,
+          "ci_high": 0.9826284594029913,
+          "accuracy": 0.9871554336845143
+        },
+        "neighbour": {
+          "macro_f1": 0.9856087910212449,
+          "ci_low": 0.9650201803574187,
+          "ci_high": 0.9936899930028034,
+          "accuracy": 0.9963919757540771
+        }
+      }
+    },
+    ">=70": {
+      "n_sequences": 25129,
+      "n_clusters": 4103,
+      "n_classes": 50,
+      "models": {
+        "probe": {
+          "macro_f1": 0.9935208620091024,
+          "ci_low": 0.9903030521702023,
+          "ci_high": 0.9950482191386743,
+          "accuracy": 0.9949460782363007
+        },
+        "neighbour": {
+          "macro_f1": 0.9988593991293064,
+          "ci_low": 0.9973912823894664,
+          "ci_high": 0.9995761715207734,
+          "accuracy": 0.9995224640853198
+        }
+      }
+    }
+  },
+  "homology": {
+    "all": {
+      "n_sequences": 35785,
+      "n_clusters": 2406,
+      "n_classes": 50,
+      "models": {
+        "probe": {
+          "macro_f1": 0.754565095808095,
+          "ci_low": 0.688682762862346,
+          "ci_high": 0.7813807021231184,
+          "accuracy": 0.8546877183177309
+        },
+        "neighbour": {
+          "macro_f1": 0.8146443913521314,
+          "ci_low": 0.7532472291201313,
+          "ci_high": 0.8337328826650243,
+          "accuracy": 0.8898980019561269
+        }
+      }
+    },
+    "relative_free": {
+      "n_sequences": 19094,
+      "n_clusters": 2105,
+      "n_classes": 50,
+      "models": {
+        "probe": {
+          "macro_f1": 0.6589776278358628,
+          "ci_low": 0.5960252758330902,
+          "ci_high": 0.7003139887414891,
+          "accuracy": 0.7635906567508117
+        },
+        "neighbour": {
+          "macro_f1": 0.739138193878686,
+          "ci_low": 0.6632194568612774,
+          "ci_high": 0.7587317499359123,
+          "accuracy": 0.812035194301875
+        }
+      }
+    },
+    "no_hit": {
+      "n_sequences": 406,
+      "n_clusters": 117,
+      "n_classes": 28,
+      "models": {
+        "probe": {
+          "macro_f1": 0.36729567136125896,
+          "ci_low": 0.30285076456524035,
+          "ci_high": 0.42695180436791463,
+          "accuracy": 0.37438423645320196
+        },
+        "neighbour": {
+          "macro_f1": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    "<30": {
+      "n_sequences": 6473,
+      "n_clusters": 965,
+      "n_classes": 49,
+      "models": {
+        "probe": {
+          "macro_f1": 0.6324706272312057,
+          "ci_low": 0.5747313982971006,
+          "ci_high": 0.6682667011685348,
+          "accuracy": 0.7639425305113549
+        },
+        "neighbour": {
+          "macro_f1": 0.6371194130184178,
+          "ci_low": 0.5721743202645219,
+          "ci_high": 0.6832369037097733,
+          "accuracy": 0.759925845821103
+        }
+      }
+    },
+    "30-40": {
+      "n_sequences": 14406,
+      "n_clusters": 1212,
+      "n_classes": 50,
+      "models": {
+        "probe": {
+          "macro_f1": 0.7123599476530995,
+          "ci_low": 0.648985026341564,
+          "ci_high": 0.7564089386906703,
+          "accuracy": 0.8359711231431348
+        },
+        "neighbour": {
+          "macro_f1": 0.7825642321023615,
+          "ci_low": 0.7149407601882539,
+          "ci_high": 0.8080710040179875,
+          "accuracy": 0.8940024989587672
+        }
+      }
+    },
+    "40-50": {
+      "n_sequences": 8078,
+      "n_clusters": 684,
+      "n_classes": 49,
+      "models": {
+        "probe": {
+          "macro_f1": 0.7567029740488044,
+          "ci_low": 0.7010131081432139,
+          "ci_high": 0.7932005271459311,
+          "accuracy": 0.9078979945531072
+        },
+        "neighbour": {
+          "macro_f1": 0.845651086925059,
+          "ci_low": 0.7827585304257467,
+          "ci_high": 0.8672043748508802,
+          "accuracy": 0.9538252042584798
+        }
+      }
+    },
+    "50-70": {
+      "n_sequences": 5066,
+      "n_clusters": 449,
+      "n_classes": 46,
+      "models": {
+        "probe": {
+          "macro_f1": 0.8854703270094505,
+          "ci_low": 0.8321190139100174,
+          "ci_high": 0.922600412737911,
+          "accuracy": 0.9518357678641927
+        },
+        "neighbour": {
+          "macro_f1": 0.964761891338058,
+          "ci_low": 0.9299853385745988,
+          "ci_high": 0.9771118486706306,
+          "accuracy": 0.9873667587840506
+        }
+      }
+    },
+    ">=70": {
+      "n_sequences": 1356,
+      "n_clusters": 175,
+      "n_classes": 36,
+      "models": {
+        "probe": {
+          "macro_f1": 0.8968087352767609,
+          "ci_low": 0.8182719020114406,
+          "ci_high": 0.9185519511329091,
+          "accuracy": 0.950589970501475
+        },
+        "neighbour": {
+          "macro_f1": 0.9706991481270852,
+          "ci_low": 0.9395063301235161,
+          "ci_high": 0.9865856082408497,
+          "accuracy": 0.9882005899705014
+        }
+      }
+    }
+  },
+  "gap_random_minus_homology": {
+    "all": {
+      "probe": {
+        "difference": 0.21918947759253526,
+        "ci_low": 0.1899767421750223,
+        "ci_high": 0.28239476380637396
+      },
+      "neighbour": {
+        "difference": 0.1683151375046409,
+        "ci_low": 0.1474552312099308,
+        "ci_high": 0.2286349070862917
+      }
+    },
+    "relative_free": {
+      "probe": {
+        "difference": -0.031041430500697742,
+        "ci_low": -0.08712526513389036,
+        "ci_high": 0.03762608087545215
+      },
+      "neighbour": {
+        "difference": -0.03138902888709838,
+        "ci_low": -0.06888167619631039,
+        "ci_high": 0.05710656195507906
+      }
+    }
+  }
+}
