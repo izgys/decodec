@@ -50,6 +50,7 @@ FORMAT_OUTPUT = "query,target,pident,alnlen,qcov,tcov,evalue,bits"
 # The coverage the clustering requires of both sequences (-c 0.8 --cov-mode 0)
 CLUSTER_COVERAGE = 0.8
 HISTOGRAM_WIDTH = 5     # identity histogram bin width, in percentage points
+NO_PREDICTION = -1      # nearest neighbour's label for a sequence with no hit
 
 
 # ---------------------------------------------------------------------------
@@ -226,6 +227,13 @@ def build_report(table: list[dict], records: list[dict]) -> dict:
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
+def predict_from_best_hit(table: list[dict], train_labels: dict[str, int]) -> np.ndarray:
+    """The label of each sequence's best training hit; NO_PREDICTION if it has none."""
+    return np.array(
+        [train_labels[row["best_target"]] if row["n_hits"] else NO_PREDICTION for row in table]
+    )
+
 
 def build_views(
     table: list[dict], relative_identity: float, edges: list[float]

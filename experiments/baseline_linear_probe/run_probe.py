@@ -33,7 +33,6 @@ Why tune C on validation and refit nothing on validation?
 
 import json
 import logging
-import time
 from pathlib import Path
 
 import numpy as np
@@ -45,6 +44,7 @@ from sklearn.preprocessing import StandardScaler
 from src import metrics
 from src.config import cli_config, config_as_dict
 from src.embeddings import SPLITS, embeddings_path
+from src.probe import fit_and_select
 from src.tracking import git_state, log_run
 
 logging.basicConfig(
@@ -60,36 +60,6 @@ def load_split(cfg: DictConfig, split: str) -> dict[str, np.ndarray]:
         raise FileNotFoundError(f"{path} not found. Run: uv run python -m src.embeddings")
     with np.load(path) as f:
         return {k: f[k] for k in f.files}
-
-
-def fit_and_select(
-    x_train: np.ndarray, y_train: np.ndarray,
-    x_val: np.ndarray, y_val: np.ndarray,
-    labels: list[int], probe: DictConfig,
-) -> tuple[LogisticRegression, list[dict]]:
-    """Fit one probe per C on train; return the best by val macro-F1, and the sweep."""
-    sweep, best, best_f1 = [], None, -1.0
-    for c in probe.C_grid:
-        start = time.time()
-        clf = LogisticRegression(
-            C=float(c),
-            class_weight=probe.class_weight,
-            max_iter=probe.max_iter,
-            random_state=probe.seed,
-        )
-        clf.fit(x_train, y_train)
-        val_f1 = metrics.macro_f1(y_val, clf.predict(x_val), labels)
-        sweep.append({
-            "C": float(c),
-            "val_macro_f1": val_f1,
-            "n_iter": int(np.max(clf.n_iter_)),
-            "converged": bool(np.max(clf.n_iter_) < probe.max_iter),
-            "fit_seconds": time.time() - start,
-        })
-        logger.info(f"  C={c:<8} val macro-F1 {val_f1:.4f} ({sweep[-1]['fit_seconds']:.0f} s)")
-        if val_f1 > best_f1:
-            best, best_f1 = clf, val_f1
-    return best, sweep
 
 
 def evaluate(

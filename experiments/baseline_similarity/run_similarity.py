@@ -40,7 +40,7 @@ from omegaconf import DictConfig
 
 from src import metrics
 from src.config import cli_config, config_as_dict
-from src.data.identity import build_views
+from src.data.identity import NO_PREDICTION, build_views, predict_from_best_hit  # noqa: F401
 from src.tracking import git_state, log_run
 
 logging.basicConfig(
@@ -48,16 +48,6 @@ logging.basicConfig(
     format="%(asctime)s  %(levelname)s  %(message)s",
 )
 logger = logging.getLogger(__name__)
-
-NO_PREDICTION = -1
-
-
-def predict_from_best_hit(table: list[dict], train_labels: dict[str, int]) -> np.ndarray:
-    """The label of each sequence's best training hit; NO_PREDICTION if it has none."""
-    return np.array(
-        [train_labels[row["best_target"]] if row["n_hits"] else NO_PREDICTION for row in table]
-    )
-
 
 def score_view(
     y_true: np.ndarray,

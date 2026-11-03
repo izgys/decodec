@@ -10,4 +10,5 @@ defaults:
   - training
   - comparison
   - calibration
+  - random_split
   - _self_
