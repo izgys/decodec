@@ -1,0 +1,785 @@
+{
+  "experiment": "E7 hybrid of search and language model",
+  "git_commit": "c4926ce",
+  "dirty": false,
+  "selected_fallback": "probe",
+  "selected_evalue_threshold": 1e-05,
+  "probe_best_C": 0.1,
+  "config": {
+    "evalue_thresholds": [
+      1e-50,
+      1e-30,
+      1e-20,
+      1e-10,
+      1e-05,
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      10.0
+    ],
+    "lora_predictions_dir": "experiments/lora/r8_650M",
+    "evaluate_test": true,
+    "n_bootstrap": 1000,
+    "seed": 42,
+    "work_dir": "data/hybrid",
+    "output_dir": "experiments/hybrid/results"
+  },
+  "validation": {
+    "single_models_macro_f1": {
+      "neighbour": 0.769382230672059,
+      "lora": 0.7157183919088055,
+      "probe": 0.7337076219202087
+    },
+    "hybrids": {
+      "lora": {
+        "evalue_threshold": 0.01,
+        "macro_f1": 0.7960768801949476,
+        "accuracy": 0.8667022792022792,
+        "share_from_search": 0.887962962962963,
+        "sweep": [
+          {
+            "evalue_threshold": 1e-50,
+            "macro_f1": 0.7464593701010699,
+            "accuracy": 0.8332621082621082,
+            "share_from_search": 0.4306980056980057
+          },
+          {
+            "evalue_threshold": 1e-30,
+            "macro_f1": 0.7490068180988928,
+            "accuracy": 0.8449430199430199,
+            "share_from_search": 0.6447293447293447
+          },
+          {
+            "evalue_threshold": 1e-20,
+            "macro_f1": 0.7612781894277098,
+            "accuracy": 0.854522792022792,
+            "share_from_search": 0.7363603988603988
+          },
+          {
+            "evalue_threshold": 1e-10,
+            "macro_f1": 0.787182896439885,
+            "accuracy": 0.8642450142450142,
+            "share_from_search": 0.8282763532763533
+          },
+          {
+            "evalue_threshold": 1e-05,
+            "macro_f1": 0.795491158267297,
+            "accuracy": 0.8668447293447293,
+            "share_from_search": 0.8629629629629629
+          },
+          {
+            "evalue_threshold": 0.001,
+            "macro_f1": 0.7960159490979315,
+            "accuracy": 0.8665598290598291,
+            "share_from_search": 0.8796296296296297
+          },
+          {
+            "evalue_threshold": 0.01,
+            "macro_f1": 0.7960768801949476,
+            "accuracy": 0.8667022792022792,
+            "share_from_search": 0.887962962962963
+          },
+          {
+            "evalue_threshold": 0.1,
+            "macro_f1": 0.7957291366545841,
+            "accuracy": 0.8655626780626781,
+            "share_from_search": 0.9026709401709402
+          },
+          {
+            "evalue_threshold": 1.0,
+            "macro_f1": 0.7848219997266689,
+            "accuracy": 0.8584757834757835,
+            "share_from_search": 0.9334757834757835
+          },
+          {
+            "evalue_threshold": 10.0,
+            "macro_f1": 0.7653429861819286,
+            "accuracy": 0.8412037037037037,
+            "share_from_search": 0.9811253561253561
+          }
+        ]
+      },
+      "probe": {
+        "evalue_threshold": 1e-05,
+        "macro_f1": 0.7961778270730477,
+        "accuracy": 0.8603276353276353,
+        "share_from_search": 0.8629629629629629,
+        "sweep": [
+          {
+            "evalue_threshold": 1e-50,
+            "macro_f1": 0.7500074936547553,
+            "accuracy": 0.8247863247863247,
+            "share_from_search": 0.4306980056980057
+          },
+          {
+            "evalue_threshold": 1e-30,
+            "macro_f1": 0.764304799388743,
+            "accuracy": 0.8403846153846154,
+            "share_from_search": 0.6447293447293447
+          },
+          {
+            "evalue_threshold": 1e-20,
+            "macro_f1": 0.7723882577194702,
+            "accuracy": 0.8503205128205128,
+            "share_from_search": 0.7363603988603988
+          },
+          {
+            "evalue_threshold": 1e-10,
+            "macro_f1": 0.7895683529017523,
+            "accuracy": 0.8588319088319089,
+            "share_from_search": 0.8282763532763533
+          },
+          {
+            "evalue_threshold": 1e-05,
+            "macro_f1": 0.7961778270730477,
+            "accuracy": 0.8603276353276353,
+            "share_from_search": 0.8629629629629629
+          },
+          {
+            "evalue_threshold": 0.001,
+            "macro_f1": 0.7953961572439031,
+            "accuracy": 0.8596509971509971,
+            "share_from_search": 0.8796296296296297
+          },
+          {
+            "evalue_threshold": 0.01,
+            "macro_f1": 0.7950307153463649,
+            "accuracy": 0.8596153846153847,
+            "share_from_search": 0.887962962962963
+          },
+          {
+            "evalue_threshold": 0.1,
+            "macro_f1": 0.7944876944461027,
+            "accuracy": 0.8582264957264957,
+            "share_from_search": 0.9026709401709402
+          },
+          {
+            "evalue_threshold": 1.0,
+            "macro_f1": 0.7852028526939248,
+            "accuracy": 0.8520299145299145,
+            "share_from_search": 0.9334757834757835
+          },
+          {
+            "evalue_threshold": 10.0,
+            "macro_f1": 0.7648673786924634,
+            "accuracy": 0.8378917378917379,
+            "share_from_search": 0.9811253561253561
+          }
+        ]
+      }
+    }
+  },
+  "test": {
+    "views": {
+      "all": {
+        "n_sequences": 35785,
+        "n_clusters": 2406,
+        "n_classes": 50,
+        "share_from_search": 0.9071398630711192,
+        "models": {
+          "neighbour": {
+            "macro_f1": 0.8146443913521314,
+            "ci_low": 0.7535789045650034,
+            "ci_high": 0.8352727076230797,
+            "accuracy": 0.8898980019561269
+          },
+          "lora": {
+            "macro_f1": 0.7733891056753777,
+            "ci_low": 0.7159333773957527,
+            "ci_high": 0.8090148161061325,
+            "accuracy": 0.8771831773089284
+          },
+          "probe": {
+            "macro_f1": 0.754565095808095,
+            "ci_low": 0.6920510733515323,
+            "ci_high": 0.781932600630836,
+            "accuracy": 0.8546877183177309
+          },
+          "hybrid_lora": {
+            "macro_f1": 0.8433092015105857,
+            "ci_low": 0.7897464500411753,
+            "ci_high": 0.8704005995973373,
+            "accuracy": 0.9163895486935867
+          },
+          "hybrid_probe": {
+            "macro_f1": 0.8421834781858852,
+            "ci_low": 0.7875712683502771,
+            "ci_high": 0.8664887882807805,
+            "accuracy": 0.9142936984770155
+          }
+        },
+        "differences": {
+          "hybrid_minus_neighbour": {
+            "macro_f1": {
+              "difference": 0.027539086833753834,
+              "ci_low": 0.013669771354925603,
+              "ci_high": 0.052525896963993124
+            },
+            "accuracy": {
+              "difference": 0.02439569652088864,
+              "ci_low": 0.012620909799057287,
+              "ci_high": 0.03841044576128428
+            }
+          },
+          "hybrid_minus_lora": {
+            "macro_f1": {
+              "difference": 0.06879437251050757,
+              "ci_low": 0.025181910977111702,
+              "ci_high": 0.1042917407949945
+            },
+            "accuracy": {
+              "difference": 0.03711052116808719,
+              "ci_low": 0.0063117197026932486,
+              "ci_high": 0.07283186111056665
+            }
+          },
+          "hybrid_minus_probe": {
+            "macro_f1": {
+              "difference": 0.08761838237779018,
+              "ci_low": 0.05125966271100583,
+              "ci_high": 0.1275432767765728
+            },
+            "accuracy": {
+              "difference": 0.059605980159284616,
+              "ci_low": 0.02474523736109346,
+              "ci_high": 0.10485019554951011
+            }
+          }
+        }
+      },
+      "relative_free": {
+        "n_sequences": 19094,
+        "n_clusters": 2105,
+        "n_classes": 50,
+        "share_from_search": 0.8273279564261025,
+        "models": {
+          "neighbour": {
+            "macro_f1": 0.739138193878686,
+            "ci_low": 0.6603740169668492,
+            "ci_high": 0.7624952299240344,
+            "accuracy": 0.812035194301875
+          },
+          "lora": {
+            "macro_f1": 0.6716679797121412,
+            "ci_low": 0.6094018116955456,
+            "ci_high": 0.7208860374334096,
+            "accuracy": 0.7821828846758144
+          },
+          "probe": {
+            "macro_f1": 0.6589776278358628,
+            "ci_low": 0.5936977798219257,
+            "ci_high": 0.702276386033919,
+            "accuracy": 0.7635906567508117
+          },
+          "hybrid_lora": {
+            "macro_f1": 0.7892159475992823,
+            "ci_low": 0.7226197024706018,
+            "ci_high": 0.8159929277958811,
+            "accuracy": 0.8616842987325861
+          },
+          "hybrid_probe": {
+            "macro_f1": 0.7797628523922014,
+            "ci_low": 0.7137046866108697,
+            "ci_high": 0.8063714088141464,
+            "accuracy": 0.8577563632554729
+          }
+        },
+        "differences": {
+          "hybrid_minus_neighbour": {
+            "macro_f1": {
+              "difference": 0.04062465851351549,
+              "ci_low": 0.021646136243523205,
+              "ci_high": 0.07810513897541091
+            },
+            "accuracy": {
+              "difference": 0.04572116895359799,
+              "ci_low": 0.023780267596876577,
+              "ci_high": 0.07440907948518936
+            }
+          },
+          "hybrid_minus_lora": {
+            "macro_f1": {
+              "difference": 0.10809487268006024,
+              "ci_low": 0.046859368861225964,
+              "ci_high": 0.14170474643855788
+            },
+            "accuracy": {
+              "difference": 0.07557347857965853,
+              "ci_low": 0.02680997889031663,
+              "ci_high": 0.14412148840676864
+            }
+          },
+          "hybrid_minus_probe": {
+            "macro_f1": {
+              "difference": 0.12078522455633867,
+              "ci_low": 0.06928069788244327,
+              "ci_high": 0.15494637245052714
+            },
+            "accuracy": {
+              "difference": 0.09416570650466115,
+              "ci_low": 0.03921112716278382,
+              "ci_high": 0.16759245654492758
+            }
+          }
+        }
+      },
+      "no_hit": {
+        "n_sequences": 406,
+        "n_clusters": 117,
+        "n_classes": 28,
+        "share_from_search": 0.0,
+        "models": {
+          "neighbour": {
+            "macro_f1": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "accuracy": 0.0
+          },
+          "lora": {
+            "macro_f1": 0.39661298616146645,
+            "ci_low": 0.31657416906617286,
+            "ci_high": 0.4389476904981839,
+            "accuracy": 0.43349753694581283
+          },
+          "probe": {
+            "macro_f1": 0.36729567136125896,
+            "ci_low": 0.306167623586145,
+            "ci_high": 0.42595995073774856,
+            "accuracy": 0.37438423645320196
+          },
+          "hybrid_lora": {
+            "macro_f1": 0.39661298616146645,
+            "ci_low": 0.31657416906617286,
+            "ci_high": 0.4389476904981839,
+            "accuracy": 0.43349753694581283
+          },
+          "hybrid_probe": {
+            "macro_f1": 0.36729567136125896,
+            "ci_low": 0.306167623586145,
+            "ci_high": 0.42595995073774856,
+            "accuracy": 0.37438423645320196
+          }
+        },
+        "differences": {
+          "hybrid_minus_neighbour": {
+            "macro_f1": {
+              "difference": 0.36729567136125896,
+              "ci_low": 0.306167623586145,
+              "ci_high": 0.42595995073774856
+            },
+            "accuracy": {
+              "difference": 0.37438423645320196,
+              "ci_low": 0.2447582880705493,
+              "ci_high": 0.5123162975286818
+            }
+          },
+          "hybrid_minus_lora": {
+            "macro_f1": {
+              "difference": -0.029317314800207495,
+              "ci_low": -0.07731973792195446,
+              "ci_high": 0.05010026740341338
+            },
+            "accuracy": {
+              "difference": -0.059113300492610835,
+              "ci_low": -0.12301247095096753,
+              "ci_high": 0.0
+            }
+          },
+          "hybrid_minus_probe": {
+            "macro_f1": {
+              "difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "accuracy": {
+              "difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "<30": {
+        "n_sequences": 6473,
+        "n_clusters": 965,
+        "n_classes": 49,
+        "share_from_search": 0.7705855090375405,
+        "models": {
+          "neighbour": {
+            "macro_f1": 0.6371194130184178,
+            "ci_low": 0.5738990998213875,
+            "ci_high": 0.6824133921588306,
+            "accuracy": 0.759925845821103
+          },
+          "lora": {
+            "macro_f1": 0.6492677813167285,
+            "ci_low": 0.5803570461650236,
+            "ci_high": 0.7015357324455929,
+            "accuracy": 0.7707399969102425
+          },
+          "probe": {
+            "macro_f1": 0.6324706272312057,
+            "ci_low": 0.570012006567561,
+            "ci_high": 0.6739495598379838,
+            "accuracy": 0.7639425305113549
+          },
+          "hybrid_lora": {
+            "macro_f1": 0.6882746068771121,
+            "ci_low": 0.633819344114351,
+            "ci_high": 0.739334329575749,
+            "accuracy": 0.8112158195581647
+          },
+          "hybrid_probe": {
+            "macro_f1": 0.686639648801898,
+            "ci_low": 0.6319300481621793,
+            "ci_high": 0.7335068374262173,
+            "accuracy": 0.8058087440135949
+          }
+        },
+        "differences": {
+          "hybrid_minus_neighbour": {
+            "macro_f1": {
+              "difference": 0.04952023578348019,
+              "ci_low": 0.02237029199052472,
+              "ci_high": 0.08647575167313061
+            },
+            "accuracy": {
+              "difference": 0.04588289819249189,
+              "ci_low": 0.017349981968659903,
+              "ci_high": 0.08238527629189006
+            }
+          },
+          "hybrid_minus_lora": {
+            "macro_f1": {
+              "difference": 0.03737186748516952,
+              "ci_low": -0.005733977115590204,
+              "ci_high": 0.08885358749632442
+            },
+            "accuracy": {
+              "difference": 0.035068747103352386,
+              "ci_low": -0.0026388602267574048,
+              "ci_high": 0.08588288713010417
+            }
+          },
+          "hybrid_minus_probe": {
+            "macro_f1": {
+              "difference": 0.054169021570692255,
+              "ci_low": 0.026774558685267697,
+              "ci_high": 0.0960207735440498
+            },
+            "accuracy": {
+              "difference": 0.041866213502240075,
+              "ci_low": 0.01892167007924879,
+              "ci_high": 0.07089502515703541
+            }
+          }
+        }
+      },
+      "30-40": {
+        "n_sequences": 14406,
+        "n_clusters": 1212,
+        "n_classes": 50,
+        "share_from_search": 0.9244064972927947,
+        "models": {
+          "neighbour": {
+            "macro_f1": 0.7825642321023615,
+            "ci_low": 0.7180458142563709,
+            "ci_high": 0.8100992342531362,
+            "accuracy": 0.8940024989587672
+          },
+          "lora": {
+            "macro_f1": 0.7499421626911991,
+            "ci_low": 0.6897204064751487,
+            "ci_high": 0.7932248407628392,
+            "accuracy": 0.8629043454116341
+          },
+          "probe": {
+            "macro_f1": 0.7123599476530995,
+            "ci_low": 0.6504675678274195,
+            "ci_high": 0.7549443473535405,
+            "accuracy": 0.8359711231431348
+          },
+          "hybrid_lora": {
+            "macro_f1": 0.8327669917576682,
+            "ci_low": 0.775415986469918,
+            "ci_high": 0.8638593094790071,
+            "accuracy": 0.9160072192142164
+          },
+          "hybrid_probe": {
+            "macro_f1": 0.8237017215708914,
+            "ci_low": 0.7663686583220735,
+            "ci_high": 0.8525369914682701,
+            "accuracy": 0.915104817437179
+          }
+        },
+        "differences": {
+          "hybrid_minus_neighbour": {
+            "macro_f1": {
+              "difference": 0.04113748946852991,
+              "ci_low": 0.02635987497367429,
+              "ci_high": 0.07031119586893937
+            },
+            "accuracy": {
+              "difference": 0.021102318478411774,
+              "ci_low": 0.010665217570165808,
+              "ci_high": 0.03709647409994145
+            }
+          },
+          "hybrid_minus_lora": {
+            "macro_f1": {
+              "difference": 0.07375955887969232,
+              "ci_low": 0.0201113575847938,
+              "ci_high": 0.11736451526297427
+            },
+            "accuracy": {
+              "difference": 0.05220047202554491,
+              "ci_low": 0.0027035197536443042,
+              "ci_high": 0.11893860673031154
+            }
+          },
+          "hybrid_minus_probe": {
+            "macro_f1": {
+              "difference": 0.11134177391779188,
+              "ci_low": 0.05366861969270183,
+              "ci_high": 0.15518086826500546
+            },
+            "accuracy": {
+              "difference": 0.07913369429404415,
+              "ci_low": 0.01916080039538096,
+              "ci_high": 0.15623567238636582
+            }
+          }
+        }
+      },
+      "40-50": {
+        "n_sequences": 8078,
+        "n_clusters": 684,
+        "n_classes": 49,
+        "share_from_search": 0.96496657588512,
+        "models": {
+          "neighbour": {
+            "macro_f1": 0.845651086925059,
+            "ci_low": 0.7790715311698779,
+            "ci_high": 0.8682041604408471,
+            "accuracy": 0.9538252042584798
+          },
+          "lora": {
+            "macro_f1": 0.819925035913363,
+            "ci_low": 0.7567672774805722,
+            "ci_high": 0.8445647298025508,
+            "accuracy": 0.9512255508789305
+          },
+          "probe": {
+            "macro_f1": 0.7567029740488044,
+            "ci_low": 0.7002181455953422,
+            "ci_high": 0.7891632689514244,
+            "accuracy": 0.9078979945531072
+          },
+          "hybrid_lora": {
+            "macro_f1": 0.8756221434655429,
+            "ci_low": 0.8213871316473277,
+            "ci_high": 0.901962380442191,
+            "accuracy": 0.9662045060658578
+          },
+          "hybrid_probe": {
+            "macro_f1": 0.8749535666589433,
+            "ci_low": 0.8244427817695383,
+            "ci_high": 0.8973141019399862,
+            "accuracy": 0.9658331270116366
+          }
+        },
+        "differences": {
+          "hybrid_minus_neighbour": {
+            "macro_f1": {
+              "difference": 0.029302479733884335,
+              "ci_low": 0.009981758359930907,
+              "ci_high": 0.0693973988769786
+            },
+            "accuracy": {
+              "difference": 0.012007922753156722,
+              "ci_low": 0.005939439015982587,
+              "ci_high": 0.021026842090184975
+            }
+          },
+          "hybrid_minus_lora": {
+            "macro_f1": {
+              "difference": 0.05502853074558034,
+              "ci_low": 0.019302817345569424,
+              "ci_high": 0.10088708337852892
+            },
+            "accuracy": {
+              "difference": 0.014607576132706116,
+              "ci_low": -0.00974507858001727,
+              "ci_high": 0.043552740782670275
+            }
+          },
+          "hybrid_minus_probe": {
+            "macro_f1": {
+              "difference": 0.11825059261013893,
+              "ci_low": 0.07440772764987792,
+              "ci_high": 0.1587324846119001
+            },
+            "accuracy": {
+              "difference": 0.05793513245852934,
+              "ci_low": 0.011182516141346405,
+              "ci_high": 0.11959307052859099
+            }
+          }
+        }
+      },
+      "50-70": {
+        "n_sequences": 5066,
+        "n_clusters": 449,
+        "n_classes": 46,
+        "share_from_search": 0.9885511251480458,
+        "models": {
+          "neighbour": {
+            "macro_f1": 0.964761891338058,
+            "ci_low": 0.9303112894011039,
+            "ci_high": 0.977657833415797,
+            "accuracy": 0.9873667587840506
+          },
+          "lora": {
+            "macro_f1": 0.8984424290318634,
+            "ci_low": 0.8455066521961312,
+            "ci_high": 0.922195982074784,
+            "accuracy": 0.9703908409001184
+          },
+          "probe": {
+            "macro_f1": 0.8854703270094505,
+            "ci_low": 0.8359325094356417,
+            "ci_high": 0.9244767569334343,
+            "accuracy": 0.9518357678641927
+          },
+          "hybrid_lora": {
+            "macro_f1": 0.9597751027192095,
+            "ci_low": 0.9385884815269451,
+            "ci_high": 0.9800188962587706,
+            "accuracy": 0.9917094354520332
+          },
+          "hybrid_probe": {
+            "macro_f1": 0.9779691123716733,
+            "ci_low": 0.9560415339960704,
+            "ci_high": 0.9861922754796989,
+            "accuracy": 0.9921042242400315
+          }
+        },
+        "differences": {
+          "hybrid_minus_neighbour": {
+            "macro_f1": {
+              "difference": 0.013207221033615268,
+              "ci_low": 0.00041047165121062035,
+              "ci_high": 0.036115050190369105
+            },
+            "accuracy": {
+              "difference": 0.00473746545598105,
+              "ci_low": 0.0024018483716434437,
+              "ci_high": 0.008172641103902362
+            }
+          },
+          "hybrid_minus_lora": {
+            "macro_f1": {
+              "difference": 0.07952668333980983,
+              "ci_low": 0.05246432927077197,
+              "ci_high": 0.12918538485049863
+            },
+            "accuracy": {
+              "difference": 0.021713383339913146,
+              "ci_low": 0.009284326459031093,
+              "ci_high": 0.03706733755734947
+            }
+          },
+          "hybrid_minus_probe": {
+            "macro_f1": {
+              "difference": 0.09249878536222278,
+              "ci_low": 0.05199504338781581,
+              "ci_high": 0.13580172328372545
+            },
+            "accuracy": {
+              "difference": 0.040268456375838924,
+              "ci_low": 0.015881063529645866,
+              "ci_high": 0.06959100417803891
+            }
+          }
+        }
+      },
+      ">=70": {
+        "n_sequences": 1356,
+        "n_clusters": 175,
+        "n_classes": 36,
+        "share_from_search": 0.9985250737463127,
+        "models": {
+          "neighbour": {
+            "macro_f1": 0.9706991481270852,
+            "ci_low": 0.935989555129899,
+            "ci_high": 0.9865244410357683,
+            "accuracy": 0.9882005899705014
+          },
+          "lora": {
+            "macro_f1": 0.8372011764849698,
+            "ci_low": 0.7556093684496527,
+            "ci_high": 0.8525679793351677,
+            "accuracy": 0.8805309734513275
+          },
+          "probe": {
+            "macro_f1": 0.8968087352767609,
+            "ci_low": 0.8207807926115507,
+            "ci_high": 0.9179720930281826,
+            "accuracy": 0.950589970501475
+          },
+          "hybrid_lora": {
+            "macro_f1": 0.9719342363033273,
+            "ci_low": 0.937271300547279,
+            "ci_high": 0.9878390174296128,
+            "accuracy": 0.9889380530973452
+          },
+          "hybrid_probe": {
+            "macro_f1": 0.9707560490897834,
+            "ci_low": 0.9352078230120592,
+            "ci_high": 0.9864222738022748,
+            "accuracy": 0.9874631268436578
+          }
+        },
+        "differences": {
+          "hybrid_minus_neighbour": {
+            "macro_f1": {
+              "difference": 5.69009626981698e-05,
+              "ci_low": -0.0040814540522956435,
+              "ci_high": 0.0023293172690763697
+            },
+            "accuracy": {
+              "difference": -0.0007374631268436578,
+              "ci_low": -0.0025516778876499046,
+              "ci_high": 0.0
+            }
+          },
+          "hybrid_minus_lora": {
+            "macro_f1": {
+              "difference": 0.13355487260481358,
+              "ci_low": 0.11399455957052049,
+              "ci_high": 0.20528275138663038
+            },
+            "accuracy": {
+              "difference": 0.10693215339233038,
+              "ci_low": 0.07083015104504074,
+              "ci_high": 0.16686727615870064
+            }
+          },
+          "hybrid_minus_probe": {
+            "macro_f1": {
+              "difference": 0.07394731381302255,
+              "ci_low": 0.051262679645239395,
+              "ci_high": 0.13693887939819588
+            },
+            "accuracy": {
+              "difference": 0.03687315634218289,
+              "ci_low": 0.015589470823323832,
+              "ci_high": 0.07385960019125247
+            }
+          }
+        }
+      }
+    }
+  }
+}

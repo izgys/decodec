@@ -8,7 +8,7 @@
 
 Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, and measures how close each test protein is to the training set, so a score can be read against that distance.
 
-> **Status: in development.** The data pipeline, both baselines, the fine-tuned model and its calibration work. Attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
+> **Status: in development.** The data pipeline, both baselines, the fine-tuned model, its calibration and a hybrid of search and language model work. Attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
 
 ## Why
 
@@ -58,7 +58,7 @@ A few things worth knowing:
 | Random vs homology-aware split comparison, for both baselines | Built |
 | Calibration (temperature scaling, ECE), by identity and by cluster | Built |
 | Integrated gradients with conservation check | Planned |
-| Hybrid of search and language model, with its threshold set on validation | Planned |
+| Hybrid of search and language model, with its threshold set on validation | Built |
 | Inference API and Docker image | Planned |
 | Tests and CI, run with networking off | Built |
 
@@ -106,7 +106,22 @@ What the numbers say:
 - **Fine-tuning may help at middle identities.** LoRA is ahead of the probe from 30 to 50% identity, most clearly from 40 to 50%. This needs repeating before it counts as a finding.
 - **LoRA is worse than the frozen probe at 70% identity and above, mostly because of one family.** All 204 test sequences of one cluster, spider and scorpion dermonecrotic toxins (EC 4.6), are predicted as EC 3.1, and 103 of them fall in this bin. Training holds only two sequences of this family, fragments of 71 and 161 residues that LoRA gets right, while the test sequences are 263 to 324 residues long. Their high identity covers only about 57% of each sequence, so the bin is not made up only of close full-length relatives. This was found after seeing the results, so it is exploratory and the tables above keep the cluster. Without it, accuracy in this bin is 0.953 for LoRA and 0.948 for the probe, and the macro-F1 difference shrinks to -0.024 (-0.070 to -0.001) on 1,253 sequences, 35 classes.
 - **These are single runs on one split,** so the intervals cover which test clusters were drawn, not training or split randomness.
-- **Exploratory, chosen after seeing the data:** on the 7.8% of sequences with a weak hit or none (E-value above 0.001), the probe beats the neighbour by 0.222 (0.183 to 0.297). A hybrid that trusts the search when its hit is strong and the probe otherwise scores 0.780 on sequences with no training relative, 0.041 (0.022 to 0.078) above the neighbour alone. Both need confirming with a threshold set on validation data.
+
+### Search plus language model
+
+A hybrid copies the label of the best training hit when its E-value is at or below a threshold, and otherwise uses a language model. The threshold and the fallback were chosen on validation only: E-value 0.00001 and the frozen probe. LoRA tied as the fallback on validation (macro-F1 0.7961 against 0.7962).
+
+| Test macro-F1 (95% CI), homology-aware split | Hybrid | Nearest neighbour | Hybrid minus neighbour |
+|---|---|---|---|
+| **No training relative** (19,094 sequences, 2,105 clusters, 50 classes) | **0.780 (0.714 to 0.806)** | 0.739 (0.660 to 0.762) | **+0.041 (0.022 to 0.078)** |
+| All test sequences (35,785 sequences, 2,406 clusters, 50 classes) | 0.842 (0.788 to 0.866) | 0.815 (0.754 to 0.835) | +0.028 (0.014 to 0.053) |
+
+Paired differences on all test sequences: hybrid minus probe +0.088 (0.051 to 0.128), hybrid minus LoRA +0.069 (0.025 to 0.104).
+
+- **The hybrid is the best predictor here, and the gap over search is modest.** Search answers 90.7% of test sequences, at 95.1% accuracy. The probe answers the other 3,323, at 55.6% accuracy, where a strong hit is missing and the task is hardest.
+- **Fine-tuning is not needed for this result.** The hybrid uses frozen embeddings.
+- **It can rescue families that fool a model.** The dermonecrotic toxins and the 526 sequences of an EC 4.3 cluster that LoRA misses entirely are all answered correctly through search. Search does not fix everything: one EC 6.3 cluster of 561 sequences is wrong under the hybrid, the neighbour, the probe and LoRA alike.
+- **This score stays somewhat optimistic.** The settings came from validation, but the idea came from looking at this test set. A clean check needs a new holdout, planned for v2.
 
 ### Calibration
 
@@ -157,7 +172,7 @@ This is one random split with one seed. LoRA was not retrained on it.
 
 The first version of the probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
 
-The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [LoRA against both baselines](experiments/model_comparison/results/results.json), [LoRA training](experiments/lora/r8_650M/results.json), [calibration](experiments/calibration/results/results.json), [random split](experiments/random_split/results/results.json), [probe](experiments/baseline_linear_probe/results/results.json), [neighbour](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
+The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [LoRA against both baselines](experiments/model_comparison/results/results.json), [LoRA training](experiments/lora/r8_650M/results.json), [calibration](experiments/calibration/results/results.json), [random split](experiments/random_split/results/results.json), [hybrid](experiments/hybrid/results/results.json), [probe](experiments/baseline_linear_probe/results/results.json), [neighbour](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
 
 ## Quick start
 
@@ -234,6 +249,13 @@ Measure how much a random split inflates the baselines (under an hour, Docker ne
 uv run python experiments/random_split/run_random_split.py
 ```
 
+Choose the hybrid's settings on validation only, then score it on test (minutes, Docker needed):
+
+```bash
+uv run python experiments/hybrid/run_hybrid.py --set hybrid.evaluate_test=false
+uv run python experiments/hybrid/run_hybrid.py
+```
+
 Results land in each experiment's folder (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
 
 ## Design choices
@@ -281,7 +303,7 @@ Each limitation has a planned fix.
 - [x] Calibration with ECE and reliability diagrams
 - [x] Tests and CI, run with networking off
 - [x] Random vs homology-aware split comparison, for both baselines
-- [ ] Hybrid of search and language model, with its threshold set on validation
+- [x] Hybrid of search and language model, with its threshold set on validation
 - [ ] Integrated gradients with a conservation cross-check, on selected families and failing clusters
 - [ ] Inference API and Docker image, returning the prediction with its evidence: best hit, identity, calibrated confidence and a low-support flag
 - [ ] Pinned MMseqs2 version and checksums for every pipeline stage
@@ -321,6 +343,7 @@ decodec/
 │   ├── similarity.yaml           no-relative subset and identity bins
 │   ├── comparison.yaml           LoRA vs baselines: predictions and bootstrap settings
 │   ├── random_split.yaml         random split: seed and folders
+│   ├── hybrid.yaml               hybrid: E-value thresholds tried on validation
 │   ├── calibration.yaml          temperature scaling: bins, thresholds, cluster check
 │   └── tracking.yaml             MLflow on/off and store folder
 ├── src/
@@ -350,7 +373,8 @@ decodec/
 │   ├── lora/                     hardware test, 35M trial and 650M training results
 │   ├── model_comparison/         LoRA vs both baselines, by identity to train
 │   ├── calibration/              temperature, ECE before and after, reliability diagrams
-│   └── random_split/             random vs homology-aware split, for both baselines
+│   ├── random_split/             random vs homology-aware split, for both baselines
+│   └── hybrid/                   search plus language model, chosen on validation
 ├── pyproject.toml
 └── uv.lock
 ```
