@@ -16,6 +16,7 @@ data/embeddings/
 data/identity/
 data/random_split/
 data/hybrid/
+data/attribution/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/clusters/.gitkeep
