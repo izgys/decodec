@@ -12,4 +12,5 @@ defaults:
   - calibration
   - random_split
   - hybrid
+  - attribution
   - _self_

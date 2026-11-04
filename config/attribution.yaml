@@ -1,0 +1,32 @@
+# @package attribution
+# Per-residue attributions on chosen families (T5.7): experiments/attribution/run_attribution.py
+# The families were chosen after seeing test results, so this describes the models; it selects nothing.
+# Both models are explained by masking one residue at a time, and the probe also by an exact split.
+# Integrated gradients is measured, not reported as scores: see the script's header.
+checkpoint: experiments/lora/r8_650M/best.pt
+lora_predictions_path: experiments/lora/r8_650M/test_predictions.npz
+probe_predictions_path: experiments/baseline_linear_probe/results/test_predictions_mean.npz
+families:
+  - {cluster: C0JB52, role: failing, name: "Dermonecrotic toxins", anchors: [P0CE79]}
+  - {cluster: P72139, role: failing, name: "HisF, imidazole glycerol phosphate synthase", anchors: [P60664]}
+  - {cluster: C4Y459, role: failing, name: "GatB, tRNA amidotransferase subunit B", anchors: [O75879]}
+  - {cluster: B9DIP2, role: counterpart, name: "HisA, the isomerase class HisF is mistaken for", anchors: [Q9X0C7]}
+  - {cluster: P62414, role: control, name: "Phosphoglycerate kinase", anchors: [P00558]}
+  - {cluster: Q9PHY2, role: control, name: "Lactate and malate dehydrogenases", anchors: [P00338]}
+  - {cluster: P80506, role: control, name: "Glyceraldehyde-3-phosphate dehydrogenases", anchors: [P04406]}
+sequences_per_family: 12           # masking costs one forward pass per residue per model
+robustness_sequences: 4            # per family, masking repeated with the second replacement (D9)
+convergence_sequences: 2           # per family, the integrated gradients measurement
+convergence_steps: [32, 128]       # a converging method's completeness gap falls towards zero
+variation_points: [100, 400]       # a path that can be integrated has variation that settles
+max_tokens: 1024                   # tokens per batch where gradients are kept; lower it if memory runs out
+occlusion_max_tokens: 8192         # no gradients in masking, so larger batches fit
+max_memory_fraction: 0.8           # empty the CUDA cache when reserved memory passes this share of VRAM
+max_homologs: 100                  # family members aligned to each sequence for conservation
+top_fraction: 0.1                  # a residue counts as highlighted if in this top share of |score|
+n_top_residues: 15                 # listed for each anchor in results.json
+n_shuffles: 1000                   # circular shifts for the null distribution
+uniprot_url: https://rest.uniprot.org/uniprotkb
+seed: 42
+work_dir: data/attribution         # cached UniProt annotations
+output_dir: experiments/attribution/results

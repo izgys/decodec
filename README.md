@@ -8,7 +8,7 @@
 
 Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, and measures how close each test protein is to the training set, so a score can be read against that distance.
 
-> **Status: in development.** The data pipeline, both baselines, the fine-tuned model, its calibration and a hybrid of search and language model work. Attributions and the inference API are not built yet. This README describes what exists today and will grow as each part lands.
+> **Status: in development.** The data pipeline, both baselines, the fine-tuned model, its calibration and a hybrid of search and language model work. Per-residue attributions are written and tested but not yet run, and the inference API is not built yet. This README describes what exists today and will grow as each part lands.
 
 ## Why
 
@@ -28,6 +28,7 @@ flowchart TD
     D --> F["ESM-2 + LoRA<br/>fine-tuning"]
     F --> G["Calibrated confidence"]
     F --> H["Per-residue attributions"]
+    E --> H
     classDef built fill:#e2f0e2,stroke:#4a8a4a,color:#222
     classDef planned fill:#f0f0f0,stroke:#999,stroke-dasharray:4 3,color:#222
     class A,B,C,K,D,E,F,G built
@@ -57,7 +58,7 @@ A few things worth knowing:
 | Paired comparison of LoRA with both baselines, by identity to train | Built |
 | Random vs homology-aware split comparison, for both baselines | Built |
 | Calibration (temperature scaling, ECE), by identity and by cluster | Built |
-| Integrated gradients with conservation check | Planned |
+| Per-residue attributions by masking, with conservation and active-site checks | Built, not yet run |
 | Hybrid of search and language model, with its threshold set on validation | Built |
 | Inference API and Docker image | Planned |
 | Tests and CI, run with networking off | Built |
@@ -256,6 +257,12 @@ uv run python experiments/hybrid/run_hybrid.py --set hybrid.evaluate_test=false
 uv run python experiments/hybrid/run_hybrid.py
 ```
 
+Attribute the predictions on the chosen families (about two hours on a laptop RTX 4070; it fetches UniProt site annotations the first time and caches them):
+
+```bash
+uv run python experiments/attribution/run_attribution.py
+```
+
 Results land in each experiment's folder (`results.json` and per-class reports) and in MLflow. UniProt changes with every release, so a fresh download will give slightly different numbers.
 
 ## Design choices
@@ -270,7 +277,7 @@ Results land in each experiment's folder (`results.json` and per-class reports) 
 
 **Temperature scaling for calibration.** One parameter, fitted on validation data. It cannot change which class is predicted, only how confident the prediction is, which makes it easy to check and explain.
 
-**Integrated gradients, not attention weights.** Attention shows how information flows through the model, not which residues matter. Integrated gradients give per-residue attributions that can be checked against conservation in multiple sequence alignments.
+**Masking one residue at a time, not attention weights and not integrated gradients.** Attention shows how information flows through the model, not which residues matter. Integrated gradients was the first choice and is implemented, but on these models its attributions do not add up to the change in score they are meant to explain, and the shortfall falls too slowly with the step count for any affordable setting to close it. Masking each residue in turn gives up that additive guarantee and gains a number that is exact and repeats to the bit: one forward pass per residue, no baseline path, no step count. The run measures the integrated gradients shortfall for both models rather than hiding it, which is also the only evidence here of what fine-tuning did to the model's local geometry. The linear probe additionally admits an exact split over positions, because its score is one direction dotted with a mean over residues, and the run reports how far that view and masking agree.
 
 ## Known limitations
 
@@ -304,7 +311,7 @@ Each limitation has a planned fix.
 - [x] Tests and CI, run with networking off
 - [x] Random vs homology-aware split comparison, for both baselines
 - [x] Hybrid of search and language model, with its threshold set on validation
-- [ ] Integrated gradients with a conservation cross-check, on selected families and failing clusters
+- [ ] Per-residue attributions on selected families and failing clusters, cross-checked against conservation and annotated active sites
 - [ ] Inference API and Docker image, returning the prediction with its evidence: best hit, identity, calibrated confidence and a low-support flag
 - [ ] Pinned MMseqs2 version and checksums for every pipeline stage
 - [ ] Release v1 with its results as they stand
@@ -344,6 +351,7 @@ decodec/
 │   ├── comparison.yaml           LoRA vs baselines: predictions and bootstrap settings
 │   ├── random_split.yaml         random split: seed and folders
 │   ├── hybrid.yaml               hybrid: E-value thresholds tried on validation
+│   ├── attribution.yaml          attributions: families explained, masking and null settings
 │   ├── calibration.yaml          temperature scaling: bins, thresholds, cluster check
 │   └── tracking.yaml             MLflow on/off and store folder
 ├── src/
@@ -363,8 +371,12 @@ decodec/
 │   │   └── benchmark.py          hardware test: memory, speed, estimated run time
 │   ├── calibration/temperature.py   temperature scaling, ECE, per-view and per-cluster checks
 │   ├── visualisation/            README figures from the saved results
-│   └── interpretability/, inference/
-│                                 placeholders for the planned parts
+│   ├── interpretability/
+│   │   ├── scoring.py            what each model's margin is, and the embeddings to perturb
+│   │   ├── occlusion.py          masking one residue at a time
+│   │   ├── exact.py              the probe's exact split over positions
+│   │   └── integrated_gradients.py   measured here, not reported as scores
+│   └── inference/                placeholder for the planned API
 ├── tests/                        offline tests, run in CI with networking off
 ├── data/                         created by the pipeline, not tracked (except checksums.json)
 ├── experiments/
@@ -374,7 +386,8 @@ decodec/
 │   ├── model_comparison/         LoRA vs both baselines, by identity to train
 │   ├── calibration/              temperature, ECE before and after, reliability diagrams
 │   ├── random_split/             random vs homology-aware split, for both baselines
-│   └── hybrid/                   search plus language model, chosen on validation
+│   ├── hybrid/                   search plus language model, chosen on validation
+│   └── attribution/              per-residue attributions on chosen families
 ├── pyproject.toml
 └── uv.lock
 ```

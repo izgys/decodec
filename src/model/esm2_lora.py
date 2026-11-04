@@ -26,6 +26,10 @@ from transformers import EsmModel
 
 from src.embeddings import pool
 
+# ESM-2 scales its token embeddings by this when a sequence holds no mask tokens,
+# but only on the input_ids path (EsmEmbeddings.forward, token_dropout)
+TOKEN_DROPOUT_SCALE = 1 - 0.15 * 0.8
+
 
 class EsmLoraClassifier(nn.Module):
     def __init__(
@@ -51,6 +55,21 @@ class EsmLoraClassifier(nn.Module):
 
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         hidden = self.esm(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
+        _, mean = pool(hidden, attention_mask)
+        return self.head(self.dropout(mean))
+
+    def embed_tokens(self, input_ids: torch.Tensor) -> torch.Tensor:
+        """
+        Token embeddings as forward() would use them, for sequences with no mask
+        tokens. Attribution needs them as a tensor it can differentiate against.
+        """
+        embeddings = self.esm.get_base_model().embeddings
+        tokens = embeddings.word_embeddings(input_ids)
+        return tokens * TOKEN_DROPOUT_SCALE if embeddings.token_dropout else tokens
+
+    def forward_embedded(self, tokens: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+        """forward(), starting from the output of embed_tokens()."""
+        hidden = self.esm(inputs_embeds=tokens, attention_mask=attention_mask).last_hidden_state
         _, mean = pool(hidden, attention_mask)
         return self.head(self.dropout(mean))
 
