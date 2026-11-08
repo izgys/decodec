@@ -16,6 +16,7 @@ import numpy as np
 import pytest
 import torch
 from conftest import make_record
+from omegaconf import read_write
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from transformers import EsmConfig, EsmModel
@@ -432,6 +433,7 @@ def write_inputs(tmp_path, tokenizer, misaligned=False):
         "attribution.convergence_sequences=1",
         "attribution.variation_points=[10,20]",
         "attribution.convergence_steps=[2,4]",
+        "attribution.require_gpu=false",
         "attribution.n_shuffles=20",
         "attribution.max_homologs=4",
         f"attribution.work_dir='{(tmp_path / 'work').as_posix()}'",
@@ -534,3 +536,12 @@ def test_a_changed_uniprot_sequence_drops_its_sites(tmp_path, tokenizer, monkeyp
     family = json.loads((tmp_path / "results" / "results.json").read_text())["families"][0]
     assert family["n_sites_unavailable"] == 3
     assert family["methods"]["lora_masking"]["sites"]["active_site"]["scores"] is None
+
+
+def test_a_cpu_run_is_refused_unless_it_is_allowed(tmp_path, tokenizer, monkeypatch):
+    cfg, _ = write_inputs(tmp_path, tokenizer)
+    monkeypatch.setattr(attribution, "get_device", lambda: torch.device("cpu"))
+    with read_write(cfg.attribution):
+        cfg.attribution.require_gpu = True
+    with pytest.raises(RuntimeError, match="No GPU found"):
+        attribution.run(cfg)

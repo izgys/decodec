@@ -502,6 +502,13 @@ def measure_convergence(model, tokenizer, record, context, settings, device) -> 
 
 def run(cfg: DictConfig) -> None:
     settings, lora = cfg.attribution, cfg.lora
+    device = get_device()
+    logger.info(f"Device: {device}")
+    if device.type == "cpu" and settings.require_gpu:
+        raise RuntimeError(
+            "No GPU found, and masking needs a forward pass per residue: this would take days. "
+            "Run with --set attribution.require_gpu=false to do it anyway."
+        )
     processed_dir = Path(cfg.data.output.processed_dir)
     output_dir = Path(settings.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -534,13 +541,15 @@ def run(cfg: DictConfig) -> None:
         cfg, [by_id[i] for item in families for i in item["chosen"]], work_dir / "annotations.json"
     )
 
-    logger.info("Refitting the probe on the cached embeddings")
+    logger.info(
+        "Refitting the probe on the cached embeddings. This is scikit-learn on the CPU and "
+        "takes a few minutes, so the GPU stays idle until the first sequence."
+    )
     clf, scaler, probe_ids, probe_mean = fit_probe(cfg, labels)
     if probe_ids != ids:
         raise ValueError("Test records and the cached embeddings are not aligned.")
     probe_row = dict(zip(ids, clf.decision_function(scaler.transform(probe_mean))))
 
-    device = get_device()
     tokenizer = EsmTokenizer.from_pretrained(lora.model_name)
     model = build_model(
         lora.model_name, len(index_to_subclass), lora.r, lora.alpha, lora.dropout,
