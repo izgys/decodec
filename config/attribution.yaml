@@ -22,6 +22,7 @@ variation_points: [100, 400]       # a path that can be integrated has variation
 max_tokens: 1024                   # tokens per batch where gradients are kept; lower it if memory runs out
 occlusion_max_tokens: 8192         # no gradients in masking, so larger batches fit
 max_memory_fraction: 0.8           # empty the CUDA cache when reserved memory passes this share of VRAM
+require_gpu: true                  # masking is a forward pass per residue, so refuse to start on a CPU
 max_homologs: 100                  # family members aligned to each sequence for conservation
 top_fraction: 0.1                  # a residue counts as highlighted if in this top share of |score|
 n_top_residues: 15                 # listed for each anchor in results.json
