@@ -8,7 +8,7 @@
 
 Give DecodEC an enzyme sequence. It predicts the EC sub-class (for example 3.4, the peptidases), says how confident it is, and shows which residues drove the call. Under the hood it fine-tunes the ESM-2 protein language model with LoRA and evaluates it on homology-aware splits, and measures how close each test protein is to the training set, so a score can be read against that distance.
 
-> **Status: in development.** The data pipeline, both baselines, the fine-tuned model, its calibration and a hybrid of search and language model work. Per-residue attributions are written and tested but not yet run, and the inference API is not built yet. This README describes what exists today and will grow as each part lands.
+> **Status: in development.** The data pipeline, both baselines, the fine-tuned model, its calibration, a hybrid of search and language model and per-residue attributions all work. The inference API is not built yet. This README describes what exists today and will grow as each part lands.
 
 ## Why
 
@@ -29,10 +29,12 @@ flowchart TD
     F --> G["Calibrated confidence"]
     F --> H["Per-residue attributions"]
     E --> H
+    G --> I["Inference API"]
+    H --> I
     classDef built fill:#e2f0e2,stroke:#4a8a4a,color:#222
     classDef planned fill:#f0f0f0,stroke:#999,stroke-dasharray:4 3,color:#222
-    class A,B,C,K,D,E,F,G built
-    class H planned
+    class A,B,C,K,D,E,F,G,H built
+    class I planned
 ```
 
 Green steps work today. Grey dashed steps are planned.
@@ -58,7 +60,7 @@ A few things worth knowing:
 | Paired comparison of LoRA with both baselines, by identity to train | Built |
 | Random vs homology-aware split comparison, for both baselines | Built |
 | Calibration (temperature scaling, ECE), by identity and by cluster | Built |
-| Per-residue attributions by masking, with conservation and active-site checks | Built, not yet run |
+| Per-residue attributions by masking, with conservation and active-site checks | Built |
 | Hybrid of search and language model, with its threshold set on validation | Built |
 | Inference API and Docker image | Planned |
 | Tests and CI, run with networking off | Built |
@@ -171,6 +173,52 @@ Homology-aware intervals differ slightly from the tables above because they use 
 
 This is one random split with one seed. LoRA was not retrained on it.
 
+### Which residues drive a prediction
+
+Twelve sequences from each of seven test clusters, 84 in all: three families both models get wrong, the class one of them is mistaken for, and three families they get right. Each sequence is attributed three ways, by masking one residue at a time on the fine-tuned model, the same on the probe, and the probe's exact split over positions. Every set of scores is compared with conservation across its own family and with the active and binding sites annotated in UniProt (release 2026_04), against a null that rotates each sequence's scores, so smoothness is preserved and only the positions are destroyed.
+
+**Integrated gradients was implemented, measured and not used.** For it to mean anything the scores must add up to the change in margin they explain. The shortfall, as a share of that change, never came close to zero:
+
+| Model | Median shortfall at 32 steps | At 128 steps | Best single measurement | More steps made it worse |
+|---|---|---|---|---|
+| ESM-2 + LoRA | 1.92 | 2.14 | 0.217 | 7 of 14 sequences |
+| Linear probe on frozen ESM-2 | 4.39 | 1.80 | 0.095 | 4 of 14 sequences |
+
+Quadrupling the step count made the shortfall worse in 11 of 28 measurements, so there is no setting to settle on, and the total up-and-down movement of the margin along the path also grew with resolution, by 1.01 to 1.33 times from 100 to 400 sample points, instead of settling. Masking replaces it: one forward pass per residue, no path, no step count, and it repeats to the bit.
+
+**What the attributions line up with.** Share of annotated sites that land in the top 10% of scores, averaged over the five families that carry such annotations. Chance is 0.10 by construction, and the rotation null confirms it:
+
+| What is scored | Active sites | Beats chance | Binding sites | Beats chance |
+|---|---|---|---|---|
+| Masking, fine-tuned model | 0.31 | 3 of 5 families | 0.24 | 4 of 5 families |
+| Masking, probe | 0.25 | 3 of 5 families | 0.13 | 2 of 5 families |
+| Exact split, probe | 0.12 | 2 of 5 families | 0.14 | 4 of 5 families |
+| Conservation across the family | 0.82 | 5 of 5 families | 0.63 | 5 of 5 families |
+
+- **Masking does find catalytic residues, sometimes.** In the dermonecrotic toxins the residue the fine-tuned model is most sensitive to is His73, an annotated active site with a conservation score of 0.98 out of 1. Hiding it makes the model more confident in its wrong answer, so the model reads the catalytic histidine as evidence for the correct class and is outvoted by the rest of the sequence. In the glyceraldehyde-3-phosphate dehydrogenases 0.58 of annotated active sites land in the top 10%.
+- **Conservation localises those sites far better than any attribution.** An alignment of the family puts every annotated active site in the top 10% in all five families. Attributions here are evidence about what the model uses, not a replacement for conservation analysis.
+- **The three methods agree at chance level.** Their top 10% of residues overlap by 0.11 on average against a chance level of 0.10, with a mean rank correlation of +0.016. Which residues a reader would be shown depends almost entirely on which method is chosen.
+- **The rankings move when the replacement residue changes.** Swapping the mask token for the mean amino acid (decision D9) gives a mean rank correlation of +0.19 for the fine-tuned model and +0.25 for the probe, and as low as -0.41 on one sequence. Single-residue claims from these scores are not supported.
+- **Only the exact split tracks conservation consistently** (mean rank correlation +0.106, p below 0.05 in 7 of 7 families), and it is the weakest at locating annotated active sites. It measures which positions' final representations carry the decision, after attention has mixed the sequence, which is a different question from which residues are needed.
+
+**What the chosen families reveal about the models.** Accuracy over every test sequence in each cluster. A cluster is one unit of independence, so these are single observations with no interval:
+
+| Cluster | Sequences | True class | ESM-2 + LoRA | Linear probe | What each predicts |
+|---|---|---|---|---|---|
+| Dermonecrotic toxins | 204 | 4.6 | 0.000 | **0.745** | 3.1 for all; the probe keeps 4.6 for 74% |
+| HisF synthase | 526 | 4.3 | 0.000 | 0.000 | 5.3 for all; the probe 5.3 for 86% |
+| GatB amidotransferase | 561 | 6.3 | 0.000 | 0.000 | 6.1 for all; the probe 2.7 for 99% |
+| HisA isomerase | 422 | 5.3 | 1.000 | 0.905 | 5.3, the class HisF is mistaken for |
+| Phosphoglycerate kinase | 600 | 2.7 | 0.997 | 0.970 | 2.7 |
+| Lactate and malate dehydrogenases | 304 | 1.1 | 1.000 | 1.000 | 1.1 |
+| Glyceraldehyde-3-phosphate dehydrogenases | 294 | 1.2 | 1.000 | 0.847 | 1.2 |
+
+- **Fine-tuning lost a family the frozen embeddings handled.** All 204 toxins are wrong after fine-tuning, and three quarters are right from frozen embeddings plus logistic regression. EC 3.1 is chemically adjacent to EC 4.6 here, both acting on phosphorus-oxygen bonds, so the fine-tune settled on a plausible neighbour and gave up the distinction. This is one cluster, so it is an example of what fine-tuning can cost, not a measured rate.
+- **Two families that share a fold collapse into one.** Every HisF sequence is called 5.3, the class of HisA, which both models then classify correctly in 90% of cases or more. The two sit in the same pathway and share a barrel fold.
+- **The same failure is not the same mistake in both models.** GatB goes to 6.1 after fine-tuning and to 2.7 for the probe, so a wrong answer from one model says little about the other, which is part of why the hybrid helps.
+
+Full numbers: [attributions](experiments/attribution/results/results.json), with the per-residue arrays in `attributions.npz`.
+
 The first version of the probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
 
 The dataset: 149,052 training, 28,080 validation and 35,785 test sequences from 15,728 clusters. Each split holds about 15% of the clusters; the sequence counts differ because cluster sizes vary. Full numbers: [LoRA against both baselines](experiments/model_comparison/results/results.json), [LoRA training](experiments/lora/r8_650M/results.json), [calibration](experiments/calibration/results/results.json), [random split](experiments/random_split/results/results.json), [hybrid](experiments/hybrid/results/results.json), [probe](experiments/baseline_linear_probe/results/results.json), [neighbour](experiments/baseline_similarity/results/results.json), [identity search](experiments/baseline_similarity/results/identity_report.json).
@@ -277,7 +325,7 @@ Results land in each experiment's folder (`results.json` and per-class reports) 
 
 **Temperature scaling for calibration.** One parameter, fitted on validation data. It cannot change which class is predicted, only how confident the prediction is, which makes it easy to check and explain.
 
-**Masking one residue at a time, not attention weights and not integrated gradients.** Attention shows how information flows through the model, not which residues matter. Integrated gradients was the first choice and is implemented, but on these models its attributions do not add up to the change in score they are meant to explain, and the shortfall falls too slowly with the step count for any affordable setting to close it. Masking each residue in turn gives up that additive guarantee and gains a number that is exact and repeats to the bit: one forward pass per residue, no baseline path, no step count. The run measures the integrated gradients shortfall for both models rather than hiding it, which is also the only evidence here of what fine-tuning did to the model's local geometry. The linear probe additionally admits an exact split over positions, because its score is one direction dotted with a mean over residues, and the run reports how far that view and masking agree.
+**Masking one residue at a time, not attention weights and not integrated gradients.** Attention shows how information flows through the model, not which residues matter. Integrated gradients was the first choice and is implemented, but on these models its attributions do not add up to the change in score they are meant to explain. The median shortfall stayed above 1.8 times the change itself, and quadrupling the step count made it worse in 11 of 28 measurements, so there is no setting to choose. Masking each residue in turn gives up that additive guarantee and gains a number that is exact and repeats to the bit: one forward pass per residue, no baseline path, no step count. The run measures the integrated gradients shortfall for both models rather than hiding it, which is also the only evidence here of what fine-tuning did to the model's local geometry. The linear probe additionally admits an exact split over positions, because its score is one direction dotted with a mean over residues, and the run reports how far that view and masking agree.
 
 ## Known limitations
 
@@ -287,11 +335,12 @@ Each limitation has a planned fix.
 |---|---|---|
 | The split leaves relatives across train and test | 47% of test sequences have a training sequence above 30% identity and 80% coverage; they are scored separately, not removed | Measure what a stricter partitioning would cost |
 | The interval covers test clusters only | One fitted model on one fixed split, and one training run for LoRA | Repeat over several split and training seeds |
-| Whole families can fail with high confidence | 8 of 239 large test clusters are mostly wrong at a mean confidence of 0.8 or above, even after calibration; all 204 dermonecrotic toxins (EC 4.6) are predicted as EC 3.1 | Flag low training support at inference, for example with the best hit from a sequence search |
+| Whole families can fail with high confidence | 8 of 239 large test clusters are mostly wrong at a mean confidence of 0.8 or above, even after calibration; all 204 dermonecrotic toxins (EC 4.6) are predicted as EC 3.1, although the linear probe keeps 74.5% of them right | Flag low training support at inference, for example with the best hit from a sequence search |
 | One temperature does not fit every identity range | After scaling, ECE is 0.066 below 30% identity and 0.073 from 40 to 50%, in opposite directions | Test a temperature that depends on identity to the training set |
 | Multi-functional enzymes are left out | 1,003 proteins (0.4%) have EC numbers in more than one sub-class | Multi-label classification in v3 |
 | The rarest sub-classes are not covered | 25 sub-classes have fewer than 100 sequences or 20 clusters, for example EC 7.3 and 7.4 | Listed with their counts; revisited as UniProt grows |
 | MMseqs2 version not pinned | The Docker image uses the `latest` tag | Pin the version and store checksums for every pipeline stage |
+| Attributions do not agree with each other | Three defensible methods overlap at chance level in their top 10% of residues, and the rankings move when the replacement residue changes | Reported together with the disagreement; single-residue claims are treated as unsupported |
 | Low confidence is a weak signal for unknown families | Families absent from Swiss-Prot cannot be predicted correctly | Calibrated low-confidence flag, documented as a limit rather than a detector |
 
 ## Roadmap
@@ -311,7 +360,7 @@ Each limitation has a planned fix.
 - [x] Tests and CI, run with networking off
 - [x] Random vs homology-aware split comparison, for both baselines
 - [x] Hybrid of search and language model, with its threshold set on validation
-- [ ] Per-residue attributions on selected families and failing clusters, cross-checked against conservation and annotated active sites
+- [x] Per-residue attributions on selected families and failing clusters, cross-checked against conservation and annotated active sites
 - [ ] Inference API and Docker image, returning the prediction with its evidence: best hit, identity, calibrated confidence and a low-support flag
 - [ ] Pinned MMseqs2 version and checksums for every pipeline stage
 - [ ] Release v1 with its results as they stand
