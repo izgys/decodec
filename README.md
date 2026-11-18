@@ -1,5 +1,6 @@
 # DecodEC
 
+[![CI](https://github.com/izgys/decodec/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/izgys/decodec/actions/workflows/ci.yml)
 ![Python 3.11](https://img.shields.io/badge/python-3.11-blue)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Status: in development](https://img.shields.io/badge/status-in%20development-orange)
@@ -217,7 +218,7 @@ Quadrupling the step count made the shortfall worse in 11 of 28 measurements, so
 - **Two families that share a fold collapse into one.** Every HisF sequence is called 5.3, the class of HisA, which both models then classify correctly in 90% of cases or more. The two sit in the same pathway and share a barrel fold.
 - **The same failure is not the same mistake in both models.** GatB goes to 6.1 after fine-tuning and to 2.7 for the probe, so a wrong answer from one model says little about the other, which is part of why the hybrid helps.
 
-Full numbers: [attributions](experiments/attribution/results/results.json), with the per-residue arrays in `attributions.npz`.
+Full numbers: [attributions](experiments/attribution/results/results.json). The per-residue scores and conservation values are written to `attributions.npz` in the same folder when the experiment runs, and like the other arrays under `experiments/` they are not tracked.
 
 The first version of the probe scored 0.494 on an earlier dataset (59 sub-classes, untuned, CLS token). The numbers are not comparable, because the class set and the split changed as well as the probe. That run is kept in [`e0_previous_split/`](experiments/baseline_linear_probe/e0_previous_split/).
 
