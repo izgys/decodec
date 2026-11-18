@@ -1,6 +1,6 @@
 {
   "experiment": "E8 per-residue attributions on chosen families",
-  "git_commit": "a700cdc",
+  "git_commit": "79c432e",
   "dirty": false,
   "uniprot_release": "2026_04",
   "probe_best_C": 0.1,
